@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GameNow</string>
+    <string name="title_feed">Feed</string>
+    <string name="title_discover">Discover</string>
+    <string name="title_comingsoon">Coming Soon</string>
+    <string name="title_profile">Profile</string>
+</resources>

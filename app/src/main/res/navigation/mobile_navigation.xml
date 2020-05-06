@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_feed">
+
+    <fragment
+        android:id="@+id/navigation_feed"
+        android:name="it.unimib.disco.gruppoade.gamenow.ui.feed.FeedFragment"
+        android:label="@string/title_feed"
+        tools:layout="@layout/fragment_feed" />
+
+    <fragment
+        android:id="@+id/navigation_discover"
+        android:name="it.unimib.disco.gruppoade.gamenow.ui.discover.DiscoverFragment"
+        android:label="@string/title_discover"
+        tools:layout="@layout/fragment_discover" />
+
+    <fragment
+        android:id="@+id/navigation_comingsoon"
+        android:name="it.unimib.disco.gruppoade.gamenow.ui.comingsoon.ComingSoonFragment"
+        android:label="@string/title_comingsoon"
+        tools:layout="@layout/fragment_comingsoon" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="it.unimib.disco.gruppoade.gamenow.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>
