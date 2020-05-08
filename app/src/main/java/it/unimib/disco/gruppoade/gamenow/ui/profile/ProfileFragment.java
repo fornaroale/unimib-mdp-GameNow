@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -33,7 +32,7 @@ public class ProfileFragment extends Fragment {
 
         if (tags != null)
             for (String text : tags) {
-                Chip chip = (Chip) inflater.inflate(R.layout.chip_item, container, false);
+                /*Chip chip = (Chip) inflater.inflate(R.layout.chip_item, container, false);
                 chip.setText(text.toUpperCase());
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override
@@ -41,7 +40,7 @@ public class ProfileFragment extends Fragment {
                         Chip tp_chip = (Chip) v;
                         String tagDaEliminare = (String) tp_chip.getText();
                         chipGroup.removeView(v);
-
+                */
                         // TODO Leggere da file il tag eliminato ed eliminarlo
                   /*  try {
                         fileReader.eliminaTag(tagDaEliminare);
@@ -51,11 +50,11 @@ public class ProfileFragment extends Fragment {
 
 
                     }
-                });
+        // });
 
                 //add to group
-                chipGroup.addView(chip);
-            }
+        //chipGroup.addView(chip);
+        //   }
 
 
         return view;
