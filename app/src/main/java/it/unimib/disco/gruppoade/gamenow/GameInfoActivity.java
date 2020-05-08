@@ -16,7 +16,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
 import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.ConsoleAdapter;
 
