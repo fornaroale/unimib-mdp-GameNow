@@ -1,5 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import it.unimib.disco.gruppoade.gamenow.PopActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 
 public class ProfileFragment extends Fragment {
@@ -44,7 +46,15 @@ public class ProfileFragment extends Fragment {
                 chip.setOnCloseIconClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        chipGroup.removeView(v);
+                        // Lancio la activity pop-up
+                        Intent i = new Intent(getContext(), PopActivity.class);
+                        startActivity(i);
+
+                        // leggo la risposta
+                        //TODO leggere risposta della schermata pop-up
+
+                        // se si rimuovo l'elemento
+                        //chipGroup.removeView(v);
                     }
                 });
 
