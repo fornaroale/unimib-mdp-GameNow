@@ -11,10 +11,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- Pop Activity-->
-        <activity
-            android:name=".PopActivity"
-            android:theme="@style/AppTheme.popMe"></activity>
 
         <activity
             android:name=".MainActivity"
