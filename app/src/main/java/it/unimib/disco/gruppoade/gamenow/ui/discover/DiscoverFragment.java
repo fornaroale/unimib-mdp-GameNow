@@ -19,6 +19,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -26,22 +28,18 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.ui.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.ui.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.ui.RssFeedListAdapter;
 
 public class DiscoverFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
-    private String urlLink = "https://www.eurogamer.it/?format=rss";
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeLayout;
@@ -70,26 +68,58 @@ public class DiscoverFragment extends Fragment {
         // Swipe per Refresh Manuale
         mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
 
-        new ProcessInBackground().execute();
+        final List<NewsProvider> providers = new ArrayList<NewsProvider>();
+
+        providers.add(new NewsProvider(
+                "EuroGamer",
+                "https://www.eurogamer.it/",
+                "https://www.eurogamer.it/?format=rss"
+        ));
+
+        providers.add(new NewsProvider(
+                "EveryEye",
+                "https://www.everyeye.it/",
+                "https://www.everyeye.it/feed/feed_news_rss.asp"
+        ));
+
+        providers.add(new NewsProvider(
+                "Multiplayer.it",
+                "https://multiplayer.it/",
+                "https://multiplayer.it/feed/rss/news/"
+        ));
+
+        new ProcessInBackground().execute(providers);
+
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new ProcessInBackground().execute();
+                new ProcessInBackground().execute(providers);
             }
         });
 
         return root;
     }
 
-    public void parseFeed(InputStream inputStream) throws XmlPullParserException, IOException {
+    private String extractImageUrl(String description) {
+        Document document = Jsoup.parse(description);
+        Elements imgs = document.select("img");
+
+        for (Element img : imgs) {
+            if (img.hasAttr("src")) {
+                return img.attr("src").replace("http:", "https:");
+            }
+        }
+
+        // no image URL
+        return "";
+    }
+
+    public void parseFeed(InputStream inputStream, NewsProvider provider) throws XmlPullParserException, IOException {
         // Variabili temporanee per valori xml
         String title = null;
         String link = null;
         String description = null;
-        Date pubDate = null;
-
-        // Array di notizie da riempire
-        mFeedModelList.clear();
+        LocalDateTime pubDate = null;
 
         // mi trovo all'interno della notizia?
         boolean insideItem = false;
@@ -115,17 +145,12 @@ public class DiscoverFragment extends Fragment {
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("description")) {
                         description = xpp.nextText();
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
-                        try {
-                            DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-                            pubDate = formatter.parse(xpp.nextText());
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
                     }
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
                     if (title != null && link != null && description != null && pubDate != null) {
-                        PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description));
+                        PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), provider);
                         mFeedModelList.add(item);
                     }
                 }
@@ -138,21 +163,7 @@ public class DiscoverFragment extends Fragment {
         }
     }
 
-    private String extractImageUrl(String description) {
-        Document document = Jsoup.parse(description);
-        Elements imgs = document.select("img");
-
-        for (Element img : imgs) {
-            if (img.hasAttr("src")) {
-                return img.attr("src").replace("http:", "https:");
-            }
-        }
-
-        // no image URL
-        return "";
-    }
-
-    public class ProcessInBackground extends AsyncTask<Void, Void, Boolean> {
+    public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -160,30 +171,32 @@ public class DiscoverFragment extends Fragment {
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
-            if (TextUtils.isEmpty(urlLink))
-                return false;
+        protected Boolean doInBackground(List<NewsProvider>... providers) {
 
-            try {
-                if (!urlLink.startsWith("http://") && !urlLink.startsWith("https://"))
-                    urlLink = "https://" + urlLink;
+            // Pulisco array di notizie
+            mFeedModelList.clear();
 
-                // Creo connessione con URL
-                URL url = new URL(urlLink);
-                InputStream inputStream = url.openConnection().getInputStream();
+            for (NewsProvider provider : providers[0]) {
+                URL urlLink = provider.getRssUrl();
 
-                // eseguo il parsing
-                parseFeed(inputStream);
+                if (TextUtils.isEmpty(urlLink.toString()))
+                    return false;
 
-                // Parsing XML avvenuto correttamente
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, "Error", e);
-            } catch (XmlPullParserException e) {
-                Log.e(TAG, "Error", e);
+                try {
+                    // Creo connessione con URL
+                    InputStream inputStream = urlLink.openConnection().getInputStream();
+
+                    // Eseguo il parsing XML -> oggetti PieceOfNews
+                    parseFeed(inputStream, provider);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error [IO EXCEPTION] ", e);
+                } catch (XmlPullParserException e) {
+                    Log.e(TAG, "Error [XML PULL PARS.] ", e);
+                }
             }
 
-            return false;
+            // Parsing XML avvenuto correttamente
+            return true;
         }
 
         @Override
@@ -191,14 +204,16 @@ public class DiscoverFragment extends Fragment {
             mSwipeLayout.setRefreshing(false);
 
             if (success) {
+                // Ordino notizie in base alla data di pubblicazione
+                Collections.sort(mFeedModelList);
+                Collections.reverse(mFeedModelList);
+
                 // Riempo la RecyclerView con le schede notizie
                 adapter.notifyDataSetChanged();
-
-                //mRecyclerView.setAdapter(new RssFeedListAdapter(getActivity(), mFeedModelList));
-
             } else {
                 Log.d("RSS URL", "Enter a valid Rss feed url");
             }
         }
+
     }
 }

@@ -51,6 +51,15 @@
             android:ellipsize="end"
             android:maxLines="4" />
 
+        <TextView
+            android:id="@+id/newsProvider"
+            style="@style/ProviderText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:maxLines="1"
+            android:textAllCaps="true" />
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

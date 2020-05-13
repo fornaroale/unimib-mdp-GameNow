@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -24,6 +26,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
+    private final static String TAG = "RssFeedListAdapter";
 
     public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels) {
         this.mContext = (FragmentActivity) mContext;
@@ -52,14 +55,17 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
         // Titolo
         ((TextView) holder.rssFeedView.findViewById(R.id.newsTitle)).setText(rssFeedModel.getTitle());
 
+        // Provider della notizia
+        ((TextView) holder.rssFeedView.findViewById(R.id.newsProvider)).setText(rssFeedModel.getProvider().getName());
+
         // Descrizione
         String plainDesc = Html.fromHtml(rssFeedModel.getDesc().replaceAll("<img.+/(img)*>", "")).toString();
         ((TextView) holder.rssFeedView.findViewById(R.id.newsDesc)).setText(plainDesc);
 
         // Data di pubblicazione
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy, HH:mm");
-        String updatedDate = outputFormat.format(rssFeedModel.getPubDate());
-        ((TextView) holder.rssFeedView.findViewById(R.id.newsPubDate)).setText(updatedDate);
+        LocalDateTime osDateTime = rssFeedModel.getPubDate();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yy, HH:mm");
+        ((TextView) holder.rssFeedView.findViewById(R.id.newsPubDate)).setText(dtf.format(osDateTime));
 
         // Configurazione link
         holder.rssFeedView.setOnClickListener(new View.OnClickListener() {
