@@ -1,20 +1,22 @@
 package it.unimib.disco.gruppoade.gamenow.ui;
 
-import java.util.Date;
+import org.threeten.bp.LocalDateTime;
 
-public class PieceOfNews {
+public class PieceOfNews implements Comparable<PieceOfNews> {
     private String title;
     private String desc;
     private String link;
-    private Date pubDate;
+    private LocalDateTime pubDate;
     private String image;
+    private NewsProvider provider;
 
-    public PieceOfNews(String title, String desc, String link, Date pubDate, String image) {
+    public PieceOfNews(String title, String desc, String link, LocalDateTime pubDate, String image, NewsProvider provider) {
         this.title = title;
         this.desc = desc;
         this.link = link;
         this.pubDate = pubDate;
         this.image = image;
+        this.provider = provider;
     }
 
     public String getTitle() {
@@ -41,11 +43,11 @@ public class PieceOfNews {
         this.link = link;
     }
 
-    public Date getPubDate() {
+    public LocalDateTime getPubDate() {
         return pubDate;
     }
 
-    public void setPubDate(Date pubDate) {
+    public void setPubDate(LocalDateTime pubDate) {
         this.pubDate = pubDate;
     }
 
@@ -55,6 +57,15 @@ public class PieceOfNews {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public NewsProvider getProvider() {
+        return provider;
+    }
+
+    @Override
+    public int compareTo(PieceOfNews o) {
+        return getPubDate().compareTo(o.getPubDate());
     }
 }
 
