@@ -46,10 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            tv.setText("Utente loggato.");
+           Log.d(TAG , "Loggato");
+
         } else {
-            tv.setText("Utente non loggato.");
+            Log.d(TAG , "NON LOGGATO");
+            createSignInIntent();
         }
+
+
     }
 
     public void createSignInIntent() {
