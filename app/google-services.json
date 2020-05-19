@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "108957765081",
+    "firebase_url": "https://gamenow-4c50f.firebaseio.com",
+    "project_id": "gamenow-4c50f",
+    "storage_bucket": "gamenow-4c50f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108957765081:android:3de487133c2e9ebda7ddc8",
+        "android_client_info": {
+          "package_name": "it.unimib.disco.gruppoade.gamenow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108957765081-rmh8rf7t68dp5p34iu2q69gj7ou5r4ok.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unimib.disco.gruppoade.gamenow",
+            "certificate_hash": "2f17a9202a56c849c22421ee4045ceda400c49f6"
+          }
+        },
+        {
+          "client_id": "108957765081-sms1js41v35a1vdm86q3ol8gm40i2m5d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unimib.disco.gruppoade.gamenow",
+            "certificate_hash": "83d85c5929f3b21e7d85fd05a86925d706e76873"
+          }
+        },
+        {
+          "client_id": "108957765081-2dkqi9dchoouqarp3bgpgapc3mk7stag.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbdUmUdVWonkTGIHr6NPCzt5P8HfZ--CU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108957765081-2dkqi9dchoouqarp3bgpgapc3mk7stag.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
