@@ -45,6 +45,17 @@ public class MainActivity extends AppCompatActivity {
         tv = findViewById(R.id.textview_accountState);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+        // se non ho i file di preset
+        if(!SIMULA_findPreset(false)){
+            // lancio la activity che mi fa compilare la pagina di preset
+            Intent intent = new Intent(this, ForumActivity.class);
+
+            startActivity(intent);
+        }
+
+
         if (user != null) {
            Log.d(TAG , "Loggato");
 
@@ -77,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
         // [END auth_fui_create_intent]
     }
 
+    // simulazoine della funzione che cercherà il file che continee i preset che devono essere creati
+    // dopo il primo accesso
+    private boolean SIMULA_findPreset(boolean result){
+        return result;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
