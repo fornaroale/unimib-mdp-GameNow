@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui;
+package it.unimib.disco.gruppoade.gamenow.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +7,15 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import org.threeten.bp.LocalDateTime;
@@ -74,6 +77,40 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(rssFeedModel.getLink()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
+            }
+        });
+
+        // ToggleButton bookmark
+        final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
+        final View view = holder.rssFeedView.getRootView();
+        favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Snackbar snackbar = Snackbar.make(view, "News salvata!", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    Snackbar snackbar = Snackbar.make(view, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
+            }
+        });
+
+        // ToggleButton tag
+        final ToggleButton addTagButton = holder.rssFeedView.findViewById(R.id.newsTagButton);
+        addTagButton.setText("# TAG");
+        addTagButton.setTextOn("# TAG");
+        addTagButton.setTextOff("# TAG");
+        addTagButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Snackbar snackbar = Snackbar.make(view, "Tag aggiunto al feed!", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    Snackbar snackbar = Snackbar.make(view, "Tag rimosso dal feed!", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
             }
         });
     }
