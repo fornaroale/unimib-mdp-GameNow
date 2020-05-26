@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.discover;
+package it.unimib.disco.gruppoade.gamenow.fragments.discover;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,9 +33,9 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.ui.NewsProvider;
-import it.unimib.disco.gruppoade.gamenow.ui.PieceOfNews;
-import it.unimib.disco.gruppoade.gamenow.ui.RssFeedListAdapter;
+import it.unimib.disco.gruppoade.gamenow.fragments.NewsProvider;
+import it.unimib.disco.gruppoade.gamenow.fragments.PieceOfNews;
+import it.unimib.disco.gruppoade.gamenow.fragments.RssFeedListAdapter;
 
 public class DiscoverFragment extends Fragment {
 
