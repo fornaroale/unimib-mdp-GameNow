@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui;
+package it.unimib.disco.gruppoade.gamenow.fragments;
 
 import org.threeten.bp.LocalDateTime;
 
@@ -8,14 +8,16 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
     private String link;
     private LocalDateTime pubDate;
     private String image;
+    private String guid;
     private NewsProvider provider;
 
-    public PieceOfNews(String title, String desc, String link, LocalDateTime pubDate, String image, NewsProvider provider) {
+    public PieceOfNews(String title, String desc, String link, LocalDateTime pubDate, String image, String guid, NewsProvider provider) {
         this.title = title;
         this.desc = desc;
         this.link = link;
         this.pubDate = pubDate;
         this.image = image;
+        this.guid = guid;
         this.provider = provider;
     }
 
