@@ -119,6 +119,7 @@ public class DiscoverFragment extends Fragment {
         String title = null;
         String link = null;
         String description = null;
+        String guid = null;
         LocalDateTime pubDate = null;
 
         // mi trovo all'interno della notizia?
@@ -144,13 +145,15 @@ public class DiscoverFragment extends Fragment {
                         link = xpp.nextText();
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("description")) {
                         description = xpp.nextText();
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("guid")) {
+                        guid = xpp.nextText();
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
                         pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
                     }
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
                     if (title != null && link != null && description != null && pubDate != null) {
-                        PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), provider);
+                        PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
                         mFeedModelList.add(item);
                     }
                 }
