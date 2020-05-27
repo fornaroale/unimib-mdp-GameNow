@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.fragments;
+package it.unimib.disco.gruppoade.gamenow.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +24,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 
 public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.FeedModelViewHolder> {
 

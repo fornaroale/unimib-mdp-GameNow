@@ -34,9 +34,9 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.fragments.NewsProvider;
-import it.unimib.disco.gruppoade.gamenow.fragments.PieceOfNews;
-import it.unimib.disco.gruppoade.gamenow.fragments.RssFeedListAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
+import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
+import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 
 public class DiscoverFragment extends Fragment {
 
@@ -102,20 +102,6 @@ public class DiscoverFragment extends Fragment {
         });
 
         return root;
-    }
-
-    private String extractImageUrl(String description) {
-        Document document = Jsoup.parse(description);
-        Elements imgs = document.select("img");
-
-        for (Element img : imgs) {
-            if (img.hasAttr("src")) {
-                return img.attr("src").replace("http:", "https:");
-            }
-        }
-
-        // no image URL
-        return "";
     }
 
     public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
@@ -236,5 +222,19 @@ public class DiscoverFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    private String extractImageUrl(String description) {
+        Document document = Jsoup.parse(description);
+        Elements imgs = document.select("img");
+
+        for (Element img : imgs) {
+            if (img.hasAttr("src")) {
+                return img.attr("src").replace("http:", "https:");
+            }
+        }
+
+        // no image URL
+        return "";
     }
 }

@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.fragments;
+package it.unimib.disco.gruppoade.gamenow.models;
 
 import android.util.Log;
 
