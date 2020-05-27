@@ -10,9 +10,12 @@ public class NewsProvider {
     private String name;
     private URL homepageUrl;
     private URL rssUrl;
+    private String platform;
 
-    public NewsProvider(String name, String homepageUrl, String rssUrl) {
+    public NewsProvider(String name, String homepageUrl, String rssUrl, String platform) {
         this.name = name;
+        this.platform = platform;
+
         try {
             if (!homepageUrl.startsWith("http://") && !homepageUrl.startsWith("https://"))
                 homepageUrl = "https://" + homepageUrl;
@@ -50,5 +53,13 @@ public class NewsProvider {
 
     public void setRssUrl(URL rssUrl) {
         this.rssUrl = rssUrl;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 }
