@@ -24,9 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "FireBase UI Activity";
-    FirebaseAuth.AuthStateListener mAuthListener;
+
+    public static final String EXTRA_MESSAGE = "nameDb";
+
+    //FirebaseAuth.AuthStateListener mAuthListener;
     TextView tv;
-    private FirebaseAuth firebaseAuth;
+    //private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         tv = findViewById(R.id.textview_accountState);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
         // se non ho i file di preset
@@ -56,13 +59,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        if (user != null) {
+        /*if (user != null) {
            Log.d(TAG , "Loggato");
 
         } else {
             Log.d(TAG , "NON LOGGATO");
             createSignInIntent();
-        }
+        }*/
 
 
     }
