@@ -47,4 +47,7 @@ dependencies {
 
     // add
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
+
+    // firebase db
+    implementation 'com.google.firebase:firebase-database:19.3.0'
 }
