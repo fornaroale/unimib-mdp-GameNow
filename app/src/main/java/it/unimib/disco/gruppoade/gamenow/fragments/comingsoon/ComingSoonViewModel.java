@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
