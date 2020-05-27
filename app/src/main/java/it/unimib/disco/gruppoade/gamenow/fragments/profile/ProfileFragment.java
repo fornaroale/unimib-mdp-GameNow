@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -17,9 +18,9 @@ import it.unimib.disco.gruppoade.gamenow.adapters.MyFragmentPagerAdapter;
 public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
-    MyFragmentPagerAdapter myFragmentPagerAdapter;
-    ViewPager viewPager;
-    TabLayout tabLayout;
+    private MyFragmentPagerAdapter myFragmentPagerAdapter;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class ProfileFragment extends Fragment {
         viewPager = root.findViewById(R.id.viewPager);
         tabLayout = root.findViewById(R.id.tabLayout);
 
-        viewPager.setOffscreenPageLimit(2);
+        viewPager.setOffscreenPageLimit(3);
 
         setPagerAdapter();
         setTabLayout();
@@ -47,7 +48,8 @@ public class ProfileFragment extends Fragment {
     private void setTabLayout() {
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.getTabAt(0).setText("Utente");
-        tabLayout.getTabAt(1).setText("News");
+        tabLayout.getTabAt(0).setText("News");
+        tabLayout.getTabAt(1).setText("Giochi");
+        tabLayout.getTabAt(2).setText("Utente");
     }
 }
