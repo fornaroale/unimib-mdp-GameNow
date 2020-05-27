@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.fragments.discover;
+package it.unimib.disco.gruppoade.gamenow.ui.discover;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

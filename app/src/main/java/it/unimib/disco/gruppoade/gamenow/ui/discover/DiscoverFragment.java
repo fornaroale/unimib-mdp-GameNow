@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.fragments.feed;
+package it.unimib.disco.gruppoade.gamenow.ui.discover;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 
-public class FeedFragment extends Fragment {
+public class DiscoverFragment extends Fragment {
 
-    private FeedViewModel feedViewModel;
+    private DiscoverViewModel discoverViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        feedViewModel =
-                ViewModelProviders.of(this).get(FeedViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_feed, container, false);
-        final TextView textView = root.findViewById(R.id.text_feed);
-        feedViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        discoverViewModel =
+                ViewModelProviders.of(this).get(DiscoverViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_discover, container, false);
+        final TextView textView = root.findViewById(R.id.text_discover);
+        discoverViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

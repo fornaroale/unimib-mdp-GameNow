@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,16 +1,14 @@
-package it.unimib.disco.gruppoade.gamenow.activities;
+package it.unimib.disco.gruppoade.gamenow;
 
 import android.os.Bundle;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import it.unimib.disco.gruppoade.gamenow.R;
 
 public class MainActivity extends AppCompatActivity {
 
