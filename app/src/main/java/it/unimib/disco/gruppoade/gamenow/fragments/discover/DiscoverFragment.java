@@ -73,19 +73,22 @@ public class DiscoverFragment extends Fragment {
         providers.add(new NewsProvider(
                 "EuroGamer",
                 "https://www.eurogamer.it/",
-                "https://www.eurogamer.it/?format=rss"
+                "https://www.eurogamer.it/?format=rss&platform=PS4",
+                "PS4"
         ));
 
         providers.add(new NewsProvider(
-                "EveryEye",
-                "https://www.everyeye.it/",
-                "https://www.everyeye.it/feed/feed_news_rss.asp"
+                "EuroGamer",
+                "https://www.eurogamer.it/",
+                "https://www.eurogamer.it/?format=rss&platform=XBOXONE",
+                "XBOX ONE"
         ));
 
         providers.add(new NewsProvider(
                 "Multiplayer.it",
                 "https://multiplayer.it/",
-                "https://multiplayer.it/feed/rss/news/"
+                "https://multiplayer.it/feed/rss/news/playstation/",
+                "PS4"
         ));
 
         new ProcessInBackground().execute(providers);
@@ -112,58 +115,6 @@ public class DiscoverFragment extends Fragment {
 
         // no image URL
         return "";
-    }
-
-    public void parseFeed(InputStream inputStream, NewsProvider provider) throws XmlPullParserException, IOException {
-        // Variabili temporanee per valori xml
-        String title = null;
-        String link = null;
-        String description = null;
-        String guid = null;
-        LocalDateTime pubDate = null;
-
-        // mi trovo all'interno della notizia?
-        boolean insideItem = false;
-
-        try {
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            XmlPullParser xpp = factory.newPullParser();
-            // supporto per namespace xml a false
-            factory.setNamespaceAware(false);
-            xpp.setInput(inputStream, "UTF_8");
-
-            // tipo dell'evento (inizio doc, fine doc, inizio tag, fine tag, ecc.)
-            int eventType = xpp.getEventType();
-
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG) {
-                    if (xpp.getName().equalsIgnoreCase("item")) {
-                        insideItem = true;
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("title")) {
-                        title = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("link")) {
-                        link = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("description")) {
-                        description = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("guid")) {
-                        guid = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
-                        pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
-                    }
-                } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
-                    insideItem = false;
-                    if (title != null && link != null && description != null && pubDate != null) {
-                        PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
-                        mFeedModelList.add(item);
-                    }
-                }
-
-                eventType = xpp.next();
-            }
-
-        } finally {
-            inputStream.close();
-        }
     }
 
     public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
@@ -217,6 +168,72 @@ public class DiscoverFragment extends Fragment {
                 Log.d("RSS URL", "Enter a valid Rss feed url");
             }
         }
+    }
 
+    public void parseFeed(InputStream inputStream, NewsProvider provider) throws XmlPullParserException, IOException {
+        // Variabili temporanee per valori xml
+        String title = null;
+        String link = null;
+        String description = null;
+        String guid = null;
+        LocalDateTime pubDate = null;
+
+        // mi trovo all'interno della notizia?
+        boolean insideItem = false;
+
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser xpp = factory.newPullParser();
+            // supporto per namespace xml a false
+            factory.setNamespaceAware(false);
+            xpp.setInput(inputStream, "UTF_8");
+
+            // tipo dell'evento (inizio doc, fine doc, inizio tag, fine tag, ecc.)
+            int eventType = xpp.getEventType();
+
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG) {
+                    if (xpp.getName().equalsIgnoreCase("item")) {
+                        insideItem = true;
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("title")) {
+                        title = xpp.nextText();
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("link")) {
+                        link = xpp.nextText();
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("description")) {
+                        description = xpp.nextText();
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("guid")) {
+                        guid = xpp.nextText();
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
+                        pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
+                    }
+                } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
+                    insideItem = false;
+                    if (title != null && link != null && description != null && pubDate != null) {
+                        if (!checkNewsPresence(guid, provider.getPlatform())) {
+                            PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
+                            mFeedModelList.add(item);
+                        }
+                    }
+                }
+
+                eventType = xpp.next();
+            }
+
+        } finally {
+            inputStream.close();
+        }
+    }
+
+    public boolean checkNewsPresence(String guid, String platform) {
+        for (PieceOfNews pieceOfNews : mFeedModelList) {
+            if (pieceOfNews.getGuid().equals(guid)) {
+                // Se è già presente, aggiungo il tag (ammesso che questo non vi sia già)
+                String tmpPlatform = pieceOfNews.getProvider().getPlatform();
+                if (tmpPlatform.indexOf(platform) == -1)
+                    pieceOfNews.getProvider().setPlatform(tmpPlatform + ", " + platform);
+                return true;
+            }
+        }
+        return false;
     }
 }

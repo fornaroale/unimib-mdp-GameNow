@@ -11,9 +11,13 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
+
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
@@ -83,9 +87,11 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    // TODO: Salvare news
                     Snackbar snackbar = Snackbar.make(view, "News salvata!", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
+                    // TODO: Salvare news
                     Snackbar snackbar = Snackbar.make(view, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }
@@ -94,16 +100,18 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
         // ToggleButton tag
         final ToggleButton addTagButton = holder.rssFeedView.findViewById(R.id.newsTagButton);
-        addTagButton.setText("# TAG");
-        addTagButton.setTextOn("# TAG");
-        addTagButton.setTextOff("# TAG");
+        addTagButton.setText("# " + rssFeedModel.getProvider().getPlatform());
+        addTagButton.setTextOn("# " + rssFeedModel.getProvider().getPlatform());
+        addTagButton.setTextOff("# " + rssFeedModel.getProvider().getPlatform());
         addTagButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    // TODO: Aggiungere tag al feed
                     Snackbar snackbar = Snackbar.make(view, "Tag aggiunto al feed!", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
+                    // TODO: Rimuovere tag dal feed
                     Snackbar snackbar = Snackbar.make(view, "Tag rimosso dal feed!", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }

@@ -65,6 +65,10 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
         return provider;
     }
 
+    public String getGuid() {
+        return guid;
+    }
+
     @Override
     public int compareTo(PieceOfNews o) {
         return getPubDate().compareTo(o.getPubDate());
