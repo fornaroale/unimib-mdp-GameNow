@@ -1,5 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.discover;
 
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
