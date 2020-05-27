@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.TagComparator;
+import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 
 public class TabSettingsFragment extends Fragment {
 

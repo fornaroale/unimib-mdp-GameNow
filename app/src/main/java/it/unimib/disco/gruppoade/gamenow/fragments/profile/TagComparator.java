@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow;
+package it.unimib.disco.gruppoade.gamenow.fragments.profile;
 
 import java.util.Comparator;
 

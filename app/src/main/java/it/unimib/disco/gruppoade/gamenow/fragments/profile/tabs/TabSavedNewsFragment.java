@@ -23,9 +23,8 @@ public class TabSavedNewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
+        final View root = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
 
-
-        return view;
+        return root;
     }
 }
