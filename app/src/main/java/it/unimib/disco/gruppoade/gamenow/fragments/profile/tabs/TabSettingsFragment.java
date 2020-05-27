@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.profile;
+package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -6,38 +6,44 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.TagComparator;
 
-public class ProfileFragment extends Fragment {
+public class TabSettingsFragment extends Fragment {
 
-    private ProfileViewModel profileViewModel;
     // inserisco variabili
-    private List<String> tags = new ArrayList<String>();
+    private List<String> tags = new ArrayList<>();
 
     // comparator per stringhe
 
     //private String[] tags = {"PS4", "XBOX", "RPG", "FAnTasy", "FPS", null, "corsa", "Sparatutto In prima Persona"};
     private ChipGroup chipGroup;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        profileViewModel =
-                ViewModelProviders.of(this).get(ProfileViewModel.class);
-        final View view = inflater.inflate(R.layout.fragment_profile, container, false);
+    public TabSettingsFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
         // inizio codice
 
@@ -65,12 +71,9 @@ public class ProfileFragment extends Fragment {
                 }
             }
 
-
         return view;
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void popola(List<String> tags) {
         //  popolo il tags
 
@@ -85,19 +88,15 @@ public class ProfileFragment extends Fragment {
         tags.add("Nintendo");
 
         // sorting
-        TagComparator comparatore = new TagComparator();
-        tags.sort(comparatore);
+        Collections.sort(tags, new TagComparator());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void sortedAdd(String element, List<String> tags) {
-
         // aggiungo l'elemento
         tags.add(element);
 
         // sorting
-        TagComparator comparatore = new TagComparator();
-        tags.sort(comparatore);
+        Collections.sort(tags, new TagComparator());
     }
 
     private String formatText(String text) {
