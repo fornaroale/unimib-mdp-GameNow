@@ -4,4 +4,6 @@
     <string name="title_discover">Discover</string>
     <string name="title_comingsoon">Coming Soon</string>
     <string name="title_profile">Profile</string>
+
+    <string name="news_img_description">Image of the post</string>
 </resources>
