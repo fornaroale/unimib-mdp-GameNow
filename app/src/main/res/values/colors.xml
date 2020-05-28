@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#C25E00</color>
     <color name="colorAccent">#FFBD45</color>
 
+    <!-- Tag background color -->
+    <color name="ColorBgTag">#8000</color>
+    <color name="ColorTextTag">#FFFF</color>
 </resources>

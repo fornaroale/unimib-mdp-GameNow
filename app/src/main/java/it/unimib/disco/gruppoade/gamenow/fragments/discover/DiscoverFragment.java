@@ -217,7 +217,8 @@ public class DiscoverFragment extends Fragment {
                 // Se è già presente, aggiungo il tag (ammesso che questo non vi sia già)
                 String tmpPlatform = pieceOfNews.getProvider().getPlatform();
                 if (tmpPlatform.indexOf(platform) == -1)
-                    pieceOfNews.getProvider().setPlatform(tmpPlatform + ", " + platform);
+                    pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
+                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
                 return true;
             }
         }
