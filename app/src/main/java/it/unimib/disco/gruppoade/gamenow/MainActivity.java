@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "nameDb";
 
-    //FirebaseAuth.AuthStateListener mAuthListener;
+    FirebaseAuth.AuthStateListener mAuthListener;
     TextView tv;
-    //private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // se non ho i file di preset
-        if(!SIMULA_findPreset(false)){
+        if(true){
             // lancio la activity che mi fa compilare la pagina di preset
             Intent intent = new Intent(this, ForumActivity.class);
 
@@ -91,11 +91,6 @@ public class MainActivity extends AppCompatActivity {
         // [END auth_fui_create_intent]
     }
 
-    // simulazoine della funzione che cercherà il file che continee i preset che devono essere creati
-    // dopo il primo accesso
-    private boolean SIMULA_findPreset(boolean result){
-        return result;
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -117,4 +112,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // login
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.d(TAG , "Loggato");
+
+        } else {
+            Log.d(TAG , "NON LOGGATO");
+            createSignInIntent();
+        }
+    }
 }

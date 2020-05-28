@@ -24,16 +24,10 @@ public class ForumActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
     private static final String TAG = "ForumActivity";
     private static final int RC_SIGN_IN = 123;
 
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String usernameDb;
     // login
     FirebaseAuth.AuthStateListener mAuthListener;
@@ -52,13 +46,13 @@ public class ForumActivity extends AppCompatActivity {
         // login
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
+       /* if (user != null) {
             Log.d(TAG , "Loggato");
 
         } else {
             Log.d(TAG , "NON LOGGATO");
             createSignInIntent();
-        }
+        }*/
 
 
         Button submit_button = findViewById(R.id.submit);
@@ -68,12 +62,16 @@ public class ForumActivity extends AppCompatActivity {
 
         Log.d(TAG, String.valueOf("Activity partita, userset: "));
 
+        if(user != null)
         if(user.isEmailVerified())
             Log.d(TAG, "mailVerificata: " + user.getEmail());
 
 
-        usernameDb = "prego@gmail.com";
-        //usernameDb = user.getEmail();
+
+        if(user != null)
+            usernameDb = user.getEmail();
+        else
+            usernameDb = "nousername@gmail.com";
         usernameDb = usernameDb.replace(".", "DOT");
         Log.d(TAG, "usernameDb: " + usernameDb);
         myRef = database.getReference(usernameDb);
@@ -112,6 +110,17 @@ public class ForumActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.");
             }
         });*/
+
+       // login
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            Log.d(TAG , "Loggato");
+
+        } else {
+            Log.d(TAG , "NON LOGGATO");
+            createSignInIntent();
+        }
 
         Log.d(TAG, "Fuori ONStart");
     }
