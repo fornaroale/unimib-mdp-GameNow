@@ -125,13 +125,11 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                         chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
                         Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                        notifyDataSetChanged();
                     } else { // TODO: tag non presente nella lista tag utente
                         USER_TAGS.add(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
                         Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                        notifyDataSetChanged();
                     }
                 }
             });
