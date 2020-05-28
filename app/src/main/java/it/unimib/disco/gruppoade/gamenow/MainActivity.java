@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             // lancio la activity che mi fa compilare la pagina di preset
             Intent intent = new Intent(this, ForumActivity.class);
 
+            Log.d(TAG , "chiamo:  startActivity(intent)");
             startActivity(intent);
         }
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createSignInIntent() {
+        Log.d(TAG , "Dentro: createSignInIntent()");
         // [START auth_fui_create_intent]
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+       /* Log.d(TAG, "Dentro onStart");
         // login
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -123,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             Log.d(TAG , "NON LOGGATO");
+            Log.d(TAG , "Creo Login Page");
             createSignInIntent();
-        }
+        }*/
     }
 }
