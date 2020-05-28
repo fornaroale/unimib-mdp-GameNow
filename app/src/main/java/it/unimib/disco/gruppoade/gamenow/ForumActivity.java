@@ -65,11 +65,7 @@ public class ForumActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-                submit_button.setOnClickListener(new View.OnClickListener() {
+        submit_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG, "In the click button submit");
@@ -82,12 +78,16 @@ public class ForumActivity extends AppCompatActivity {
 
 
                         if(user != null)
-                            usernameDb = user.getEmail();
+                            usernameDb = user.getUid();
                         else
-                            usernameDb = "nousername@gmail.com";
+                            usernameDb = "fift";
                         usernameDb = usernameDb.replace(".", "DOT");
                         Log.d(TAG, "usernameDb: " + usernameDb);
                         myRef = database.getReference(usernameDb);
+
+
+                        myRef.addListenerForSingleValueEvent(postListener);
+
 
                         // write data on databse
                         Log.d(TAG, "MyRefKey: " + myRef.getKey());
@@ -98,39 +98,21 @@ public class ForumActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        Log.d(TAG, "Dentro ONStart");
-
-       /* myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String text = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Messaggio onDataChange: " + text);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.");
-            }
-        });*/
-
-       // login
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            Log.d(TAG , "Loggato");
-
-        } else {
-            Log.d(TAG , "NON LOGGATO");
-            createSignInIntent();
+    ValueEventListener postListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            String text = dataSnapshot.getValue(String.class);
+            Log.d(TAG, "Messaggio onDataChange: " + text);
         }
 
-        Log.d(TAG, "Fuori ONStart");
-    }
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Getting Post failed, log a message
+            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+        }
+    };
+
+
 
     private String creaUserDB(FirebaseUser user) {
         String temp = null;
