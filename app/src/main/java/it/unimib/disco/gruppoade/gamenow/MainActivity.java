@@ -27,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.data.User;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
@@ -123,9 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 // QUI LANCIO FORUM se serve
 
 
-               // String usernameDb = user.getEmail();
-               // usernameDb = usernameDb.replace(".", "DOT");
-
                 String usernameDb = user.getUid();
                 Log.d(TAG, "usernameDb: " + usernameDb);
                 myRef = database.getReference(usernameDb);
@@ -136,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String tags = dataSnapshot.getValue(String.class);
+                        User user = dataSnapshot.getValue(User.class);
 
-                        if(tags == null){
+                        if(user == null){
                             // lancio la activity che mi fa compilare la pagina di preset
                             Intent intent = new Intent(getApplicationContext(), ForumActivity.class);
 
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
 
-                        Log.d(TAG, "Messaggio onDataChange: " + tags);
+
                     }
 
                     @Override
