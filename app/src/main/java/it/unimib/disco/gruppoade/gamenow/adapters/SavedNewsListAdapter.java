@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
     }
 
     @Override
-    public void onBindViewHolder(SavedNewsModelViewHolder holder, final int position) {
+    public void onBindViewHolder(final SavedNewsModelViewHolder holder, final int position) {
         final PieceOfNews savedNewsModel = mSavedNewsFeedModels.get(position);
 
         // Immagine
@@ -88,6 +89,11 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO: Rimuovere news
+                Log.d(TAG, "Tolgo notizia: " + mSavedNewsFeedModels.get(holder.getAdapterPosition()).getTitle() + "   - Pos. adapater: " + holder.getAdapterPosition());
+                mSavedNewsFeedModels.remove(holder.getAdapterPosition());
+                notifyItemRemoved(holder.getAdapterPosition());
+                notifyItemRangeChanged(holder.getAdapterPosition(), mSavedNewsFeedModels.size());
+
                 Snackbar snackbar = Snackbar.make(buttonView, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
                 snackbar.show();
                 // TODO: + fare UNDO

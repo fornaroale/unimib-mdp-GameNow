@@ -50,7 +50,7 @@ public class TabSavedNewsFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
 
         // TODO: Carico notizie salvate (per ora locale:)
-        mSavedNewsModelList.add(new PieceOfNews("News salvata",
+        mSavedNewsModelList.add(new PieceOfNews("News salvata 1",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 "https://google.it/", LocalDateTime.now(),
                 "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/kronos/common/social-share/social-share-image.jpg",
@@ -60,7 +60,7 @@ public class TabSavedNewsFragment extends Fragment {
                         "https://www.eurogamer.it/?format=rss&platform=PS4",
                         "PS4")));
 
-        mSavedNewsModelList.add(new PieceOfNews("News salvata",
+        mSavedNewsModelList.add(new PieceOfNews("News salvata 2",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 "https://google.it/", LocalDateTime.now(),
                 "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/kronos/common/social-share/social-share-image.jpg",
@@ -70,7 +70,7 @@ public class TabSavedNewsFragment extends Fragment {
                         "https://www.eurogamer.it/?format=rss&platform=PS4",
                         "XBOX")));
 
-        mSavedNewsModelList.add(new PieceOfNews("News salvata",
+        mSavedNewsModelList.add(new PieceOfNews("News salvata 3",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 "https://google.it/", LocalDateTime.now(),
                 "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/kronos/common/social-share/social-share-image.jpg",
