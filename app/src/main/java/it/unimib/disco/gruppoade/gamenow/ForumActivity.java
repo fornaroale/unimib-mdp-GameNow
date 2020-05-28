@@ -44,7 +44,7 @@ public class ForumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forum);
 
         // login
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
        /* if (user != null) {
             Log.d(TAG , "Loggato");
@@ -62,25 +62,32 @@ public class ForumActivity extends AppCompatActivity {
 
         Log.d(TAG, String.valueOf("Activity partita, userset: "));
 
-        if(user != null)
-        if(user.isEmailVerified())
-            Log.d(TAG, "mailVerificata: " + user.getEmail());
 
 
 
-        if(user != null)
-            usernameDb = user.getEmail();
-        else
-            usernameDb = "nousername@gmail.com";
-        usernameDb = usernameDb.replace(".", "DOT");
-        Log.d(TAG, "usernameDb: " + usernameDb);
-        myRef = database.getReference(usernameDb);
+
+
 
 
                 submit_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG, "In the click button submit");
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        if(user != null)
+                            if(user.isEmailVerified())
+                                Log.d(TAG, "mailVerificata: " + user.getEmail());
+
+
+                        if(user != null)
+                            usernameDb = user.getEmail();
+                        else
+                            usernameDb = "nousername@gmail.com";
+                        usernameDb = usernameDb.replace(".", "DOT");
+                        Log.d(TAG, "usernameDb: " + usernameDb);
+                        myRef = database.getReference(usernameDb);
 
                         // write data on databse
                         Log.d(TAG, "MyRefKey: " + myRef.getKey());
