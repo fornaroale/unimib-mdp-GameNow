@@ -1,11 +1,12 @@
 package it.unimib.disco.gruppoade.gamenow.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,24 +18,35 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.data.User;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "FireBase UI Activity";
 
+
     public static final String EXTRA_MESSAGE = "nameDb";
 
-    //FirebaseAuth.AuthStateListener mAuthListener;
+    // firebase auth
+    FirebaseAuth.AuthStateListener mAuthListener;
     TextView tv;
-    //private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
+
+    // firebase db
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,30 +64,32 @@ public class MainActivity extends AppCompatActivity {
 
         tv = findViewById(R.id.textview_accountState);
 
-        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
         // se non ho i file di preset
-        if(!SIMULA_findPreset(false)){
+        /*if(true){
             // lancio la activity che mi fa compilare la pagina di preset
             Intent intent = new Intent(this, ForumActivity.class);
 
+            Log.d(TAG , "chiamo:  startActivity(intent)");
             startActivity(intent);
-        }
+        }*/
 
 
-        /*if (user != null) {
+        if (user != null) {
            Log.d(TAG , "Loggato");
 
         } else {
             Log.d(TAG , "NON LOGGATO");
             createSignInIntent();
-        }*/
+        }
 
 
     }
 
     public void createSignInIntent() {
+        Log.d(TAG , "Dentro: createSignInIntent()");
         // [START auth_fui_create_intent]
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -93,14 +107,11 @@ public class MainActivity extends AppCompatActivity {
                         .setLogo(R.drawable.app_logo)
                         .build(),
                 RC_SIGN_IN);
+
+
         // [END auth_fui_create_intent]
     }
 
-    // simulazoine della funzione che cercherà il file che continee i preset che devono essere creati
-    // dopo il primo accesso
-    private boolean SIMULA_findPreset(boolean result){
-        return result;
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -112,7 +123,44 @@ public class MainActivity extends AppCompatActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(TAG, "Nome utente: " + user.getDisplayName());
-                // ...
+
+                // QUI LANCIO FORUM se serve
+
+
+                String usernameDb = user.getUid();
+                Log.d(TAG, "usernameDb: " + usernameDb);
+                myRef = database.getReference(usernameDb);
+
+
+                // read from database
+                // TODO sistemare problema che viene effettuata la richiesta al db solamente dopo l'if
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+
+                        if(user == null){
+                            // lancio la activity che mi fa compilare la pagina di preset
+                            Intent intent = new Intent(getApplicationContext(), ForumActivity.class);
+
+                            Log.d(TAG , "chiamo:  startActivity(intent)");
+                            startActivity(intent);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    }
+                });
+
+
+
+
+
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
@@ -121,5 +169,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 }
