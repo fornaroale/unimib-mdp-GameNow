@@ -118,7 +118,7 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
 
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline;\n" +
+                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {48}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
@@ -132,7 +132,7 @@ public class ComingSoonFragment extends Fragment {
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline;\n" +
+                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
@@ -145,7 +145,7 @@ public class ComingSoonFragment extends Fragment {
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline;\n" +
+                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
@@ -158,7 +158,7 @@ public class ComingSoonFragment extends Fragment {
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline;\n" +
+                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
@@ -178,7 +178,7 @@ public class ComingSoonFragment extends Fragment {
     }
 
     private void resetBody(){
-        body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary, storyline;\n" +
+        body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                 "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n" +
                 "sort first_release_date asc;\nlimit 100;\n";
     }
@@ -186,7 +186,6 @@ public class ComingSoonFragment extends Fragment {
     private void retrieveJson(String body){
         final Gson gson = new Gson();
 
-        /*Call<List<Game>> call = ApiClient.getInstance().getApi().getGames(fields,order,limit);*/
         Call<List<Game>> call = ApiClient.getInstance().getApi().getGames(body);
         call.enqueue(new Callback<List<Game>>() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

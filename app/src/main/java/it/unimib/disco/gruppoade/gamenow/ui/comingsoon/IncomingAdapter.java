@@ -92,7 +92,8 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
                 intent.putExtra("title", game.getName());
                 intent.putExtra("imageUrl",url);
                 intent.putParcelableArrayListExtra("platforms", (ArrayList<? extends Parcelable>) game.getPlatforms());
-                intent.putExtra("storyline", game.getStrotyline());
+                intent.putParcelableArrayListExtra("videos", (ArrayList<? extends Parcelable>) game.getVideos());
+                intent.putExtra("storyline", game.getStoryline());
                 //start activity
                 mContext.startActivity(intent);
             }
