@@ -1,8 +1,6 @@
-package it.unimib.disco.gruppoade.gamenow.data;
+package it.unimib.disco.gruppoade.gamenow.database;
 
 import java.io.IOException;
-
-import it.unimib.disco.gruppoade.gamenow.data.model.LoggedInUser;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.

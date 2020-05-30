@@ -24,23 +24,23 @@ import com.squareup.picasso.Picasso;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.FeedModelViewHolder> {
 
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
+    private User user;
     private final static String TAG = "RssFeedListAdapter";
 
-    private final ArrayList<String> USER_TAGS = new ArrayList<>();
-
-    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels) {
+    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
         this.mContext = (FragmentActivity) mContext;
         mRssFeedModels = rssFeedModels;
+        this.user = user;
     }
 
     @Override
@@ -119,17 +119,14 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                 public void onClick(View view) {
                     String chipTagText = chip.getText().toString();
 
-                    if (USER_TAGS.contains(chipTagText)) { // TODO: tag già presente nella lista tag utente
-                        USER_TAGS.remove(chipTagText);
+                    if (user.getTags().contains(chipTagText)) { // TODO: tag già presente nella lista tag utente
+                        user.removeTag(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
 
                         Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
-
-                        notifyItemChanged(holder.getAdapterPosition());
-                        notifyItemRangeChanged(0, holder.getAdapterPosition());
                     } else { // TODO: tag non presente nella lista tag utente
-                        USER_TAGS.add(chipTagText);
+                        user.addTag(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
 
                         Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
@@ -141,7 +138,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
     }
 
     private void setNewsTagsIcon(Chip chip, FeedModelViewHolder holder) {
-        if (USER_TAGS.contains(chip.getText().toString())) {
+        if (user.getTags().contains(chip.getText().toString())) {
             chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
         } else {
             chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));

@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow;
+package it.unimib.disco.gruppoade.gamenow.models;
 
 import android.util.Log;
 
@@ -7,17 +7,15 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 @IgnoreExtraProperties
 public class User {
 
     private static final String TAG = "User";
 
-    public String username;
-    public String email;
-    public List<String> tags;
-
+    private String username;
+    private String email;
+    private List<String> tags;
+    private List<PieceOfNews> savedNews;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -27,23 +25,7 @@ public class User {
         this.username = username;
         this.email = email;
         tags = new ArrayList<>();
-    }
-
-    public void addTag(String tag){
-
-        tags.add(tag.toUpperCase());
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public List<String> getTags() {
-        return tags;
+        savedNews = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -54,8 +36,16 @@ public class User {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public List<PieceOfNews> getSavedNews() {
+        return savedNews;
+    }
+
+    public void addTag(String tag) {
+        tags.add(tag.toUpperCase());
     }
 
     @Override

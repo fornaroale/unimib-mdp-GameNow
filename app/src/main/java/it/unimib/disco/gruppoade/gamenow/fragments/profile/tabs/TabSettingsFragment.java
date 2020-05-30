@@ -22,13 +22,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.User;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class TabSettingsFragment extends Fragment {
 
@@ -75,10 +74,8 @@ public class TabSettingsFragment extends Fragment {
         Log.d(TAG, "Start Profile");
 
         // recupero l'user
-
         Log.d(TAG, "Dentro getUserOnDb()");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         String usernameDb = user.getUid();
         myRef = database.getReference(usernameDb);
         myRef.addListenerForSingleValueEvent(postListener);
@@ -86,69 +83,33 @@ public class TabSettingsFragment extends Fragment {
         return view;
     }
 
-    private void setUp(View view) {
+    // usato per leggere dati dal DB
+    ValueEventListener postListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            theUser = dataSnapshot.getValue(User.class);
+            Log.d(TAG, "Messaggio onDataChange: " + theUser.toString());
 
-        //theUser = getUserOnDb();
-
-        // se non è vuoto
-        if(theUser != null){
-
-            Log.d(TAG, "theUser: " + theUser.toString());
-
-            // collego activity con oggetti
-            chipGroup = view.findViewById(R.id.chipGroup);
-            username = view.findViewById((R.id.Username));
-            email = view.findViewById((R.id.Email));
-            platform = view.findViewById((R.id.Platform));
-
-            // setto i valori
-            username.setText(theUser.username);
-            email.setText(theUser.email);
-
-            // setto piattaforma usando un metodo
-            // che analizza i tag e trova le piattaforme
-            if(theUser.tags != null)
-                platform.setText(findPlatform(theUser.tags));
-
-            // riempio i tag
-            tags = theUser.tags;
+            setUp(getActivity().findViewById(android.R.id.content).getRootView());
         }
 
-
-
-        // popolo con i tags
-        if (tags != null)
-            for (String text : tags) {
-
-                // se il nome esiste
-                if (text != null) {
-
-                    text = formatText(text);
-
-                    // creo la chip
-                    Chip chip = creaChip(text, view);
-
-
-                    // aggiunta chips alla chipsvgroup
-                    chipGroup.addView(chip);
-                    chipGroup.setVisibility(view.getVisibility());
-                }
-            }
-
-
-    }
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Getting Post failed, log a message
+            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+        }
+    };
 
     private String findPlatform(List<String> tags) {
         String tempPlatform = "";
 
-        for(String temp : tags){
+        for (String temp : tags) {
             temp.toLowerCase();
 
-            if(temp.equalsIgnoreCase("xbox") ||
+            if (temp.equalsIgnoreCase("xbox") ||
                     temp.equalsIgnoreCase("pc") ||
                     temp.equalsIgnoreCase("ps4") ||
-                    temp.equalsIgnoreCase("switcg"))
-            {
+                    temp.equalsIgnoreCase("switcg")) {
                 tempPlatform += temp + " ";
             }
         }
@@ -172,6 +133,73 @@ public class TabSettingsFragment extends Fragment {
         result = result.substring(0, 1).toUpperCase() + result.substring(1).toLowerCase();
         return result;
     }
+
+    private void setUp(View view) {
+
+        //theUser = getUserOnDb();
+
+        // se non è vuoto
+        if(theUser != null){
+
+            Log.d(TAG, "theUser: " + theUser.toString());
+
+            // collego activity con oggetti
+            chipGroup = view.findViewById(R.id.chipGroup);
+            username = view.findViewById((R.id.Username));
+            email = view.findViewById((R.id.Email));
+            platform = view.findViewById((R.id.Platform));
+
+            // setto i valori
+            username.setText(theUser.getUsername());
+            email.setText(theUser.getEmail());
+
+            // setto piattaforma usando un metodo
+            // che analizza i tag e trova le piattaforme
+            if (theUser.getTags() != null)
+                platform.setText(findPlatform(theUser.getTags()));
+
+            // riempio i tag
+            tags = theUser.getTags();
+        }
+
+
+
+        // popolo con i tags
+        if (tags != null)
+            for (String text : tags) {
+
+                // se il nome esiste
+                if (text != null) {
+                    text = formatText(text);
+
+                    // creo la chip
+                    Chip chip = creaChip(text, view);
+
+                    // aggiunta chips alla chipsvgroup
+                    chipGroup.addView(chip);
+                    chipGroup.setVisibility(view.getVisibility());
+                }
+            }
+
+
+    }
+
+//    User getUserOnDb(){
+//        User tempUser = null;
+//
+//        Log.d(TAG, "Dentro getUserOnDb()");
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//
+//        String usernameDb = user.getUid();
+//        myRef = database.getReference(usernameDb);
+//        myRef.addListenerForSingleValueEvent(postListener);
+//
+//
+//
+//
+//
+//        return tempUser;
+//    }
 
     private Chip creaChip(String text, View tempView) {
 
@@ -203,7 +231,7 @@ public class TabSettingsFragment extends Fragment {
                 Log.d(TAG, "rimozione tag da theUser: " + theUser.toString());
 
                 // riottengo i tag
-                tags = theUser.tags;
+                tags = theUser.getTags();
 
 
                 // Creo la snackbar
@@ -233,7 +261,7 @@ public class TabSettingsFragment extends Fragment {
                         myRef = database.getReference(usernameDb);
 
                         // aggiorno le piattaforme
-                        platform.setText(findPlatform(theUser.tags));
+                        platform.setText(findPlatform(theUser.getTags()));
                         // salvo user su DB
                         myRef.setValue(theUser);
 
@@ -250,57 +278,20 @@ public class TabSettingsFragment extends Fragment {
 
                 Log.d(TAG, "UsernameDb: " + usernameDb);
                 myRef = database.getReference(usernameDb);
-                Log.d(TAG, "Tag theUser: " + theUser.tags);
+                Log.d(TAG, "Tag theUser: " + theUser.getTags());
                 Log.d(TAG, "New theUser: " + theUser.toString());
 
                 // aggiorno le piattaforme
-                platform.setText(findPlatform(theUser.tags));
+                platform.setText(findPlatform(theUser.getTags()));
 
                 // salvo user su DB
                 myRef.setValue(theUser);
-
             }
         });
 
         // ritorno la chip creata
         return chip;
     }
-
-//    User getUserOnDb(){
-//        User tempUser = null;
-//
-//        Log.d(TAG, "Dentro getUserOnDb()");
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//
-//        String usernameDb = user.getUid();
-//        myRef = database.getReference(usernameDb);
-//        myRef.addListenerForSingleValueEvent(postListener);
-//
-//
-//
-//
-//
-//        return tempUser;
-//    }
-
-    // usato per leggere dati dal DB
-    ValueEventListener postListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            User user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-
-            theUser = user;
-            setUp(getActivity().findViewById(android.R.id.content).getRootView());
-
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            // Getting Post failed, log a message
-            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-        }
-    };
 
 //    @Override
 //    public void onStart() {

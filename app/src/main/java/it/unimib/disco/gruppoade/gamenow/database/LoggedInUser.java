@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.data.model;
+package it.unimib.disco.gruppoade.gamenow.database;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
