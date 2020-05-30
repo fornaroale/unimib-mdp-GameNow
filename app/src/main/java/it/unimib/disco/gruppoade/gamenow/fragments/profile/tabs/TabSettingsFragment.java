@@ -2,9 +2,11 @@ package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -12,25 +14,50 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.User;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 
 public class TabSettingsFragment extends Fragment {
 
+    // firebase
+
+    // firebase auth
+    FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth firebaseAuth;
+
+    // firebase db
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
+
+    private static final String TAG = "TabSettingFragment";
+
+    // recupero l'utente con i relativi dati dal db
+    private User theUser = null;
+
     // inserisco variabili
-    private List<String> tags = new ArrayList<>();
+    private List<String> tags = null;
 
-    // comparator per stringhe
-
-    //private String[] tags = {"PS4", "XBOX", "RPG", "FAnTasy", "FPS", null, "corsa", "Sparatutto In prima Persona"};
+    // oggetti activity
     private ChipGroup chipGroup;
+    private TextView username;
+    private TextView email;
+    private TextView platform;
 
     public TabSettingsFragment() {
+        //theUser = getUserOnDb();
     }
 
     @Override
@@ -45,14 +72,32 @@ public class TabSettingsFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
-        // inizio codice
+        // recupero l'user
+       // theUser = getUserOnDb();
 
-        // popolo lista tags
-        popola(tags);
+        // se non è vuoto
+        if(theUser != null){
+            // collego activity con oggetti
+            chipGroup = view.findViewById(R.id.chipGroup);
+            username = view.findViewById((R.id.Username));
+            email = view.findViewById((R.id.Email));
+            platform = view.findViewById((R.id.Platform));
 
-        // inserisco codice
-        chipGroup = view.findViewById(R.id.chipGroup);
+            // setto i valori
+            username.setText(theUser.username);
+            email.setText(theUser.email);
 
+            // setto piattaforma usando un metodo
+            // che analizza i tag e trova le piattaforme
+            platform.setText(findPlatform(theUser.tags));
+
+            // riempio i tag
+            tags = theUser.tags;
+        }
+
+
+
+        // popolo con i tags
         if (tags != null)
             for (String text : tags) {
 
@@ -74,26 +119,28 @@ public class TabSettingsFragment extends Fragment {
         return view;
     }
 
-    private void popola(List<String> tags) {
-        //  popolo il tags
+    private String findPlatform(List<String> tags) {
+        String tempPlatform = null;
 
-        tags.add("PS4");
-        tags.add("XBOX");
-        tags.add("RPG");
-        tags.add("FAnTasy");
-        tags.add("FPS");
-        tags.add(null);
-        tags.add("corsa");
-        tags.add("Sparatutto In prima Persona");
-        tags.add("Nintendo");
+        for(String temp : tags){
+            temp.toLowerCase();
 
-        // sorting
-        Collections.sort(tags, new TagComparator());
+            if(temp.equals("xbox") ||
+                    temp.equals("pc") ||
+                    temp.equals("ps4") ||
+                    temp.equals("switcg"))
+            {
+                tempPlatform = temp + " ";
+            }
+        }
+
+        return tempPlatform;
     }
 
+
     private void sortedAdd(String element, List<String> tags) {
-        // aggiungo l'elemento
-        tags.add(element);
+        // aggiungo l'elemento all'oggetto user
+        theUser.addTag(element);
 
         // sorting
         Collections.sort(tags, new TagComparator());
@@ -130,9 +177,11 @@ public class TabSettingsFragment extends Fragment {
                 //rimuovo l'elemento dal chipGroup
                 chipGroup.removeView(v);
 
-                // in futuro andrà rimossa o da file o da Database
-                //TODO rimuovo l'elemento dal vettore
-                tags.remove(tmpString);
+                // rimuovo l'elemento dall'oggetto User
+                theUser.removeTag(tmpString);
+
+                // riottengo i tag
+                tags = theUser.tags;
 
 
                 // Creo la snackbar
@@ -151,8 +200,7 @@ public class TabSettingsFragment extends Fragment {
                         chipGroup.addView(tmpChip);
                         chipGroup.setVisibility(tmpView.getVisibility());
 
-                        // in futuro la rimozione avverà su file o database
-                        //TODO riaggiungoi l'elemento dal vettore
+                        // aggiungo l'elemento ad user
                         sortedAdd(tmpString, tags);
 
                     }
@@ -160,11 +208,55 @@ public class TabSettingsFragment extends Fragment {
                 // mostro la snackbar
                 mySnackbar.show();
 
+                // salvo l'user su db
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String usernameDb = user.getUid();
+                myRef = database.getReference(usernameDb);
+
+                // salvo user su DB
+                myRef.setValue(theUser);
 
             }
         });
 
         // ritorno la chip creata
         return chip;
+    }
+
+    User getUserOnDb(){
+        final User[] tempUser = {null};
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        String usernameDb = user.getUid();
+        myRef = database.getReference(usernameDb);
+
+
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                tempUser[0] = dataSnapshot.getValue(User.class);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
+        myRef.setValue(tempUser[0]);
+
+        return tempUser[0];
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        theUser = getUserOnDb();
     }
 }
