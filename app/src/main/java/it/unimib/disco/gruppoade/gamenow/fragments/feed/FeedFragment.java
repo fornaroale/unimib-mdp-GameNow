@@ -36,6 +36,9 @@ public class FeedFragment extends Fragment {
             public void onClick(View v) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signOut();
+
+                // close activity
+
             }
         });
 

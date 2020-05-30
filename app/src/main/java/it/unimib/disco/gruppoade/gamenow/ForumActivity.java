@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,20 +21,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.data.User;
+
 public class ForumActivity extends AppCompatActivity {
-
-
-
-
-
-
 
 
 
     private static final String TAG = "ForumActivity";
     private static final int RC_SIGN_IN = 123;
 
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String usernameDb;
     // login
     FirebaseAuth.AuthStateListener mAuthListener;
@@ -50,84 +47,98 @@ public class ForumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forum);
 
         // login
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
+       /* if (user != null) {
             Log.d(TAG , "Loggato");
 
         } else {
             Log.d(TAG , "NON LOGGATO");
             createSignInIntent();
-        }
+        }*/
 
 
         Button submit_button = findViewById(R.id.submit);
+
+        // checkbox
+        final CheckBox pc = findViewById(R.id.cb_pc);
+        final CheckBox xbox = findViewById(R.id.cb_xbox);
+        final CheckBox ps4 = findViewById(R.id.cb_ps4);
+        final CheckBox nintendo = findViewById(R.id.cb_Switch);
 
 
 
 
         Log.d(TAG, String.valueOf("Activity partita, userset: "));
 
-        if(user.isEmailVerified())
-            Log.d(TAG, "mailVerificata: " + user.getEmail());
 
 
-        usernameDb = "prego@gmail.com";
-        //usernameDb = user.getEmail();
-        usernameDb = usernameDb.replace(".", "DOT");
-        Log.d(TAG, "usernameDb: " + usernameDb);
-        myRef = database.getReference(usernameDb);
-
-
-                submit_button.setOnClickListener(new View.OnClickListener() {
+        submit_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG, "In the click button submit");
 
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        usernameDb = user.getUid();
+                        usernameDb = usernameDb.replace(".", "DOT");
+                        Log.d(TAG, "usernameDb: " + usernameDb);
+                        myRef = database.getReference(usernameDb);
+
+
+                        myRef.addListenerForSingleValueEvent(postListener);
+
+
                         // write data on databse
                         Log.d(TAG, "MyRefKey: " + myRef.getKey());
-                        myRef.setValue("PS4, XBOX");
+//                        myRef.setValue("Stringa");
+
+
+                        // creo User
+                        User theUser = new User(user.getDisplayName(), user.getEmail());
+
+                        // setto i tag
+                        if(pc.isChecked())
+                            theUser.addTag("PC");
+
+                        if(xbox.isChecked())
+                            theUser.addTag("XBOX");
+
+                        if(ps4.isChecked())
+                            theUser.addTag("PS4");
+
+                        if(nintendo.isChecked())
+                            theUser.addTag("Nintendo");
+
+
+                        // salvo user su DB
+                        myRef.setValue(theUser);
+
+
+
 
                         finish();
                     }
                 });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    // usato per leggere dati dal DB
+    ValueEventListener postListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            User user = dataSnapshot.getValue(User.class);
+            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
+        }
 
-        Log.d(TAG, "Dentro ONStart");
-
-       /* myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String text = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Messaggio onDataChange: " + text);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.");
-            }
-        });*/
-
-        Log.d(TAG, "Fuori ONStart");
-    }
-
-    private String creaUserDB(FirebaseUser user) {
-        String temp = null;
-
-        temp = user.getDisplayName().replace(" ", "");
-        temp += user.getEmail().replace(".", "");
-
-        Log.d(TAG, "Dentro creaUserDB: " + temp);
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Getting Post failed, log a message
+            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+        }
+    };
 
 
-        return temp;
-    }
-
+    // crea e lancia la activity di LOGIN e REGISTRAZIONE
     public void createSignInIntent() {
         // [START auth_fui_create_intent]
         // Choose authentication providers

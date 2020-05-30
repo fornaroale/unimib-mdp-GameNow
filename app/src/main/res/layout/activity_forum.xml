@@ -81,7 +81,7 @@
                     android:text="XBOX" />
 
                 <CheckBox
-                    android:id="@+id/xb_Switch"
+                    android:id="@+id/cb_Switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
