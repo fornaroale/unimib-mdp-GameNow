@@ -1,12 +1,10 @@
 package it.unimib.disco.gruppoade.gamenow.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import it.unimib.disco.gruppoade.gamenow.ForumActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.data.User;
 
