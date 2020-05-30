@@ -1,9 +1,10 @@
-package it.unimib.disco.gruppoade.gamenow;
+package it.unimib.disco.gruppoade.gamenow.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -19,6 +20,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import it.unimib.disco.gruppoade.gamenow.R;
 
 public class MainActivity extends AppCompatActivity {
 

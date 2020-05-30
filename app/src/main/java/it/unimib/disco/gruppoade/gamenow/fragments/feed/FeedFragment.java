@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.feed;
+package it.unimib.disco.gruppoade.gamenow.fragments.feed;
 
 import android.content.Intent;
 import android.os.Bundle;
