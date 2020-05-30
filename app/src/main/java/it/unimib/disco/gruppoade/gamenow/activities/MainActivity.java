@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        // User's data persistence [Offline Caching]
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         tv = findViewById(R.id.textview_accountState);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

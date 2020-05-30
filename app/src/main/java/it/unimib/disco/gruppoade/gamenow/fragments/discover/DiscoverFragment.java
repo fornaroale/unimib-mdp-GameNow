@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -60,6 +61,7 @@ public class DiscoverFragment extends Fragment {
 
     // Firebase
     private FirebaseDatabase database;
+    private DatabaseReference myRef;
     private User user;
     private ValueEventListener postListenerUserData = new ValueEventListener() {
         @Override
@@ -73,6 +75,7 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
             Log.d(TAG, databaseError.getMessage());
+            throw databaseError.toException();
         }
     };
 
@@ -83,9 +86,11 @@ public class DiscoverFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_discover, container, false);
 
         // Recupero dati database
-        database = FirebaseDatabase.getInstance();
         FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-        database.getReference(fbUser.getUid()).addValueEventListener(postListenerUserData);
+        String usernameDb = fbUser.getUid();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference(usernameDb);
+        myRef.addListenerForSingleValueEvent(postListenerUserData);
 
         // Recupero il recyclerview dal layout xml e imposto l'adapter
         mRecyclerView = root.findViewById(R.id.recyclerView);
@@ -93,7 +98,6 @@ public class DiscoverFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
-        user = new User();
         adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
         mRecyclerView.setAdapter(adapter);
 
