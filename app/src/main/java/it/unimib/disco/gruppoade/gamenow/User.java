@@ -1,12 +1,18 @@
 package it.unimib.disco.gruppoade.gamenow;
 
+import android.util.Log;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @IgnoreExtraProperties
 public class User {
+
+    private static final String TAG = "User";
 
     public String username;
     public String email;
@@ -24,8 +30,8 @@ public class User {
     }
 
     public void addTag(String tag){
-        tag.toLowerCase();
-        tags.add(tag);
+
+        tags.add(tag.toUpperCase());
     }
 
     public void setTags(List<String> tags) {
@@ -62,7 +68,12 @@ public class User {
     }
 
     public void removeTag(String tmpString) {
-        tmpString.toLowerCase();
-        tags.remove(tmpString);
+        Log.d(TAG, "Rimozione Tag");
+
+        Log.d(TAG, "Tag da rimuovere: " + tmpString);
+        Log.d(TAG, "Elenco tag: " + tags);
+
+        tags.remove(tmpString.toUpperCase());
+
     }
 }
