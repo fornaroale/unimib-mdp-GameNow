@@ -72,11 +72,29 @@ public class TabSettingsFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
+        Log.d(TAG, "Start Profile");
+
         // recupero l'user
-       // theUser = getUserOnDb();
+
+        Log.d(TAG, "Dentro getUserOnDb()");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        String usernameDb = user.getUid();
+        myRef = database.getReference(usernameDb);
+        myRef.addListenerForSingleValueEvent(postListener);
+
+        return view;
+    }
+
+    private void setUp(View view) {
+
+        //theUser = getUserOnDb();
 
         // se non è vuoto
         if(theUser != null){
+
+            Log.d(TAG, "theUser: " + theUser.toString());
+
             // collego activity con oggetti
             chipGroup = view.findViewById(R.id.chipGroup);
             username = view.findViewById((R.id.Username));
@@ -116,7 +134,7 @@ public class TabSettingsFragment extends Fragment {
                 }
             }
 
-        return view;
+
     }
 
     private String findPlatform(List<String> tags) {
@@ -156,6 +174,8 @@ public class TabSettingsFragment extends Fragment {
 
     private Chip creaChip(String text, View tempView) {
 
+        Log.d(TAG, "Creo chip, text: " + text);
+
         // creo la chips e la setto
         Chip chip = new Chip(getContext());
         chip.setText(text);
@@ -179,6 +199,7 @@ public class TabSettingsFragment extends Fragment {
 
                 // rimuovo l'elemento dall'oggetto User
                 theUser.removeTag(tmpString);
+                Log.d(TAG, "rimozione tag da theUser: " + theUser.toString());
 
                 // riottengo i tag
                 tags = theUser.tags;
@@ -203,16 +224,31 @@ public class TabSettingsFragment extends Fragment {
                         // aggiungo l'elemento ad user
                         sortedAdd(tmpString, tags);
 
+                        // salvo l'user su db
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        String usernameDb = user.getUid();
+
+                        myRef = database.getReference(usernameDb);
+
+                        // salvo user su DB
+                        myRef.setValue(theUser);
+
                     }
                 });
                 // mostro la snackbar
                 mySnackbar.show();
 
+                Log.d(TAG, "Inizio aggiornamento");
                 // salvo l'user su db
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String usernameDb = user.getUid();
-                myRef = database.getReference(usernameDb);
 
+                String usernameDb = user.getUid();
+
+                Log.d(TAG, "UsernameDb: " + usernameDb);
+                myRef = database.getReference(usernameDb);
+                Log.d(TAG, "Tag theUser: " + theUser.tags);
+                Log.d(TAG, "New theUser: " + theUser.toString());
                 // salvo user su DB
                 myRef.setValue(theUser);
 
@@ -223,40 +259,46 @@ public class TabSettingsFragment extends Fragment {
         return chip;
     }
 
-    User getUserOnDb(){
-        final User[] tempUser = {null};
+//    User getUserOnDb(){
+//        User tempUser = null;
+//
+//        Log.d(TAG, "Dentro getUserOnDb()");
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//
+//        String usernameDb = user.getUid();
+//        myRef = database.getReference(usernameDb);
+//        myRef.addListenerForSingleValueEvent(postListener);
+//
+//
+//
+//
+//
+//        return tempUser;
+//    }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    // usato per leggere dati dal DB
+    ValueEventListener postListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            User user = dataSnapshot.getValue(User.class);
+            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
 
-        String usernameDb = user.getUid();
-        myRef = database.getReference(usernameDb);
+            theUser = user;
+            setUp(getActivity().findViewById(android.R.id.content).getRootView());
 
+        }
 
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Getting Post failed, log a message
+            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+        }
+    };
 
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                tempUser[0] = dataSnapshot.getValue(User.class);
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
-
-
-
-        return tempUser[0];
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        theUser = getUserOnDb();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//
+//        theUser = getUserOnDb();
+//    }
 }
