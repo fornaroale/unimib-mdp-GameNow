@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ForumActivity">
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_platform"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txt_titolo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Benvenuti in GameNow"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_piattaforma"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Seleziona le piattaforme che sono di tuo interesse"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_titolo" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_piattaforma">
+
+                <CheckBox
+                    android:id="@+id/cb_xbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="8dp"
+
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="8dp"
+
+                    android:text="XBOX" />
+
+                <CheckBox
+                    android:id="@+id/cb_Switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
+
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="8dp"
+
+                    android:text="Switch" />
+
+                <CheckBox
+                    android:id="@+id/cb_pc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="8dp"
+
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="8dp"
+
+                    android:text="PC" />
+
+                <CheckBox
+                    android:id="@+id/cb_ps4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="8dp"
+
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="8dp"
+
+                    android:text="PS4" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_categorie"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cv_platform">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_categorie"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txt_categorie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Scegli le categorie principali di tuo interesse\n  (è possibile anche non sceglierne nessuna)"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/ll_h_categorie"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_categorie">
+
+                <LinearLayout
+                    android:id="@+id/ll_v_colonna1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <CheckBox
+                        android:id="@+id/cb_cat1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="RPG"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sparatutto"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Strategia"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CheckBox"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat13"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CheckBox"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_v_colonna2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <CheckBox
+                        android:id="@+id/cb_cat2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Corse"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FPS"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat8"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Carte"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat11"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CheckBox"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CheckBox"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_v_colonna3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <CheckBox
+                        android:id="@+id/cb_cat3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Simulazione"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Arcade"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="BattleRoyal"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat12"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CheckBox"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_cat15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CheckBox"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
