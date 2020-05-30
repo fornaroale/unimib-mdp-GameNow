@@ -107,7 +107,8 @@ public class TabSettingsFragment extends Fragment {
 
             // setto piattaforma usando un metodo
             // che analizza i tag e trova le piattaforme
-            platform.setText(findPlatform(theUser.tags));
+            if(theUser.tags != null)
+                platform.setText(findPlatform(theUser.tags));
 
             // riempio i tag
             tags = theUser.tags;
@@ -138,17 +139,17 @@ public class TabSettingsFragment extends Fragment {
     }
 
     private String findPlatform(List<String> tags) {
-        String tempPlatform = null;
+        String tempPlatform = "";
 
         for(String temp : tags){
             temp.toLowerCase();
 
-            if(temp.equals("xbox") ||
-                    temp.equals("pc") ||
-                    temp.equals("ps4") ||
-                    temp.equals("switcg"))
+            if(temp.equalsIgnoreCase("xbox") ||
+                    temp.equalsIgnoreCase("pc") ||
+                    temp.equalsIgnoreCase("ps4") ||
+                    temp.equalsIgnoreCase("switcg"))
             {
-                tempPlatform = temp + " ";
+                tempPlatform += temp + " ";
             }
         }
 
@@ -231,6 +232,8 @@ public class TabSettingsFragment extends Fragment {
 
                         myRef = database.getReference(usernameDb);
 
+                        // aggiorno le piattaforme
+                        platform.setText(findPlatform(theUser.tags));
                         // salvo user su DB
                         myRef.setValue(theUser);
 
@@ -249,6 +252,10 @@ public class TabSettingsFragment extends Fragment {
                 myRef = database.getReference(usernameDb);
                 Log.d(TAG, "Tag theUser: " + theUser.tags);
                 Log.d(TAG, "New theUser: " + theUser.toString());
+
+                // aggiorno le piattaforme
+                platform.setText(findPlatform(theUser.tags));
+
                 // salvo user su DB
                 myRef.setValue(theUser);
 
