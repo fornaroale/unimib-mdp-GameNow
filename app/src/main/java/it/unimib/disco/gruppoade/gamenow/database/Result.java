@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.data;
+package it.unimib.disco.gruppoade.gamenow.database;
 
 /**
  * A generic class that holds a result success w/ data or an error exception.

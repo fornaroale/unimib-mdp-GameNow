@@ -16,6 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -37,6 +44,7 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class DiscoverFragment extends Fragment {
 
@@ -50,20 +58,43 @@ public class DiscoverFragment extends Fragment {
     private DiscoverViewModel discoverViewModel;
     private RssFeedListAdapter adapter;
 
+    // Firebase
+    private FirebaseDatabase database;
+    private User user;
+    private ValueEventListener postListenerUserData = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            user = dataSnapshot.getValue(User.class);
+            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
+
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+        }
+    };
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
         View root = inflater.inflate(R.layout.fragment_discover, container, false);
 
-        // Recupero il recyclerview dal layout xml
-        mRecyclerView = root.findViewById(R.id.recyclerView);
+        // Recupero dati database
+        database = FirebaseDatabase.getInstance();
+        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        database.getReference(fbUser.getUid()).addValueEventListener(postListenerUserData);
 
+        // Recupero il recyclerview dal layout xml e imposto l'adapter
+        mRecyclerView = root.findViewById(R.id.recyclerView);
         mFeedModelList = new ArrayList<>();
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
-        adapter = new RssFeedListAdapter(getActivity(), mFeedModelList);
+        user = new User();
+        adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
         mRecyclerView.setAdapter(adapter);
 
         // Swipe per Refresh Manuale

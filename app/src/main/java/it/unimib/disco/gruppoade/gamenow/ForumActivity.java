@@ -1,13 +1,12 @@
 package it.unimib.disco.gruppoade.gamenow;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.data.User;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class ForumActivity extends AppCompatActivity {
 
@@ -67,9 +66,7 @@ public class ForumActivity extends AppCompatActivity {
         final CheckBox nintendo = findViewById(R.id.cb_Switch);
 
 
-
-
-        Log.d(TAG, String.valueOf("Activity partita, userset: "));
+        Log.d(TAG, "Activity partita, userset: ");
 
 
 

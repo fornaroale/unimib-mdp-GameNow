@@ -1,6 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.data;
-
-import it.unimib.disco.gruppoade.gamenow.data.model.LoggedInUser;
+package it.unimib.disco.gruppoade.gamenow.database;
 
 /**
  * Class that requests authentication and user information from the remote data source and

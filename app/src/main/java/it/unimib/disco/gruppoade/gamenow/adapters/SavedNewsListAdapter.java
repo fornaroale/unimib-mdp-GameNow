@@ -99,26 +99,6 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
                 // TODO: + fare UNDO
             }
         });
-
-        // ToggleButton tag
-        final ToggleButton addTagButton = holder.savedNewsView.findViewById(R.id.newsTagButton);
-        addTagButton.setText("# " + savedNewsModel.getProvider().getPlatform());
-        addTagButton.setTextOn("# " + savedNewsModel.getProvider().getPlatform());
-        addTagButton.setTextOff("# " + savedNewsModel.getProvider().getPlatform());
-        addTagButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // TODO: Aggiungere tag al feed
-                    Snackbar snackbar = Snackbar.make(buttonView, "Tag aggiunto al feed!", Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                } else {
-                    // TODO: Rimuovere tag dal feed
-                    Snackbar snackbar = Snackbar.make(buttonView, "Tag rimosso dal feed!", Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                }
-            }
-        });
     }
 
     @Override

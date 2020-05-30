@@ -27,7 +27,7 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.ForumActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.data.User;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class MainActivity extends AppCompatActivity {
 
