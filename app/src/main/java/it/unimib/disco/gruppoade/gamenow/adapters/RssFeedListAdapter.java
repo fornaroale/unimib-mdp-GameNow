@@ -88,18 +88,17 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
         });
 
         // ToggleButton bookmark
-        final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
-        final View view = holder.rssFeedView.getRootView();
+        ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
         favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // TODO: Salvare news
-                    Snackbar snackbar = Snackbar.make(view, "News salvata!", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(buttonView, "News salvata!", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
                     // TODO: Salvare news
-                    Snackbar snackbar = Snackbar.make(view, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(buttonView, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }
             }
@@ -122,12 +121,17 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
                     if (USER_TAGS.contains(chipTagText)) { // TODO: tag già presente nella lista tag utente
                         USER_TAGS.remove(chipTagText);
-                        chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
+                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
+
                         Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
+
+                        notifyItemChanged(holder.getAdapterPosition());
+                        notifyItemRangeChanged(0, holder.getAdapterPosition());
                     } else { // TODO: tag non presente nella lista tag utente
                         USER_TAGS.add(chipTagText);
-                        chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
+                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
+
                         Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
