@@ -19,5 +19,5 @@
     <string name="gameinfo_placeholder_title">Title</string>
     <string name="gameinfo_placeholder_description">Descrizione</string>
     <string name="gameinfo_placeholder_storyline">Storyline</string>
-    <string name="gameinfo_placeholder_gameplays">Gameplays</string>
+    <string name="gameinfo_placeholder_gameplays">Videos</string>
 </resources>

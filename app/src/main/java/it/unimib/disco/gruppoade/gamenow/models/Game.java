@@ -1,7 +1,5 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
-import android.os.Parcel;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,6 +11,14 @@ public class Game {
     @Expose
     private Integer id;
 
+    @SerializedName("total_rating")
+    @Expose
+    private double rating;
+
+    @SerializedName("videos")
+    @Expose
+    private List<Video> videos;
+
     @SerializedName("name")
     @Expose
     private String name;
@@ -23,7 +29,7 @@ public class Game {
 
     @SerializedName("storyline")
     @Expose
-    private String strotyline;
+    private String storyline;
 
     @SerializedName("cover")
     @Expose
@@ -36,22 +42,6 @@ public class Game {
     @SerializedName("platforms")
     @Expose
     private List<Platform> platforms;
-
-    protected Game(Parcel in) {
-        if (in.readByte() == 0) {
-            id = null;
-        } else {
-            id = in.readInt();
-        }
-        name = in.readString();
-        summary = in.readString();
-        strotyline = in.readString();
-        if (in.readByte() == 0) {
-            date = null;
-        } else {
-            date = in.readInt();
-        }
-    }
 
     public List<Platform> getPlatforms() {
         return platforms;
@@ -101,12 +91,27 @@ public class Game {
         this.summary = summary;
     }
 
-    public String getStrotyline() {
-        return strotyline;
+    public String getStoryline() {
+        return storyline;
     }
 
-    public void setStrotyline(String strotyline) {
-        this.strotyline = strotyline;
+    public void setStoryline(String storyline) {
+        this.storyline = storyline;
     }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public List<Video> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(List<Video> videos) {
+        this.videos = videos;
+    }
 }

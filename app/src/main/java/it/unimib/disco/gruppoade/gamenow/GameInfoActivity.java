@@ -11,16 +11,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
+import it.unimib.disco.gruppoade.gamenow.models.Video;
 import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.ConsoleAdapter;
+import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.VideoAdapter;
 
 
-public class GameInfoActivity extends AppCompatActivity {
+public class GameInfoActivity extends YouTubeBaseActivity {
 
     private static final String TAG = "GameInfoActivity";
 
@@ -28,9 +31,11 @@ public class GameInfoActivity extends AppCompatActivity {
     private TextView  gameDescriptionText, gameStorylineText;
     private ImageView gameCover;
     private RecyclerView platformsRecycler;
+    private RecyclerView videosRecycler;
     private View descDivider, storylineDivider;
 
     private List<Platform> mPlatforms;
+    private List<Video> mVideos;
 
     private  String url;
     private Gson gson = new Gson();
@@ -54,6 +59,7 @@ public class GameInfoActivity extends AppCompatActivity {
 
         gameCover = findViewById(R.id.gameinfo_cover);
         platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
+        videosRecycler = findViewById(R.id.gameplays_recyclerview);
 
         Intent intent = getIntent();
         if( intent.getStringExtra("desc") != null) {
@@ -76,6 +82,7 @@ public class GameInfoActivity extends AppCompatActivity {
         }
 
         mPlatforms = intent.getParcelableArrayListExtra("platforms");
+        mVideos = intent.getParcelableArrayListExtra("videos");
         Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
 
         url = intent.getStringExtra("imageUrl");
@@ -88,6 +95,7 @@ public class GameInfoActivity extends AppCompatActivity {
         }
 
         initPlatformsRecyclerView();
+        initVideosRecyclerView();
 
     }
 
@@ -96,6 +104,14 @@ public class GameInfoActivity extends AppCompatActivity {
         ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,this);
         platformsRecycler.setAdapter(consoleAdapter);
         platformsRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+
+    }
+
+    private void initVideosRecyclerView() {
+        Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
+        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this);
+        videosRecycler.setAdapter(videoAdapter);
+        videosRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
 
     }
 }
