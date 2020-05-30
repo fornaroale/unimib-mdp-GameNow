@@ -112,26 +112,28 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.chip_tag_layout, chipGroup, false);
             chip.setText(platform);
             chipGroup.addView(chip);
-            setNewsTagsIcon(chip, holder);
+            //setNewsTagsIcon(chip, holder);
 
             chip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String chipTagText = chip.getText().toString();
 
-                    if (user.getTags().contains(chipTagText)) { // TODO: tag già presente nella lista tag utente
-                        user.removeTag(chipTagText);
-                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
-
-                        Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } else { // TODO: tag non presente nella lista tag utente
-                        user.addTag(chipTagText);
-                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
-
-                        Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    }
+//                    if (user.getTags().contains(chipTagText)) {
+//                        // TODO: tag già presente nella lista tag utente
+//                        user.removeTag(chipTagText);
+//                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
+//
+//                        Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
+//                        snackbar.show();
+//                    } else {
+//                        // TODO: tag non presente nella lista tag utente
+//                        user.addTag(chipTagText);
+//                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
+//
+//                        Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
+//                        snackbar.show();
+//                    }
                 }
             });
         }

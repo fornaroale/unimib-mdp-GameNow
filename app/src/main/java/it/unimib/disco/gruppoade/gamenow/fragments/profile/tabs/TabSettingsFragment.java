@@ -38,7 +38,7 @@ public class TabSettingsFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
 
     // firebase db
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    FirebaseDatabase database;
     DatabaseReference myRef;
 
     private static final String TAG = "TabSettingFragment";
@@ -77,6 +77,7 @@ public class TabSettingsFragment extends Fragment {
         Log.d(TAG, "Dentro getUserOnDb()");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String usernameDb = user.getUid();
+        database = FirebaseDatabase.getInstance();
         myRef = database.getReference(usernameDb);
         myRef.addListenerForSingleValueEvent(postListener);
 
