@@ -248,7 +248,7 @@ public class TabSettingsFragment extends Fragment {
             }
         });
 
-        myRef.setValue(tempUser[0]);
+
 
         return tempUser[0];
     }
