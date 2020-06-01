@@ -25,40 +25,20 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public String getLink() {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public LocalDateTime getPubDate() {
         return pubDate;
     }
 
-    public void setPubDate(LocalDateTime pubDate) {
-        this.pubDate = pubDate;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public NewsProvider getProvider() {

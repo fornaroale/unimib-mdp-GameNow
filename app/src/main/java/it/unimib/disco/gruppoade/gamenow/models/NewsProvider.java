@@ -12,7 +12,7 @@ public class NewsProvider {
     private URL rssUrl;
     private String platform;
 
-    public NewsProvider(String name, String homepageUrl, String rssUrl, String platform) {
+    public NewsProvider(String platform, String name, String homepageUrl, String rssUrl) {
         this.name = name;
         this.platform = platform;
 
@@ -35,24 +35,8 @@ public class NewsProvider {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public URL getHomepageUrl() {
-        return homepageUrl;
-    }
-
-    public void setHomepageUrl(URL homepageUrl) {
-        this.homepageUrl = homepageUrl;
-    }
-
     public URL getRssUrl() {
         return rssUrl;
-    }
-
-    public void setRssUrl(URL rssUrl) {
-        this.rssUrl = rssUrl;
     }
 
     public String getPlatform() {
