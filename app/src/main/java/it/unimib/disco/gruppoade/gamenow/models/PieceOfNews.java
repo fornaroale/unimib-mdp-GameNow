@@ -53,5 +53,14 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
     public int compareTo(PieceOfNews o) {
         return getPubDate().compareTo(o.getPubDate());
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (!(obj instanceof PieceOfNews)) return false;
+
+        PieceOfNews o = (PieceOfNews) obj;
+        return o.getGuid().equals(this.getGuid());
+    }
 }
 

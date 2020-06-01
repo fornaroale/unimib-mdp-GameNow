@@ -43,6 +43,10 @@ public class NewsProvider {
         return platform;
     }
 
+    public URL getHomepageUrl() {
+        return homepageUrl;
+    }
+
     public void setPlatform(String platform) {
         this.platform = platform;
     }
