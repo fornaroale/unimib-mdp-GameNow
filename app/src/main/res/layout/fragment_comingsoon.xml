@@ -16,8 +16,8 @@
         android:layout_marginRight="8dp">
         <Button
             android:id="@+id/button_all"
-            android:textSize="12sp"
-            android:layout_width="70dp"
+            android:textSize="10sp"
+            android:layout_width="65dp"
             android:layout_height="wrap_content"
             android:text="all"
             android:textColor="@color/white"
@@ -25,17 +25,17 @@
         <Button
             android:id="@+id/button_ps4"
             android:layout_marginLeft="4dp"
-            android:layout_width="70dp"
+            android:layout_width="65dp"
             android:layout_height="wrap_content"
             android:text="PS4"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground"/>
         <Button
             android:id="@+id/button_xbox"
             android:layout_marginLeft="4dp"
-            android:layout_width="70dp"
-            android:textSize="12sp"
+            android:layout_width="65dp"
+            android:textSize="10sp"
             android:layout_height="wrap_content"
             android:text="xbox"
             android:textColor="@color/white"
@@ -43,9 +43,9 @@
         <Button
             android:id="@+id/button_pc"
             android:layout_marginLeft="4dp"
-            android:layout_width="70dp"
+            android:layout_width="65dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:text="pc"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground"/>
@@ -53,9 +53,9 @@
         <Button
             android:id="@+id/button_switch"
             android:layout_marginLeft="4dp"
-            android:layout_width="70dp"
+            android:layout_width="65dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:text="switch"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground"/>
@@ -75,6 +75,7 @@
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="55dp"
             />
 
         <com.airbnb.lottie.LottieAnimationView

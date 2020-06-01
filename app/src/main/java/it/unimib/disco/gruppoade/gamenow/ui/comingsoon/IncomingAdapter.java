@@ -41,6 +41,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
         this.mGames = mResults;
     }
 
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -115,6 +116,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
         ImageView imageView;
         CardView cardView;
         RecyclerView recyclerView;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
