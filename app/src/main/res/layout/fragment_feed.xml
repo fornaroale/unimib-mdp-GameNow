@@ -5,16 +5,4 @@
     android:layout_height="match_parent"
     tools:context=".fragments.feed.FeedFragment">
 
-    <TextView
-        android:id="@+id/textview_accountState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Account State" />
-
-    <Button
-        android:id="@+id/button_signOut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Out" />
-
 </LinearLayout>

@@ -25,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.ForumActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -62,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
         // User's data persistence [Offline Caching]
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
-        tv = findViewById(R.id.textview_accountState);
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
@@ -142,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if(user == null){
                             // lancio la activity che mi fa compilare la pagina di preset
-                            Intent intent = new Intent(getApplicationContext(), ForumActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
 
                             Log.d(TAG , "chiamo:  startActivity(intent)");
                             startActivity(intent);

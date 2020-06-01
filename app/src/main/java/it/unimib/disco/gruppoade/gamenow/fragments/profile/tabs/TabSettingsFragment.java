@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -71,6 +72,15 @@ public class TabSettingsFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
+        Button button = view.findViewById(R.id.button_signOut);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                firebaseAuth.signOut();
+                getActivity().finish();
+            }
+        });
+
         Log.d(TAG, "Start Profile");
 
         // recupero l'user
@@ -117,7 +127,6 @@ public class TabSettingsFragment extends Fragment {
 
         return tempPlatform;
     }
-
 
     private void sortedAdd(String element, List<String> tags) {
         // aggiungo l'elemento all'oggetto user

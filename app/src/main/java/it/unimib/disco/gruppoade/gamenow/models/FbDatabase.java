@@ -8,7 +8,7 @@ public final class FbDatabase {
     private static FirebaseDatabase database;
     private static DatabaseReference userReference;
 
-    private static FbDatabase db_instance = null;
+    private static FbDatabase db_instance;
 
     private FbDatabase() {
         database = FirebaseDatabase.getInstance();

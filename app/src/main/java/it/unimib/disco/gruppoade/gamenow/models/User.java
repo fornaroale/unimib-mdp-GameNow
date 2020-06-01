@@ -13,18 +13,19 @@ public class User {
     private String username;
     private String email;
     private List<String> tags;
-    //private List<PieceOfNews> savedNews;
+    private List<PieceOfNews> savedNews;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        tags = new ArrayList<>();
+        savedNews = new ArrayList<>();
     }
 
     public User(String username, String email) {
         this.username = username;
         this.email = email;
         tags = new ArrayList<>();
-        //savedNews = new ArrayList<>();
-        //savedNews.add(new PieceOfNews("titolo", "desc", "link", LocalDateTime.now(), "img", "guid", new NewsProvider("PS4", "nome", "https://google.com", "rssUrl")));
+        savedNews = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -77,10 +78,7 @@ public class User {
 //    }
 
     public void addTag(String tag) {
-        if (tags != null)
-            tags.add(tag.toUpperCase());
-        else
-            tags = new ArrayList<>();
+        tags.add(tag.toUpperCase());
         FbDatabase.FbDatabase().getUserReference().child("tags").setValue(getTags());
     }
 
