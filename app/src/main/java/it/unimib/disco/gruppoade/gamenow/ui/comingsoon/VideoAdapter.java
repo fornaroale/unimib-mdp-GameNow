@@ -5,14 +5,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.gson.Gson;
+
 
 import java.util.List;
 
@@ -23,12 +28,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     private static final String TAG = "VideoAdapter";
 
     private List<Video> mVideos;
-    private Context mContext;
-    private Gson gson = new Gson();
+    private Lifecycle mLifecycle;
 
-    public VideoAdapter(List<Video> mVideos, Context mContext) {
+    public VideoAdapter(List<Video> mVideos, Lifecycle mLifecycle) {
         this.mVideos = mVideos;
-        this.mContext = mContext;
+        this.mLifecycle = mLifecycle;
     }
 
     @NonNull
@@ -40,37 +44,29 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        YouTubePlayer.OnInitializedListener onInitializedListener;
-        onInitializedListener = new YouTubePlayer.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                    youTubePlayer.loadVideo(mVideos.get(position).getVideoId());
-            }
-
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                Log.d(TAG, "onInitializationFailure: Failed Initializing");
-            }
-        };
-        holder.youTubePlayerView.initialize(Constants.YOUTUBE_API_KEY, onInitializedListener);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+       holder.webView.loadUrl("https://www.youtube.com/embed/"+mVideos.get(position).getVideoId());
     }
 
     @Override
     public int getItemCount() {
-        return mVideos.size();
+        if(!(mVideos == null))
+            return mVideos.size();
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        YouTubePlayerView youTubePlayerView;
+        WebView webView;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            youTubePlayerView = itemView.findViewById(R.id.youtube_player);
-
-
+            webView = itemView.findViewById(R.id.youtube_player);
+            webView.setWebViewClient(new WebViewClient());
+            webView.setWebChromeClient(new WebChromeClient());
+            webView.getSettings().setJavaScriptEnabled(true);
         }
     }
 }
+

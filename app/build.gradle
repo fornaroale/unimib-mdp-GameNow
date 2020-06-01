@@ -48,6 +48,8 @@ dependencies {
     //Lottie
     implementation 'com.airbnb.android:lottie:3.4.0'
     implementation 'org.jetbrains:annotations-java5:15.0'
-    implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    //implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation files('libs/gtranslateapi-1.0.jar')
+    //Youtube Player Soffritti
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 }
