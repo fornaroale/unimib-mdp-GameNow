@@ -10,7 +10,13 @@
 <WebView
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:id="@+id/youtube_player"
-android:layout_width="250dp"
-android:layout_height="130dp"
+android:layout_width="300dp"
+android:layout_height="150dp"
 android:layout_margin="8dp"
-android:layout_marginBottom="24dp"/>
+android:layout_marginBottom="24dp"
+    android:padding="0dp">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/webview_fullscreen"/>
+</WebView>
