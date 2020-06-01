@@ -18,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -50,7 +51,7 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 public class DiscoverFragment extends Fragment {
 
     private View root;
-    private static final String TAG = "HomeFragment";
+    private static final String TAG = "DiscoverFragment";
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeLayout;
@@ -66,13 +67,20 @@ public class DiscoverFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
             Log.d(TAG, "Messaggio onDataChange: " + user.toString());
 
+            // JSON to PieceOfNews Array
+            List<PieceOfNews> locallySavedNews = new ArrayList<>();
+            Gson gson = new Gson();
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
             // Recupero il recyclerview dal layout xml e imposto l'adapter
             mRecyclerView = root.findViewById(R.id.recyclerView);
             mFeedModelList = new ArrayList<>();
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
+            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user, locallySavedNews);
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());
@@ -117,7 +125,6 @@ public class DiscoverFragment extends Fragment {
         mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
 
         // Recupero dati database
-        FbDatabase.FbDatabase();
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
 

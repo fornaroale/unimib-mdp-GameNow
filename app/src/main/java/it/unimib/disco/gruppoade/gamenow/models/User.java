@@ -1,6 +1,8 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.PropertyName;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,74 +10,66 @@ import java.util.List;
 @IgnoreExtraProperties
 public class User {
 
-    private static final String TAG = "User";
-
     private String username;
     private String email;
     private List<String> tags;
-    private List<PieceOfNews> savedNews;
+    private List<String> news;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
         tags = new ArrayList<>();
-        savedNews = new ArrayList<>();
+        news = new ArrayList<>();
     }
 
     public User(String username, String email) {
         this.username = username;
         this.email = email;
         tags = new ArrayList<>();
-        savedNews = new ArrayList<>();
+        news = new ArrayList<>();
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
+    @PropertyName("tags")
     public List<String> getTags() {
         return tags;
     }
 
-//    public List<PieceOfNews> getSavedNews() {
-//        return savedNews;
-//    }
+    @PropertyName("news")
+    public List<String> getNews() {
+        return news;
+    }
 
-//    public void savePieceOfNews(PieceOfNews pon){
-//        savedNews.add(pon);
-//        List<String> preparedNews = prepareNewsForSet(getSavedNews());
-//        FbDatabase.FbDatabase().getUserReference().child("news").setValue(preparedNews);
-//    }
-//
-//    public void removeSavedPieceOfNews(PieceOfNews pon){
-//        savedNews.remove(pon);
-//        List<String> preparedNews = prepareNewsForSet(getSavedNews());
-//        FbDatabase.FbDatabase().getUserReference().child("news").setValue(preparedNews);
-//    }
-//
-//    public List<String> prepareNewsForSet(List<PieceOfNews> tmpNews){
-//        List<String> preparedNews = new ArrayList<>();
-//
-//        for(PieceOfNews tmpPieceOfNews : tmpNews){
-//            String temp = "";
-//            temp.concat(tmpPieceOfNews.getTitle() + "@@@");
-//            temp.concat(tmpPieceOfNews.getDesc() + "@@@");
-//            temp.concat(tmpPieceOfNews.getLink() + "@@@");
-//            temp.concat(tmpPieceOfNews.getPubDate() + "@@@");
-//            temp.concat(tmpPieceOfNews.getImage() + "@@@");
-//            temp.concat(tmpPieceOfNews.getGuid() + "@@@");
-//            temp.concat(tmpPieceOfNews.getProvider().getPlatform() + "@@@");
-//            temp.concat(tmpPieceOfNews.getProvider().getName() + "@@@");
-//            temp.concat(tmpPieceOfNews.getProvider().getHomepageUrl() + "@@@");
-//            temp.concat(tmpPieceOfNews.getProvider().getRssUrl().toString());
-//            preparedNews.add(temp);
-//        }
-//
-//        return preparedNews;
-//    }
+    @PropertyName("username")
+    public String getUsername() {
+        return username;
+    }
+
+    @PropertyName("email")
+    public String getEmail() {
+        return email;
+    }
+
+    public void savePieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
+        if(!locallySavedNews.contains(pon)) {
+            locallySavedNews.add(pon);
+            Gson gson = new Gson();
+            String jsonPieceOfNews = gson.toJson(pon);
+            List<String> userDbNews = getNews();
+            userDbNews.add(jsonPieceOfNews);
+            FbDatabase.FbDatabase().getUserReference().child("news").setValue(userDbNews);
+        }
+    }
+
+    public void removeSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
+        if(locallySavedNews.contains(pon)) {
+            locallySavedNews.remove(pon);
+            List<String> newsToUpload = new ArrayList<>();
+            Gson gson = new Gson();
+            for (PieceOfNews oldPon : locallySavedNews) {
+                newsToUpload.add(gson.toJson(oldPon));
+            }
+            FbDatabase.FbDatabase().getUserReference().child("news").setValue(newsToUpload);
+        }
+    }
 
     public void addTag(String tag) {
         tags.add(tag.toUpperCase());

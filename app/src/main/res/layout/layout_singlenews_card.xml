@@ -21,10 +21,12 @@
             android:id="@+id/saveNewsImg"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
             android:background="@null"
             android:drawableTop="@drawable/ic_toggle_favnews"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
             android:textOff=""
             android:textOn="" />
 
@@ -33,17 +35,19 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/newsTitle"
             android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/newsTagsChipGroup"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_gravity="end"
-                app:singleLine="true" />
+                app:singleLine="true"
+                android:layout_alignParentRight="true" />
 
         </HorizontalScrollView>
 
@@ -86,6 +90,7 @@
             style="@style/ProviderText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:maxLines="1"
             android:textAllCaps="true" />
