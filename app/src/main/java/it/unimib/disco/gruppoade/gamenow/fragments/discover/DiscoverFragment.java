@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,7 +127,7 @@ public class DiscoverFragment extends Fragment {
     private List<NewsProvider> readProvidersCsv() {
         List<NewsProvider> providers = new ArrayList<NewsProvider>();
         InputStream is = getResources().openRawResource(R.raw.providers);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         String line = "";
 
         try {
