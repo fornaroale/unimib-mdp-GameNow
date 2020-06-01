@@ -123,21 +123,13 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                 @Override
                 public void onClick(View view) {
                     String chipTagText = chip.getText().toString();
-                    if (user.getTags() != null) {
-                        if (user.getTags().contains(chipTagText)) {
-                            user.removeTag(chipTagText);
-                            chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
+                    if (user.getTags().contains(chipTagText)) {
+                        user.removeTag(chipTagText);
+                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
 
-                            Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
-                            snackbar.show();
-                        } else {
-                            user.addTag(chipTagText);
-                            chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
-
-                            Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
-                            snackbar.show();
-                        }
-                    } else {  // altrimenti l'utente non ha nessun tag -> lo aggiungo
+                        Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } else {
                         user.addTag(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
 
@@ -150,12 +142,8 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
     }
 
     private void setNewsTagsIcon(Chip chip, FeedModelViewHolder holder) {
-        if (user.getTags() != null) {
-            if (user.getTags().contains(chip.getText().toString())) {
-                chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
-            } else {
-                chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
-            }
+        if (user.getTags().contains(chip.getText().toString())) {
+            chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
         } else {
             chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
         }

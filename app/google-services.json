@@ -15,19 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "108957765081-rmh8rf7t68dp5p34iu2q69gj7ou5r4ok.apps.googleusercontent.com",
+          "client_id": "108957765081-ulrmc0shf8v5o58if956f59k7ithadus.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "it.unimib.disco.gruppoade.gamenow",
             "certificate_hash": "2f17a9202a56c849c22421ee4045ceda400c49f6"
-          }
-        },
-        {
-          "client_id": "108957765081-sms1js41v35a1vdm86q3ol8gm40i2m5d.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "it.unimib.disco.gruppoade.gamenow",
-            "certificate_hash": "83d85c5929f3b21e7d85fd05a86925d706e76873"
           }
         },
         {

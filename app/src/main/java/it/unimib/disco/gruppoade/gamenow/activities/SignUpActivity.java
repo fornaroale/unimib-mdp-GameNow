@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow;
+package it.unimib.disco.gruppoade.gamenow.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,21 +8,15 @@ import android.widget.CheckBox;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
-import java.util.List;
-
+import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
-public class ForumActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
 
 
@@ -82,10 +76,6 @@ public class ForumActivity extends AppCompatActivity {
                         Log.d(TAG, "usernameDb: " + usernameDb);
                         myRef = database.getReference(usernameDb);
 
-
-                        myRef.addListenerForSingleValueEvent(postListener);
-
-
                         // write data on databse
                         Log.d(TAG, "MyRefKey: " + myRef.getKey());
 //                        myRef.setValue("Stringa");
@@ -116,43 +106,5 @@ public class ForumActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-    }
-
-    // usato per leggere dati dal DB
-    ValueEventListener postListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            User user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            // Getting Post failed, log a message
-            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-        }
-    };
-
-
-    // crea e lancia la activity di LOGIN e REGISTRAZIONE
-    public void createSignInIntent() {
-        // [START auth_fui_create_intent]
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                //new AuthUI.IdpConfig.PhoneBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
-        //new AuthUI.IdpConfig.FacebookBuilder().build(),
-        //new AuthUI.IdpConfig.TwitterBuilder().build());
-
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .setLogo(R.drawable.app_logo)
-                        .build(),
-                RC_SIGN_IN);
-        // [END auth_fui_create_intent]
     }
 }

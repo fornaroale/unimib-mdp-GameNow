@@ -117,7 +117,7 @@ public class DiscoverFragment extends Fragment {
         mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
 
         // Recupero dati database
-        FbDatabase db = FbDatabase.FbDatabase();
+        FbDatabase.FbDatabase();
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
 
@@ -127,7 +127,7 @@ public class DiscoverFragment extends Fragment {
     private List<NewsProvider> readProvidersCsv() {
         List<NewsProvider> providers = new ArrayList<NewsProvider>();
         InputStream is = getResources().openRawResource(R.raw.providers);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         String line = "";
 
         try {
