@@ -77,4 +77,7 @@ dependencies {
 
     // firebase db
     implementation 'com.google.firebase:firebase-database:19.3.0'
+
+    // json parser for Firebase
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

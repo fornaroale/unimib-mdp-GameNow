@@ -1,13 +1,21 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import org.threeten.bp.LocalDateTime;
 
@@ -15,15 +23,75 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
 import it.unimib.disco.gruppoade.gamenow.adapters.SavedNewsListAdapter;
+import it.unimib.disco.gruppoade.gamenow.fragments.discover.DiscoverFragment;
+import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class TabSavedNewsFragment extends Fragment {
+
+    private final String TAG = "TabSavedNews";
 
     private RecyclerView mRecyclerView;
     private SavedNewsListAdapter adapter;
     private List<PieceOfNews> mSavedNewsModelList;
+
+    // Firebase
+    private User user;
+    private ValueEventListener postListenerFirstUserData = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            user = dataSnapshot.getValue(User.class);
+
+            // JSON to PieceOfNews Array
+            List<PieceOfNews> locallySavedNews = new ArrayList<>();
+            Gson gson = new Gson();
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
+            // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+            if (locallySavedNews.isEmpty()) {
+                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+            } else {
+                getActivity().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+                getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+            }
+
+            // Recupero il recyclerview dal layout xml e imposto l'adapter
+            mRecyclerView = getActivity().findViewById(R.id.recyclerView);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setHasFixedSize(true);
+            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
+            mRecyclerView.setAdapter(adapter);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+            throw databaseError.toException();
+        }
+    };
+    private ValueEventListener postListenerUserData = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            user = dataSnapshot.getValue(User.class);
+            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
+
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+            throw databaseError.toException();
+        }
+    };
 
     public TabSavedNewsFragment() {
     }
@@ -39,49 +107,9 @@ public class TabSavedNewsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
 
-        // Recupero il recyclerview dal layout xml
-        mRecyclerView = root.findViewById(R.id.recyclerView);
-
-        mSavedNewsModelList = new ArrayList<>();
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setHasFixedSize(true);
-        adapter = new SavedNewsListAdapter(getActivity(), mSavedNewsModelList);
-        mRecyclerView.setAdapter(adapter);
-
-        // TODO: Carico notizie salvate (per ora locale:)
-        mSavedNewsModelList.add(new PieceOfNews("News salvata 1",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                "https://google.it/", LocalDateTime.now(),
-                "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/kronos/common/social-share/social-share-image.jpg",
-                "23544645764657845734563465",
-                new NewsProvider("EuroGamer",
-                        "https://www.eurogamer.it/",
-                        "https://www.eurogamer.it/?format=rss&platform=PS4",
-                        "PS4")));
-
-        mSavedNewsModelList.add(new PieceOfNews("News salvata 2",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                "https://google.it/", LocalDateTime.now(),
-                "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/kronos/common/social-share/social-share-image.jpg",
-                "23544645764657845734563465",
-                new NewsProvider("EuroGamer",
-                        "https://www.eurogamer.it/",
-                        "https://www.eurogamer.it/?format=rss&platform=PS4",
-                        "XBOX")));
-
-        mSavedNewsModelList.add(new PieceOfNews("News salvata 3",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                "https://google.it/", LocalDateTime.now(),
-                "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/kronos/common/social-share/social-share-image.jpg",
-                "23544645764657845734563465",
-                new NewsProvider("EuroGamer",
-                        "https://www.eurogamer.it/",
-                        "https://www.eurogamer.it/?format=rss&platform=PS4",
-                        "SWITCH")));
-
-        // Carico notizie nel RecyclerView
-        adapter.notifyDataSetChanged();
+        // Recupero dati database
+        FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
+        FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
 
         return root;
     }
