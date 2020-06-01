@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,11 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -35,12 +40,14 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
     private User user;
+    private List<PieceOfNews> locallySavedNews;
     private final static String TAG = "RssFeedListAdapter";
 
-    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
+    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user, List<PieceOfNews> locallySavedNews) {
         this.mContext = (FragmentActivity) mContext;
         this.mRssFeedModels = rssFeedModels;
         this.user = user;
+        this.locallySavedNews = locallySavedNews;
     }
 
     @Override
@@ -88,24 +95,26 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
         });
 
         // ToggleButton bookmark
-        ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
-//        for(PieceOfNews pon : user.getSavedNews()){
-//            if(pon.getGuid().equals(rssFeedModel.getGuid()))
-//                favButton.setChecked(true);
-//            else
-//                favButton.setChecked(false);
-//        }
+        final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
+        if(checkSavedPieceofNews(locallySavedNews, rssFeedModel))
+            favButton.setChecked(true);
+        else
+            favButton.setChecked(false);
+
         favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-//                    user.savePieceOfNews(mRssFeedModels.get(holder.getAdapterPosition()));
-                    Snackbar snackbar = Snackbar.make(buttonView, "News salvata!", Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                } else {
-//                    user.removeSavedPieceOfNews(mRssFeedModels.get(holder.getAdapterPosition()));
-                    Snackbar snackbar = Snackbar.make(buttonView, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                if(favButton.isPressed()) {
+                    if (isChecked) {
+                        user.savePieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
+                        Log.d(TAG, "NEWS: Notizie salvate in locale: " + locallySavedNews.size());
+                        Snackbar snackbar = Snackbar.make(buttonView, "News salvata!", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } else {
+                        user.removeSavedPieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
+                        Snackbar snackbar = Snackbar.make(buttonView, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 }
             }
         });
@@ -118,7 +127,6 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             chip.setText(newsTag);
             chipGroup.addView(chip);
             setNewsTagsIcon(chip, holder);
-
             chip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -126,13 +134,11 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                     if (user.getTags().contains(chipTagText)) {
                         user.removeTag(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
-
                         Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } else {
                         user.addTag(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
-
                         Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
@@ -147,6 +153,15 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
         } else {
             chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
         }
+    }
+
+    private boolean checkSavedPieceofNews(List<PieceOfNews> locallySavedNews, PieceOfNews PON){
+        Boolean savedNews = false;
+        for(PieceOfNews pon : locallySavedNews){
+            if(pon.equals(PON))
+                savedNews = true;
+        }
+        return savedNews;
     }
 
     @Override
