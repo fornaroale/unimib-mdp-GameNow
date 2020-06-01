@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,7 @@ public class GameInfoActivity extends YouTubeBaseActivity {
     private RecyclerView platformsRecycler;
     private RecyclerView videosRecycler;
     private View descDivider, storylineDivider;
+    private RatingBar ratingBar;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
@@ -53,6 +55,8 @@ public class GameInfoActivity extends YouTubeBaseActivity {
 
         gameTitle = findViewById(R.id.gameinfo_title);
 
+        ratingBar = findViewById(R.id.gameinfo_rating);
+
         storylineDivider = findViewById(R.id.gameinfo_storyline_divider);
         gameStoryline = findViewById(R.id.gameinfo_storyline);
         gameStorylineText = findViewById(R.id.gameinfo_storyline_text);
@@ -68,6 +72,12 @@ public class GameInfoActivity extends YouTubeBaseActivity {
             gameDescription.setVisibility(View.GONE);
             descDivider.setVisibility(View.GONE);
             gameDescriptionText.setVisibility(View.GONE);
+        }
+
+        if(intent.getStringExtra("rating") == null){
+            ratingBar.setVisibility(View.GONE);
+        } else {
+            ratingBar.setRating((float)setRating(Double.valueOf(intent.getStringExtra("rating"))));
         }
 
         gameTitle.setText(intent.getStringExtra("title"));
@@ -113,5 +123,11 @@ public class GameInfoActivity extends YouTubeBaseActivity {
         videosRecycler.setAdapter(videoAdapter);
         videosRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
 
+    }
+
+    private double setRating(double totRating){
+        double rating = Math.floor(totRating * 5) / 100;
+        double significance = 0.5;
+        return ((int)(rating/significance) * significance) + significance;
     }
 }
