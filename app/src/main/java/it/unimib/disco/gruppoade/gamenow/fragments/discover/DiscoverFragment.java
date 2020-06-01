@@ -127,7 +127,7 @@ public class DiscoverFragment extends Fragment {
     private List<NewsProvider> readProvidersCsv() {
         List<NewsProvider> providers = new ArrayList<NewsProvider>();
         InputStream is = getResources().openRawResource(R.raw.providers);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         String line = "";
 
         try {
