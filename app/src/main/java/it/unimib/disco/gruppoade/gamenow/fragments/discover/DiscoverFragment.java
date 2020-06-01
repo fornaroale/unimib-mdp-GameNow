@@ -1,6 +1,5 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.discover;
 
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,12 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jsoup.Jsoup;
@@ -34,35 +29,67 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
+import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class DiscoverFragment extends Fragment {
 
+    private View root;
     private static final String TAG = "HomeFragment";
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeLayout;
-
     private List<PieceOfNews> mFeedModelList;
-
     private DiscoverViewModel discoverViewModel;
     private RssFeedListAdapter adapter;
 
     // Firebase
-    private FirebaseDatabase database;
-    private DatabaseReference myRef;
     private User user;
+    private ValueEventListener postListenerFirstUserData = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            user = dataSnapshot.getValue(User.class);
+            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
+
+            // Recupero il recyclerview dal layout xml e imposto l'adapter
+            mRecyclerView = root.findViewById(R.id.recyclerView);
+            mFeedModelList = new ArrayList<>();
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setHasFixedSize(true);
+            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
+            mRecyclerView.setAdapter(adapter);
+
+            new ProcessInBackground().execute(readProvidersCsv());
+
+            mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new ProcessInBackground().execute(readProvidersCsv());
+                }
+            });
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            Log.d(TAG, databaseError.getMessage());
+            throw databaseError.toException();
+        }
+    };
     private ValueEventListener postListenerUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -83,113 +110,56 @@ public class DiscoverFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_discover, container, false);
-
-        // Recupero dati database
-        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-        String usernameDb = fbUser.getUid();
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference(usernameDb);
-        myRef.addListenerForSingleValueEvent(postListenerUserData);
-
-        // Recupero il recyclerview dal layout xml e imposto l'adapter
-        mRecyclerView = root.findViewById(R.id.recyclerView);
-        mFeedModelList = new ArrayList<>();
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setHasFixedSize(true);
-        adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
-        mRecyclerView.setAdapter(adapter);
+        root = inflater.inflate(R.layout.fragment_discover, container, false);
 
         // Swipe per Refresh Manuale
         mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
 
-        final List<NewsProvider> providers = new ArrayList<NewsProvider>();
-
-        providers.add(new NewsProvider(
-                "EuroGamer",
-                "https://www.eurogamer.it/",
-                "https://www.eurogamer.it/?format=rss&platform=PS4",
-                "PS4"
-        ));
-
-        providers.add(new NewsProvider(
-                "EuroGamer",
-                "https://www.eurogamer.it/",
-                "https://www.eurogamer.it/?format=rss&platform=XBOXONE",
-                "XBOX ONE"
-        ));
-
-        providers.add(new NewsProvider(
-                "Multiplayer.it",
-                "https://multiplayer.it/",
-                "https://multiplayer.it/feed/rss/news/playstation/",
-                "PS4"
-        ));
-
-        new ProcessInBackground().execute(providers);
-
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new ProcessInBackground().execute(providers);
-            }
-        });
+        // Recupero dati database
+        FbDatabase db = FbDatabase.FbDatabase();
+        FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
+        FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
 
         return root;
     }
 
-    public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
+    private List<NewsProvider> readProvidersCsv() {
+        List<NewsProvider> providers = new ArrayList<NewsProvider>();
+        InputStream is = getResources().openRawResource(R.raw.providers);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        String line = "";
 
-        @Override
-        protected void onPreExecute() {
-            mSwipeLayout.setRefreshing(true);
-        }
-
-        @Override
-        protected Boolean doInBackground(List<NewsProvider>... providers) {
-
-            // Pulisco array di notizie
-            mFeedModelList.clear();
-
-            for (NewsProvider provider : providers[0]) {
-                URL urlLink = provider.getRssUrl();
-
-                if (TextUtils.isEmpty(urlLink.toString()))
-                    return false;
-
-                try {
-                    // Creo connessione con URL
-                    InputStream inputStream = urlLink.openConnection().getInputStream();
-
-                    // Eseguo il parsing XML -> oggetti PieceOfNews
-                    parseFeed(inputStream, provider);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error [IO EXCEPTION] ", e);
-                } catch (XmlPullParserException e) {
-                    Log.e(TAG, "Error [XML PULL PARS.] ", e);
+        try {
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split("@@@");
+                if (user.getTags() != null) {
+                    if (!user.getTags().contains(tokens[0]))
+                        providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
+                } else {  // non ha nessun tag salvato
+                    providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
                 }
             }
-
-            // Parsing XML avvenuto correttamente
-            return true;
+        } catch (IOException e) {
+            Log.e("CSV ERROR LOG ----->>> ", "Error: " + e);
         }
 
-        @Override
-        protected void onPostExecute(Boolean success) {
-            mSwipeLayout.setRefreshing(false);
+        return providers;
+    }
 
-            if (success) {
-                // Ordino notizie in base alla data di pubblicazione
-                Collections.sort(mFeedModelList);
-                Collections.reverse(mFeedModelList);
-
-                // Riempo la RecyclerView con le schede notizie
-                adapter.notifyDataSetChanged();
-            } else {
-                Log.d("RSS URL", "Enter a valid Rss feed url");
+    public boolean checkNewsPresence(String guid, String platform) {
+        // Controlla che non vi sia già una news uguale ma con tag diversi,
+        // in tal caso aggiunge a quella
+        for (PieceOfNews pieceOfNews : mFeedModelList) {
+            if (pieceOfNews.getGuid().equals(guid)) {
+                // Se è già presente, aggiungo il tag (ammesso che questo non vi sia già)
+                String tmpPlatform = pieceOfNews.getProvider().getPlatform();
+                if (tmpPlatform.indexOf(platform) == -1)
+                    pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
+                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
+                return true;
             }
         }
+        return false;
     }
 
     public void parseFeed(InputStream inputStream, NewsProvider provider) throws XmlPullParserException, IOException {
@@ -237,27 +207,73 @@ public class DiscoverFragment extends Fragment {
                         }
                     }
                 }
-
                 eventType = xpp.next();
             }
-
         } finally {
             inputStream.close();
         }
     }
 
-    public boolean checkNewsPresence(String guid, String platform) {
-        for (PieceOfNews pieceOfNews : mFeedModelList) {
-            if (pieceOfNews.getGuid().equals(guid)) {
-                // Se è già presente, aggiungo il tag (ammesso che questo non vi sia già)
-                String tmpPlatform = pieceOfNews.getProvider().getPlatform();
-                if (tmpPlatform.indexOf(platform) == -1)
-                    pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
-                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
-                return true;
+    public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            mSwipeLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Boolean doInBackground(List<NewsProvider>... providers) {
+
+            // Pulisco array di notizie
+            mFeedModelList.clear();
+
+            for (NewsProvider provider : providers[0]) {
+                URL urlLink = provider.getRssUrl();
+
+                if (TextUtils.isEmpty(urlLink.toString()))
+                    return false;
+
+                try {
+                    // Creo connessione con URL
+                    InputStream inputStream = urlLink.openConnection().getInputStream();
+
+                    // Eseguo il parsing XML -> oggetti PieceOfNews
+                    parseFeed(inputStream, provider);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error [IO EXCEPTION] ", e);
+                } catch (XmlPullParserException e) {
+                    Log.e(TAG, "Error [XML PULL PARS.] ", e);
+                }
+            }
+
+            // Parsing XML avvenuto correttamente
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            mSwipeLayout.setRefreshing(false);
+
+            if (success) {
+                // Ordino notizie in base alla data di pubblicazione
+                Collections.sort(mFeedModelList);
+                Collections.reverse(mFeedModelList);
+
+                // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+                if (mFeedModelList.isEmpty()) {
+                    root.findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                    root.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                } else {
+                    root.findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+                    root.findViewById(R.id.empty_view).setVisibility(View.GONE);
+                }
+
+                // Riempo la RecyclerView con le schede notizie
+                adapter.notifyDataSetChanged();
+            } else {
+                Log.d("RSS URL", "Enter a valid Rss feed url");
             }
         }
-        return false;
     }
 
     private String extractImageUrl(String description) {

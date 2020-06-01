@@ -39,7 +39,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
     public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
         this.mContext = (FragmentActivity) mContext;
-        mRssFeedModels = rssFeedModels;
+        this.mRssFeedModels = rssFeedModels;
         this.user = user;
     }
 
@@ -89,15 +89,21 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
         // ToggleButton bookmark
         ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
+//        for(PieceOfNews pon : user.getSavedNews()){
+//            if(pon.getGuid().equals(rssFeedModel.getGuid()))
+//                favButton.setChecked(true);
+//            else
+//                favButton.setChecked(false);
+//        }
         favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    // TODO: Salvare news
+//                    user.savePieceOfNews(mRssFeedModels.get(holder.getAdapterPosition()));
                     Snackbar snackbar = Snackbar.make(buttonView, "News salvata!", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
-                    // TODO: Salvare news
+//                    user.removeSavedPieceOfNews(mRssFeedModels.get(holder.getAdapterPosition()));
                     Snackbar snackbar = Snackbar.make(buttonView, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }
@@ -105,43 +111,51 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
         });
 
         // News' tags chips
-        String[] platforms = rssFeedModel.getProvider().getPlatform().split(",");
         ChipGroup chipGroup = holder.rssFeedView.findViewById(R.id.newsTagsChipGroup);
         chipGroup.removeAllViews();
-        for (String platform : platforms) {
+        for (String newsTag : rssFeedModel.getProvider().getPlatform().split(",")) {
             final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.chip_tag_layout, chipGroup, false);
-            chip.setText(platform);
+            chip.setText(newsTag);
             chipGroup.addView(chip);
-            //setNewsTagsIcon(chip, holder);
+            setNewsTagsIcon(chip, holder);
 
             chip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String chipTagText = chip.getText().toString();
+                    if (user.getTags() != null) {
+                        if (user.getTags().contains(chipTagText)) {
+                            user.removeTag(chipTagText);
+                            chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
 
-//                    if (user.getTags().contains(chipTagText)) {
-//                        // TODO: tag già presente nella lista tag utente
-//                        user.removeTag(chipTagText);
-//                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
-//
-//                        Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
-//                        snackbar.show();
-//                    } else {
-//                        // TODO: tag non presente nella lista tag utente
-//                        user.addTag(chipTagText);
-//                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
-//
-//                        Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
-//                        snackbar.show();
-//                    }
+                            Snackbar snackbar = Snackbar.make(view, "Tag rimosso dai tag utente!", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        } else {
+                            user.addTag(chipTagText);
+                            chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
+
+                            Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                    } else {  // altrimenti l'utente non ha nessun tag -> lo aggiungo
+                        user.addTag(chipTagText);
+                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
+
+                        Snackbar snackbar = Snackbar.make(view, "Tag aggiunto ai tag utente!", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 }
             });
         }
     }
 
     private void setNewsTagsIcon(Chip chip, FeedModelViewHolder holder) {
-        if (user.getTags().contains(chip.getText().toString())) {
-            chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
+        if (user.getTags() != null) {
+            if (user.getTags().contains(chip.getText().toString())) {
+                chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart_pressed));
+            } else {
+                chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
+            }
         } else {
             chip.setChipIcon(ContextCompat.getDrawable(holder.rssFeedView.getContext(), R.drawable.heart));
         }

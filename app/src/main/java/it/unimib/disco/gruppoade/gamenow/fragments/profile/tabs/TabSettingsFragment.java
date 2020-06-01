@@ -121,7 +121,7 @@ public class TabSettingsFragment extends Fragment {
 
     private void sortedAdd(String element, List<String> tags) {
         // aggiungo l'elemento all'oggetto user
-        theUser.addTag(element);
+        theUser.addTagNoDbUpdate(element);
 
         // sorting
         Collections.sort(tags, new TagComparator());
@@ -228,7 +228,7 @@ public class TabSettingsFragment extends Fragment {
                 chipGroup.removeView(v);
 
                 // rimuovo l'elemento dall'oggetto User
-                theUser.removeTag(tmpString);
+                theUser.removeTagNoDbUpdate(tmpString);
                 Log.d(TAG, "rimozione tag da theUser: " + theUser.toString());
 
                 // riottengo i tag

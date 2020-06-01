@@ -96,17 +96,16 @@ public class ForumActivity extends AppCompatActivity {
 
                         // setto i tag
                         if(pc.isChecked())
-                            theUser.addTag("PC");
+                            theUser.addTagNoDbUpdate("PC");
 
                         if(xbox.isChecked())
-                            theUser.addTag("XBOX");
+                            theUser.addTagNoDbUpdate("XBOX");
 
                         if(ps4.isChecked())
-                            theUser.addTag("PS4");
+                            theUser.addTagNoDbUpdate("PS4");
 
                         if(nintendo.isChecked())
-                            theUser.addTag("Nintendo");
-
+                            theUser.addTagNoDbUpdate("Nintendo");
 
                         // salvo user su DB
                         myRef.setValue(theUser);

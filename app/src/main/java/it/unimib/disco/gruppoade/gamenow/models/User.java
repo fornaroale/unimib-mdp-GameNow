@@ -1,7 +1,5 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
-import android.util.Log;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ public class User {
     private String username;
     private String email;
     private List<String> tags;
-    private List<PieceOfNews> savedNews;
+    //private List<PieceOfNews> savedNews;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -25,7 +23,8 @@ public class User {
         this.username = username;
         this.email = email;
         tags = new ArrayList<>();
-        savedNews = new ArrayList<>();
+        //savedNews = new ArrayList<>();
+        //savedNews.add(new PieceOfNews("titolo", "desc", "link", LocalDateTime.now(), "img", "guid", new NewsProvider("PS4", "nome", "https://google.com", "rssUrl")));
     }
 
     public String getUsername() {
@@ -40,11 +39,52 @@ public class User {
         return tags;
     }
 
-    public List<PieceOfNews> getSavedNews() {
-        return savedNews;
-    }
+//    public List<PieceOfNews> getSavedNews() {
+//        return savedNews;
+//    }
+
+//    public void savePieceOfNews(PieceOfNews pon){
+//        savedNews.add(pon);
+//        List<String> preparedNews = prepareNewsForSet(getSavedNews());
+//        FbDatabase.FbDatabase().getUserReference().child("news").setValue(preparedNews);
+//    }
+//
+//    public void removeSavedPieceOfNews(PieceOfNews pon){
+//        savedNews.remove(pon);
+//        List<String> preparedNews = prepareNewsForSet(getSavedNews());
+//        FbDatabase.FbDatabase().getUserReference().child("news").setValue(preparedNews);
+//    }
+//
+//    public List<String> prepareNewsForSet(List<PieceOfNews> tmpNews){
+//        List<String> preparedNews = new ArrayList<>();
+//
+//        for(PieceOfNews tmpPieceOfNews : tmpNews){
+//            String temp = "";
+//            temp.concat(tmpPieceOfNews.getTitle() + "@@@");
+//            temp.concat(tmpPieceOfNews.getDesc() + "@@@");
+//            temp.concat(tmpPieceOfNews.getLink() + "@@@");
+//            temp.concat(tmpPieceOfNews.getPubDate() + "@@@");
+//            temp.concat(tmpPieceOfNews.getImage() + "@@@");
+//            temp.concat(tmpPieceOfNews.getGuid() + "@@@");
+//            temp.concat(tmpPieceOfNews.getProvider().getPlatform() + "@@@");
+//            temp.concat(tmpPieceOfNews.getProvider().getName() + "@@@");
+//            temp.concat(tmpPieceOfNews.getProvider().getHomepageUrl() + "@@@");
+//            temp.concat(tmpPieceOfNews.getProvider().getRssUrl().toString());
+//            preparedNews.add(temp);
+//        }
+//
+//        return preparedNews;
+//    }
 
     public void addTag(String tag) {
+        if (tags != null)
+            tags.add(tag.toUpperCase());
+        else
+            tags = new ArrayList<>();
+        FbDatabase.FbDatabase().getUserReference().child("tags").setValue(getTags());
+    }
+
+    public void addTagNoDbUpdate(String tag) {
         tags.add(tag.toUpperCase());
     }
 
@@ -58,12 +98,11 @@ public class User {
     }
 
     public void removeTag(String tmpString) {
-        Log.d(TAG, "Rimozione Tag");
-
-        Log.d(TAG, "Tag da rimuovere: " + tmpString);
-        Log.d(TAG, "Elenco tag: " + tags);
-
         tags.remove(tmpString.toUpperCase());
+        FbDatabase.FbDatabase().getUserReference().child("tags").setValue(getTags());
+    }
 
+    public void removeTagNoDbUpdate(String tmpString) {
+        tags.remove(tmpString.toUpperCase());
     }
 }
