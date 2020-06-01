@@ -3,7 +3,6 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -18,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -26,24 +24,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "FireBase UI Activity";
-
-
-    public static final String EXTRA_MESSAGE = "nameDb";
-
-    // firebase auth
-    FirebaseAuth.AuthStateListener mAuthListener;
-    TextView tv;
-    private FirebaseAuth firebaseAuth;
-
-    // firebase db
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,42 +46,17 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // User's data persistence [Offline Caching]
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        // Retrieve user from current instance
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
-        // se non ho i file di preset
-        /*if(true){
-            // lancio la activity che mi fa compilare la pagina di preset
-            Intent intent = new Intent(this, ForumActivity.class);
-
-            Log.d(TAG , "chiamo:  startActivity(intent)");
-            startActivity(intent);
-        }*/
-
-
-        if (user != null) {
-           Log.d(TAG , "Loggato");
-
-        } else {
-            Log.d(TAG , "NON LOGGATO");
+        if (user == null)
             createSignInIntent();
-        }
-
-
     }
 
     public void createSignInIntent() {
         Log.d(TAG , "Dentro: createSignInIntent()");
-        // [START auth_fui_create_intent]
-        // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                //new AuthUI.IdpConfig.PhoneBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
-        //new AuthUI.IdpConfig.FacebookBuilder().build(),
-        //new AuthUI.IdpConfig.TwitterBuilder().build());
 
         // Create and launch sign-in intent
         startActivityForResult(
@@ -104,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                         .setLogo(R.drawable.app_logo)
                         .build(),
                 RC_SIGN_IN);
-
 
         // [END auth_fui_create_intent]
     }
@@ -121,17 +82,11 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(TAG, "Nome utente: " + user.getDisplayName());
 
-                // QUI LANCIO FORUM se serve
-
-
                 String usernameDb = user.getUid();
                 Log.d(TAG, "usernameDb: " + usernameDb);
-                myRef = database.getReference(usernameDb);
 
-
-                // read from database
-                // TODO sistemare problema che viene effettuata la richiesta al db solamente dopo l'if
-                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                FbDatabase.FbDatabase();
+                FbDatabase.getUserReference().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
@@ -143,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG , "chiamo:  startActivity(intent)");
                             startActivity(intent);
                         }
-
-
                     }
 
                     @Override
@@ -153,11 +106,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                     }
                 });
-
-
-
-
-
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
@@ -166,7 +114,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 }
