@@ -144,6 +144,11 @@ public class GameInfoActivity extends AppCompatActivity {
 
         mPlatforms = intent.getParcelableArrayListExtra("platforms");
         mVideos = intent.getParcelableArrayListExtra("videos");
+
+        if (mVideos == null){
+            gameVideoText.setVisibility(View.GONE);
+            videoDivider.setVisibility(View.GONE);
+        }
         Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
 
         url = intent.getStringExtra("imageUrl");

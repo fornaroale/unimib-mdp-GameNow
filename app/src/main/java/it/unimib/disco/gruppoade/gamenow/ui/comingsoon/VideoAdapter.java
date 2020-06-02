@@ -2,11 +2,8 @@ package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -23,7 +20,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiControlle
 
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.FullscreenActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Video;
 import it.unimib.disco.gruppoade.gamenow.utils.FullscreenHelper;
@@ -58,10 +54,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.cueVideo(mVideos.get(position).getVideoId());
-        final Intent intent = new Intent(mContext, FullscreenActivity.class);
-        intent.putExtra("videoID", mVideos.get(position).getVideoId());
 
-        final RecyclerView.LayoutParams rp = (RecyclerView.LayoutParams) holder.youTubePlayerView.getLayoutParams();
+        /*final RecyclerView.LayoutParams rp = (RecyclerView.LayoutParams) holder.youTubePlayerView.getLayoutParams();
         final RecyclerView recyclerView = activity.findViewById(R.id.gameplays_recyclerview);
         final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) recyclerView.getLayoutParams();
 
@@ -85,15 +79,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
                 lp.setMargins(8,8,8,24);
                 recyclerView.setLayoutParams(lp);
             }
-        });
-
-//        holder.playerUiController.setFullScreenButtonClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mContext.startActivity(intent);
-//                holder.youTubePlayerView.toggleFullScreen();
-//            }
-//        });
+        });*/
     }
 
     @Override
@@ -110,15 +96,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         private String currentVideoId;
         private PlayerUiController playerUiController;
         private FullscreenHelper fullscreenHelper;
-        private View[] views;
-
 
         ViewHolder(YouTubePlayerView playerView) {
             super(playerView);
             youTubePlayerView = playerView;
-            /*for (int i = 0; i<viewGroup.getChildCount(); i++){
-                views[i] = viewGroup.getChildAt(i);
-            }*/
             fullscreenHelper = new FullscreenHelper(activity, viewGroup.getChildAt(0));
             playerUiController = youTubePlayerView.getPlayerUiController();
             youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
