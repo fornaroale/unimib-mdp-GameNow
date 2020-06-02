@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -44,6 +45,8 @@ public class GameInfoActivity extends AppCompatActivity {
     private RecyclerView videosRecycler;
     private View descDivider, storylineDivider, videoDivider;
     private RatingBar ratingBar;
+
+    private ViewGroup views;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
@@ -85,7 +88,9 @@ public class GameInfoActivity extends AppCompatActivity {
         platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = findViewById(R.id.gameplays_recyclerview);
 
+        views = findViewById(R.id.gameinfo_parent);
 
+        Log.d(TAG, "onCreate: View Group " + views);
 
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .requireWifi()
@@ -169,7 +174,7 @@ public class GameInfoActivity extends AppCompatActivity {
 
     private void initVideosRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
-        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this);
+        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle(), this, this, views);
         videosRecycler.setAdapter(videoAdapter);
         videosRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
 
