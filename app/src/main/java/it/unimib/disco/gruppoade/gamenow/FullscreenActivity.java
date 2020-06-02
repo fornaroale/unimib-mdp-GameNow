@@ -1,24 +1,34 @@
 package it.unimib.disco.gruppoade.gamenow;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 public class FullscreenActivity extends AppCompatActivity {
-    private WebView webView;
+
+    private YouTubePlayerView youTubePlayerView;
+    private String currentVideoId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        youTubePlayerView = findViewById(R.id.player_fullscreen);
+        getLifecycle().addObserver(youTubePlayerView);
         Intent intent = getIntent();
-        setContentView(R.layout.activity_fullscreen);
-        webView = findViewById(R.id.webview_fullscreen);
-        webView.setWebViewClient(new WebViewClient());
-        webView.setWebChromeClient(new WebChromeClient());
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadData(intent.getStringExtra("url"),"text/html", "utf-8");
+        currentVideoId = intent.getStringExtra("videoID");
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                youTubePlayer.cueVideo(currentVideoId,0);
+            }
+        });
     }
 }
+
