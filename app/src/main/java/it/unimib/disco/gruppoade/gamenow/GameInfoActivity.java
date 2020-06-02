@@ -1,11 +1,12 @@
 package it.unimib.disco.gruppoade.gamenow;
 
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -16,18 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 import com.google.gson.Gson;
-import com.gtranslate.Language;
-import com.gtranslate.Translator;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
@@ -184,7 +181,7 @@ public class GameInfoActivity extends AppCompatActivity {
         return ((int)(rating/significance) * significance) + significance;
     }
 
-    public void translate (String textToTranslate, final TextView v){
+    private void translate (String textToTranslate, final TextView v){
         enItTranslator.translate(textToTranslate)
                 .addOnSuccessListener(
                         new OnSuccessListener<String>() {

@@ -1,8 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +11,11 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.gson.Gson;
 
 
 import java.util.List;
-import java.util.Map;
 
-import it.unimib.disco.gruppoade.gamenow.FullscreenActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Video;
 
@@ -51,14 +44,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         //holder.webView.loadUrl("https://www.youtube.com/embed/"+mVideos.get(position).getVideoId());
         String url = "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/"+ mVideos.get(position).getVideoId() +"\" frameborder=\"0\" allowfullscreen></iframe>";
         holder.webView.loadData(url, "text/html", "utf-8");
-        final Intent intent = new Intent(mContext, FullscreenActivity.class);
-        intent.putExtra("url", url);
-        holder.fullscreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               mContext.startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -71,17 +56,17 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         WebView webView;
-        View fullscreen;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            fullscreen = itemView.findViewById(R.id.webview_fullscreen);
             webView = itemView.findViewById(R.id.youtube_player);
             webView.setWebViewClient(new WebViewClient());
             webView.setWebChromeClient(new WebChromeClient());
             webView.getSettings().setJavaScriptEnabled(true);
         }
     }
+
 }
 
 
