@@ -25,9 +25,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String usernameDb;
-    // login
-    FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseAuth firebaseAuth;
 
     // collegamento al db
     FirebaseDatabase database = FirebaseDatabase.getInstance();

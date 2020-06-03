@@ -12,8 +12,10 @@ public final class FbDatabase {
 
     private FbDatabase() {
         database = FirebaseDatabase.getInstance();
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        userReference = database.getReference(uid);
+        String uid = null;
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            setUserReference();
+        }
     }
 
     public static FbDatabase FbDatabase() {
@@ -27,6 +29,11 @@ public final class FbDatabase {
 
     public static DatabaseReference getUserReference() {
         return userReference;
+    }
+
+    public static void setUserReference(){
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userReference = database.getReference(uid);
     }
 
     public static FirebaseDatabase getDatabase() {

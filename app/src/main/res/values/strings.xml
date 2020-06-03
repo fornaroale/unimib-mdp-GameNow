@@ -1,4 +1,5 @@
 <resources>
+    <!-- generali -->
     <string name="app_name">GameNow</string>
     <string name="title_feed">Feed</string>
     <string name="title_discover">Discover</string>
@@ -14,6 +15,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="action_undo">Annulla</string>
 
     <!-- profile fragment-->
     <string name="txt_usernameTitle">USERNAME</string>
