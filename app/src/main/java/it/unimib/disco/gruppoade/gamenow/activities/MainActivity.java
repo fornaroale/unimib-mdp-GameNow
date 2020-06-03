@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
                         .setAvailableProviders(providers)
                         .setLogo(R.drawable.app_logo)
                         .build(),
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "usernameDb: " + usernameDb);
 
                 FbDatabase.FbDatabase();
+                FbDatabase.setUserReference();
                 FbDatabase.getUserReference().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
