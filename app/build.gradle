@@ -80,4 +80,7 @@ dependencies {
 
     // json parser for Firebase
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    // forebase storage
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
 }

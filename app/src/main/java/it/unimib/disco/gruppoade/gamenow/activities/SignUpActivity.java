@@ -2,6 +2,7 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,13 +12,22 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -103,6 +113,53 @@ public class SignUpActivity extends AppCompatActivity {
 //                        myRef.setValue("Stringa");
 
 
+                        // reference to firestore
+                        // Create a storage reference
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        // build th ename file with the Iid
+                        StorageReference imagesRef = storage.getReference().child("images").child(user.getUid() + ".jpg");
+
+                        // upload file on firestore
+                        UploadTask uploadTask = imagesRef.putFile(filePath);
+
+                        // Register observers to listen for when the download is done or if it fails
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Log.d(TAG, "Upload FALLITO!!");
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Log.d(TAG, "Upload effettuato con SUCCESSO");
+                            }
+                        });
+
+                        // Get the data from an ImageView as bytes
+//                        profile_photo.setDrawingCacheEnabled(true);
+//                        profile_photo.buildDrawingCache();
+//                        Bitmap bitmap = ((BitmapDrawable) profile_photo.getDrawable()).getBitmap();
+//                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                        byte[] data = baos.toByteArray();
+//
+//                        UploadTask uploadTask = imagesRef.putBytes(data);
+//                        uploadTask.addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception exception) {
+//                                Log.d(TAG, "Upload FALLITO!!");
+//                            }
+//                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                Log.d(TAG, "Upload effettuato con SUCCESSO");
+//                            }
+//                        });
+
+
+
+
+
                         // creo User
                         User theUser = new User(user.getDisplayName(), user.getEmail());
 
@@ -145,12 +202,21 @@ public class SignUpActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             filePath = data.getData();
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                profile_photo .setImageBitmap(bitmap);
 
-            } catch (IOException e) {
+                Picasso.get()
+                        .load(filePath)
+                        .fit()
+                        .centerCrop()
+                        .into((ImageView) profile_photo);
+
+                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+               // profile_photo.setImageBitmap(bitmap);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+
 }
