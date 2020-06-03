@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,11 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
@@ -22,10 +28,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 import it.unimib.disco.gruppoade.gamenow.models.User;
@@ -44,8 +57,12 @@ public class TabSettingsFragment extends Fragment {
 
     private static final String TAG = "TabSettingFragment";
 
+    private static final int PICK_IMAGE_REQUEST = 234;
+
+
     // recupero l'utente con i relativi dati dal db
     private User theUser = null;
+
 
     // inserisco variabili
     private List<String> tags = null;
@@ -55,6 +72,9 @@ public class TabSettingsFragment extends Fragment {
     private TextView username;
     private TextView email;
     private TextView platform;
+    private CircleImageView profilePicture;
+    private String userUid;
+    private File localFile;
 
     public TabSettingsFragment() {
         //theUser = getUserOnDb();
@@ -72,12 +92,21 @@ public class TabSettingsFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
+        profilePicture = view.findViewById(R.id.profile_image);
         Button button = view.findViewById(R.id.button_signOut);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signOut();
                 getActivity().finish();
+            }
+        });
+
+        profilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -90,6 +119,10 @@ public class TabSettingsFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference(usernameDb);
         myRef.addListenerForSingleValueEvent(postListener);
+
+        userUid = user.getUid();
+
+
 
         return view;
     }
@@ -190,6 +223,40 @@ public class TabSettingsFragment extends Fragment {
                     chipGroup.setVisibility(view.getVisibility());
                 }
             }
+
+
+        // load prfile picture
+        // Create a storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // build th ename file with the Iid
+        StorageReference imagesRef = storage.getReference().child("images").child(userUid + ".jpg");
+
+        localFile = null;
+
+        try {
+            localFile = File.createTempFile("images", "jpg");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        imagesRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                Log.d(TAG, "SUCCESS DOWNLOAD");
+
+                Picasso.get()
+                        .load(localFile)
+                        .fit()
+                        .centerCrop()
+                        .into((CircleImageView) profilePicture);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "FAILURE DOWNLOAD");
+            }
+        });
 
 
     }
@@ -303,10 +370,6 @@ public class TabSettingsFragment extends Fragment {
         return chip;
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//
-//        theUser = getUserOnDb();
-//    }
+
+
 }
