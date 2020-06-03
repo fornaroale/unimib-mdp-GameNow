@@ -49,10 +49,17 @@ public class SignUpActivity extends AppCompatActivity {
     // collegamento al db
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
+    User theUser;
 
     //a Uri object to store file path
     private Uri filePath;
     private ImageView profile_photo;
+
+    // activity obj
+    private CheckBox pc;
+    private CheckBox xbox;
+    private CheckBox ps4;
+    private CheckBox nintendo;
 
 
     @Override
@@ -79,10 +86,10 @@ public class SignUpActivity extends AppCompatActivity {
 
 
         // checkbox
-        final CheckBox pc = findViewById(R.id.cb_pc);
-        final CheckBox xbox = findViewById(R.id.cb_xbox);
-        final CheckBox ps4 = findViewById(R.id.cb_ps4);
-        final CheckBox nintendo = findViewById(R.id.cb_Switch);
+        pc = findViewById(R.id.cb_pc);
+        xbox = findViewById(R.id.cb_xbox);
+        ps4 = findViewById(R.id.cb_ps4);
+        nintendo = findViewById(R.id.cb_Switch);
 
 
         Log.d(TAG, "Activity partita, userset: ");
@@ -161,7 +168,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
                         // creo User
-                        User theUser = new User(user.getDisplayName(), user.getEmail());
+                        theUser = new User(user.getDisplayName(), user.getEmail());
 
                         // setto i tag
                         if(pc.isChecked())
