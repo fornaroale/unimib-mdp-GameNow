@@ -49,9 +49,9 @@ public class TabSavedNewsFragment extends Fragment {
             // JSON to PieceOfNews Array
             List<PieceOfNews> locallySavedNews = new ArrayList<>();
             Gson gson = new Gson();
-            for(String jsonPON : user.getNews()){
-                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-            }
+//            for(String jsonPON : user.getNews()){
+//                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+//            }
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {
@@ -81,8 +81,8 @@ public class TabSavedNewsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-
+//            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
+//
             adapter.notifyDataSetChanged();
         }
 
