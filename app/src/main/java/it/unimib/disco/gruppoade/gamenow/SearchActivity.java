@@ -96,8 +96,8 @@ public class SearchActivity extends AppCompatActivity {
                             if(o1.getDate() == null && o2.getDate() == null)
                                 return 0;
                             if(o1.getDate() == null)
-                                return -1;
-                            return 1;
+                                return 1;
+                            return -1;
                         }
                     });
         IncomingAdapter incomingAdapter = new IncomingAdapter(getApplicationContext(), mGames);
