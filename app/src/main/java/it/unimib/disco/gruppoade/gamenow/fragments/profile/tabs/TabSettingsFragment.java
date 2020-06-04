@@ -134,7 +134,7 @@ public class TabSettingsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             theUser = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + theUser.toString());
+//            Log.d(TAG, "Messaggio onDataChange: " + theUser.toString());
 
             setUp(getActivity().findViewById(android.R.id.content).getRootView());
         }
