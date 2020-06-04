@@ -173,7 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="1dp">
 
             <TextView
                 android:id="@+id/txt_press_logout"
@@ -184,10 +184,28 @@
                 android:layout_marginBottom="8dp"
                 android:text="LogOut"
                 android:textSize="20sp"
+                android:layout_marginStart="16dp" />
 
+        </androidx.cardview.widget.CardView>
 
-                />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_deleteaccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="16dp">
 
+            <TextView
+                android:id="@+id/txt_press_deleteaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Delete Account"
+                android:textColor="@color/design_default_color_error"
+                android:textSize="20sp" />
         </androidx.cardview.widget.CardView>
 
     </LinearLayout>
