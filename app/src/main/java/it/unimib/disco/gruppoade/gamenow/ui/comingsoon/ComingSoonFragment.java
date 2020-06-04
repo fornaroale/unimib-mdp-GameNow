@@ -28,6 +28,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -199,6 +201,7 @@ public class ComingSoonFragment extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     mGames.clear();
                     mGames = response.body();
+                    Collections.sort(mGames, new GameComparator());
                     Log.d(TAG, "onResponse: Response Body = "+ gson.toJson(mGames));
                     initRecyclerView();
                     lottieAnimationView.setVisibility(GONE);
@@ -220,6 +223,15 @@ public class ComingSoonFragment extends Fragment {
         IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), mGames);
         recyclerView.setAdapter(incomingAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    public class GameComparator implements Comparator<Game> {
+
+        @Override
+        public int compare(Game o1, Game o2) {
+            return o1.getDate().compareTo(o2.getDate());
+        }
+
     }
 }
 

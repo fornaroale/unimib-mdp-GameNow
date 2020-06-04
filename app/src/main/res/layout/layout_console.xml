@@ -8,7 +8,8 @@
     <TextView
         android:id="@+id/console_abb"
         android:layout_width="60dp"
-        android:textSize="10sp"
+        android:textSize="9sp"
+        android:textColor="#000"
         android:layout_height="wrap_content"
         android:text="@string/console_name_placeholder"
         android:gravity="center_horizontal"

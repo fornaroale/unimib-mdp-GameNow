@@ -1,11 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
@@ -14,31 +10,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
 
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Video;
-import it.unimib.disco.gruppoade.gamenow.utils.FullscreenHelper;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> {
     private static final String TAG = "VideoAdapter";
 
     private List<Video> mVideos;
     private Lifecycle mLifecycle;
-    private Context mContext;
-    private Activity activity;
-    private ViewGroup viewGroup;
 
-    public VideoAdapter(List<Video> mVideos, Lifecycle mLifecycle, Context mContext, Activity activity, ViewGroup viewGroup) {
+
+    public VideoAdapter(List<Video> mVideos, Lifecycle mLifecycle) {
         this.mVideos = mVideos;
         this.mLifecycle = mLifecycle;
-        this.mContext = mContext;
-        this.activity = activity;
-        this.viewGroup = (ViewGroup) viewGroup.getChildAt(0);
     }
 
 
@@ -54,32 +42,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.cueVideo(mVideos.get(position).getVideoId());
-
-        /*final RecyclerView.LayoutParams rp = (RecyclerView.LayoutParams) holder.youTubePlayerView.getLayoutParams();
-        final RecyclerView recyclerView = activity.findViewById(R.id.gameplays_recyclerview);
-        final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) recyclerView.getLayoutParams();
-
-        holder.youTubePlayerView.addFullScreenListener(new YouTubePlayerFullScreenListener() {
-            @Override
-            public void onYouTubePlayerEnterFullScreen() {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                holder.fullscreenHelper.enterFullScreen();
-                rp.setMargins(0,0,0,0);
-                holder.youTubePlayerView.setLayoutParams(rp);
-                lp.setMargins(0,0,0,0);
-                recyclerView.setLayoutParams(lp);
-            }
-
-            @Override
-            public void onYouTubePlayerExitFullScreen() {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                holder.fullscreenHelper.exitFullScreen();
-                rp.setMargins(8,8,8,24);
-                holder.youTubePlayerView.setLayoutParams(rp);
-                lp.setMargins(8,8,8,24);
-                recyclerView.setLayoutParams(lp);
-            }
-        });*/
     }
 
     @Override
@@ -94,14 +56,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         private YouTubePlayerView youTubePlayerView;
         private YouTubePlayer youTubePlayer;
         private String currentVideoId;
-        private PlayerUiController playerUiController;
-        private FullscreenHelper fullscreenHelper;
 
         ViewHolder(YouTubePlayerView playerView) {
             super(playerView);
             youTubePlayerView = playerView;
-            fullscreenHelper = new FullscreenHelper(activity, viewGroup.getChildAt(0));
-            playerUiController = youTubePlayerView.getPlayerUiController();
             youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
                 @Override
                 public void onReady(@NonNull YouTubePlayer initializedYouTubePlayer) {
@@ -109,7 +67,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
                     youTubePlayer.cueVideo(currentVideoId, 0);
                 }
             });
-
         }
 
         void cueVideo(String videoId) {
