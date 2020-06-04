@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -45,21 +46,24 @@ public class GameInfoActivity extends AppCompatActivity {
     private RecyclerView videosRecycler;
     private View descDivider, storylineDivider, videoDivider;
     private RatingBar ratingBar;
+    private ProgressBar descSpinner, storylineSpinner;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
+
+    private MainActivity translator = new MainActivity();
 
     private  String url;
     private Gson gson = new Gson();
 
     // Create an English-Italian translator:
-    private FirebaseTranslatorOptions options =
+    /*private FirebaseTranslatorOptions options =
             new FirebaseTranslatorOptions.Builder()
                     .setSourceLanguage(FirebaseTranslateLanguage.EN)
                     .setTargetLanguage(FirebaseTranslateLanguage.IT)
                     .build();
     private FirebaseTranslator enItTranslator =
-            FirebaseNaturalLanguage.getInstance().getTranslator(options);
+            FirebaseNaturalLanguage.getInstance().getTranslator(options);*/
 
 
     @Override
@@ -70,6 +74,7 @@ public class GameInfoActivity extends AppCompatActivity {
         gameDescription = findViewById(R.id.gameinfo_desc);
         gameDescriptionText = findViewById(R.id.gameinfo_desc_text);
         descDivider = findViewById(R.id.gameinfo_desc_divider);
+        descSpinner = findViewById(R.id.gameinfo_desc_spinner);
 
         gameTitle = findViewById(R.id.gameinfo_title);
 
@@ -78,6 +83,7 @@ public class GameInfoActivity extends AppCompatActivity {
         storylineDivider = findViewById(R.id.gameinfo_storyline_divider);
         gameStoryline = findViewById(R.id.gameinfo_storyline);
         gameStorylineText = findViewById(R.id.gameinfo_storyline_text);
+        storylineSpinner = findViewById(R.id.gameinfo_storyline_spinner);
 
         gameVideoText = findViewById(R.id.gameinfo_gameplays);
         videoDivider = findViewById(R.id.gameinfo_gameplays_divider);
@@ -87,7 +93,7 @@ public class GameInfoActivity extends AppCompatActivity {
         videosRecycler = findViewById(R.id.gameplays_recyclerview);
 
 
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
+       /* FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .requireWifi()
                 .build();
         enItTranslator.downloadModelIfNeeded(conditions)
@@ -96,6 +102,8 @@ public class GameInfoActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void v) {
                                 Log.d(TAG, "onSuccess: Downloaded Model");
+                                descSpinner.setVisibility(View.GONE);
+                                storylineSpinner.setVisibility(View.GONE);
 
                             }
                         })
@@ -105,18 +113,19 @@ public class GameInfoActivity extends AppCompatActivity {
                             public void onFailure(@NonNull Exception e) {
                                 e.printStackTrace();
                             }
-                        });
+                        });*/
 
 
         Intent intent = getIntent();
         if( intent.getStringExtra("desc") != null) {
             final String desc = intent.getStringExtra("desc");
-            translate(desc, gameDescriptionText);
+            translate(desc, gameDescriptionText,descSpinner);
 
         } else {
             gameDescription.setVisibility(View.GONE);
             descDivider.setVisibility(View.GONE);
             gameDescriptionText.setVisibility(View.GONE);
+            descSpinner.setVisibility(View.GONE);
         }
         if(intent.getDoubleExtra("rating", 0) == 0){
             ratingBar.setVisibility(View.GONE);
@@ -128,12 +137,13 @@ public class GameInfoActivity extends AppCompatActivity {
         String storyline = intent.getStringExtra("storyline");
         Log.d(TAG, "onCreate: Storyline = " + storyline);
         if( storyline != null) {
-            translate(storyline, gameStorylineText);
+            translate(storyline, gameStorylineText, storylineSpinner);
 
         } else {
             storylineDivider.setVisibility(View.GONE);
             gameStoryline.setVisibility(View.GONE);
             gameStorylineText.setVisibility(View.GONE);
+            storylineSpinner.setVisibility(View.GONE);
         }
 
         mPlatforms = intent.getParcelableArrayListExtra("platforms");
@@ -167,7 +177,10 @@ public class GameInfoActivity extends AppCompatActivity {
         Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
         ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,this);
         platformsRecycler.setAdapter(consoleAdapter);
-        platformsRecycler.setLayoutManager(new GridLayoutManager(getApplicationContext(), 4));
+        if(mPlatforms.size() > 4)
+            platformsRecycler.setLayoutManager(new GridLayoutManager(this, 4));
+        else
+            platformsRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
 
     }
 
@@ -185,13 +198,14 @@ public class GameInfoActivity extends AppCompatActivity {
         return (float) ((float)((int)(rating/significance) * significance) + significance);
     }
 
-    private void translate (String textToTranslate, final TextView v){
-        enItTranslator.translate(textToTranslate)
+    private void translate (String textToTranslate, final TextView v, final View spinner){
+        translator.enItTranslator.translate(textToTranslate)
                 .addOnSuccessListener(
                         new OnSuccessListener<String>() {
                             @Override
                             public void onSuccess(@NonNull String translatedText) {
                                 v.setText(translatedText);
+                                spinner.setVisibility(View.GONE);
                             }
                         })
                 .addOnFailureListener(
