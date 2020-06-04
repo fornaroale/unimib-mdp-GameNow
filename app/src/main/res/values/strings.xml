@@ -29,4 +29,6 @@
 
     <!-- saved news tab -->
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
+    <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
+    <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
 </resources>
