@@ -82,27 +82,30 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Log.d(TAG, "In the click button submit");
 
-                        // reference to firestore
-                        // Create a storage reference
-                        FirebaseStorage storage = FirebaseStorage.getInstance();
-                        // build th ename file with the Iid
-                        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
+                        if(filePath != null){
+                            // reference to firestore
+                            // Create a storage reference
+                            FirebaseStorage storage = FirebaseStorage.getInstance();
+                            // build th ename file with the Iid
+                            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
 
-                        // upload file on firestore
-                        UploadTask uploadTask = imagesRef.putFile(filePath);
+                            // upload file on firestore
+                            UploadTask uploadTask = imagesRef.putFile(filePath);
 
-                        // Register observers to listen for when the download is done or if it fails
-                        uploadTask.addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Log.d(TAG, "Upload FALLITO!!");
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                Log.d(TAG, "Upload effettuato con SUCCESSO");
-                            }
-                        });
+                            // Register observers to listen for when the download is done or if it fails
+                            uploadTask.addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Log.d(TAG, "Upload FALLITO!!");
+                                }
+                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Log.d(TAG, "Upload effettuato con SUCCESSO");
+                                }
+                            });
+                        }
+
 
 
                         // creo User
@@ -148,11 +151,14 @@ public class SignUpActivity extends AppCompatActivity {
             filePath = data.getData();
 
             // la stampo usando picasso
-            Picasso.get()
-                    .load(filePath)
-                    .fit()
-                    .centerCrop()
-                    .into((ImageView) profile_photo);
+            if(filePath != null){
+                Picasso.get()
+                        .load(filePath)
+                        .fit()
+                        .centerCrop()
+                        .into((ImageView) profile_photo);
+
+            }
 
         }
     }
