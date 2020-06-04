@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -93,9 +94,10 @@ public class TabSettingsFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
         profilePicture = view.findViewById(R.id.profile_image);
-        Button button = view.findViewById(R.id.button_signOut);
+        CardView logout = view.findViewById(R.id.cv_logout);
+//        Button button = view.findViewById(R.id.button_signOut);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signOut();
@@ -144,22 +146,22 @@ public class TabSettingsFragment extends Fragment {
         }
     };
 
-    private String findPlatform(List<String> tags) {
-        String tempPlatform = "";
-
-        for (String temp : tags) {
-            temp.toLowerCase();
-
-            if (temp.equalsIgnoreCase("xbox") ||
-                    temp.equalsIgnoreCase("pc") ||
-                    temp.equalsIgnoreCase("ps4") ||
-                    temp.equalsIgnoreCase("switcg")) {
-                tempPlatform += temp + " ";
-            }
-        }
-
-        return tempPlatform;
-    }
+//    private String findPlatform(List<String> tags) {
+//        String tempPlatform = "";
+//
+//        for (String temp : tags) {
+//            temp.toLowerCase();
+//
+//            if (temp.equalsIgnoreCase("xbox one/x") ||
+//                    temp.equalsIgnoreCase("pc") ||
+//                    temp.equalsIgnoreCase("ps4/5") ||
+//                    temp.equalsIgnoreCase("nintendo")) {
+//                tempPlatform += temp + " ";
+//            }
+//        }
+//
+//        return tempPlatform;
+//    }
 
     private void sortedAdd(String element, List<String> tags) {
         // aggiungo l'elemento all'oggetto user
@@ -190,7 +192,6 @@ public class TabSettingsFragment extends Fragment {
             chipGroup = view.findViewById(R.id.chipGroup);
             username = view.findViewById((R.id.Username));
             email = view.findViewById((R.id.Email));
-            platform = view.findViewById((R.id.Platform));
 
             // setto i valori
             username.setText(theUser.getUsername());
@@ -198,8 +199,8 @@ public class TabSettingsFragment extends Fragment {
 
             // setto piattaforma usando un metodo
             // che analizza i tag e trova le piattaforme
-            if (theUser.getTags() != null)
-                platform.setText(findPlatform(theUser.getTags()));
+//            if (theUser.getTags() != null)
+//                platform.setText(findPlatform(theUser.getTags()));
 
             // riempio i tag
             tags = theUser.getTags();
@@ -338,7 +339,7 @@ public class TabSettingsFragment extends Fragment {
                         myRef = database.getReference(usernameDb);
 
                         // aggiorno le piattaforme
-                        platform.setText(findPlatform(theUser.getTags()));
+//                        platform.setText(findPlatform(theUser.getTags()));
                         // salvo user su DB
                         myRef.setValue(theUser);
 
@@ -359,7 +360,7 @@ public class TabSettingsFragment extends Fragment {
                 Log.d(TAG, "New theUser: " + theUser.toString());
 
                 // aggiorno le piattaforme
-                platform.setText(findPlatform(theUser.getTags()));
+//                platform.setText(findPlatform(theUser.getTags()));
 
                 // salvo user su DB
                 myRef.setValue(theUser);
