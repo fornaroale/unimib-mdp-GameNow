@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,8 +45,6 @@ public class GameInfoActivity extends AppCompatActivity {
     private RecyclerView videosRecycler;
     private View descDivider, storylineDivider, videoDivider;
     private RatingBar ratingBar;
-
-    private ViewGroup views;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
@@ -88,9 +86,6 @@ public class GameInfoActivity extends AppCompatActivity {
         platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = findViewById(R.id.gameplays_recyclerview);
 
-        views = findViewById(R.id.gameinfo_parent);
-
-        Log.d(TAG, "onCreate: View Group " + views);
 
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .requireWifi()
@@ -123,11 +118,10 @@ public class GameInfoActivity extends AppCompatActivity {
             descDivider.setVisibility(View.GONE);
             gameDescriptionText.setVisibility(View.GONE);
         }
-
-        if(intent.getStringExtra("rating") == null){
+        if(intent.getDoubleExtra("rating", 0) == 0){
             ratingBar.setVisibility(View.GONE);
         } else {
-            ratingBar.setRating((float)setRating(Float.valueOf(intent.getStringExtra("rating"))));
+            ratingBar.setRating(setRating(intent.getDoubleExtra("rating", 0)));
         }
 
         gameTitle.setText(intent.getStringExtra("title"));
@@ -173,22 +167,22 @@ public class GameInfoActivity extends AppCompatActivity {
         Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
         ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,this);
         platformsRecycler.setAdapter(consoleAdapter);
-        platformsRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+        platformsRecycler.setLayoutManager(new GridLayoutManager(getApplicationContext(), 4));
 
     }
 
     private void initVideosRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
-        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle(), this, this, views);
+        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle());
         videosRecycler.setAdapter(videoAdapter);
         videosRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
 
     }
 
-    private double setRating(double totRating){
+    private float setRating(double totRating){
         double rating = Math.floor(totRating * 5) / 100;
         double significance = 0.5;
-        return ((int)(rating/significance) * significance) + significance;
+        return (float) ((float)((int)(rating/significance) * significance) + significance);
     }
 
     private void translate (String textToTranslate, final TextView v){

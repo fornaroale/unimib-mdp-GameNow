@@ -3,6 +3,7 @@ package it.unimib.disco.gruppoade.gamenow.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class Game {
@@ -37,7 +38,7 @@ public class Game {
 
     @SerializedName("first_release_date")
     @Expose
-    private  Integer date;
+    private Integer date;
 
     @SerializedName("platforms")
     @Expose
@@ -114,4 +115,5 @@ public class Game {
     public void setVideos(List<Video> videos) {
         this.videos = videos;
     }
+
 }

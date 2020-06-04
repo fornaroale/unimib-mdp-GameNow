@@ -2,6 +2,7 @@ package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import it.unimib.disco.gruppoade.gamenow.GameInfoActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHolder>{
 
@@ -96,6 +99,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
                 intent.putParcelableArrayListExtra("videos", (ArrayList<? extends Parcelable>) game.getVideos());
                 intent.putExtra("storyline", game.getStoryline());
                 intent.putExtra("rating", game.getRating());
+                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                 //start activity
                 mContext.startActivity(intent);
             }
@@ -137,11 +141,4 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
         return name + " - " + stringDate;
     }
 
-     /*public void timeStamps(){
-        Log.d(TAG, "timeStamps: Function called.");
-        Log.d(TAG, "timeStamps: Date in Milliseconds = " + time);
-        Log.d(TAG, "timeStamps: Timestamp = " + timestamp);
-        Log.d(TAG, "timeStamps: Normal Date = " + sdf.format(time));
-
-    }*/
 }

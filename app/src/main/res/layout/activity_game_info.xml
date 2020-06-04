@@ -6,152 +6,148 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:id="@+id/gameinfo_parent">
+    android:id="@+id/gameinfo_parent"
+    android:scrollbars="none">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/frame_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <FrameLayout
-                android:id="@+id/frame_container"
+                android:id="@+id/info_screen_frame"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <FrameLayout
-                    android:id="@+id/info_screen_frame"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/screenshot_na" />
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/gradient" />
-                </FrameLayout>
+                android:layout_height="200dp">
 
                 <ImageView
-                    android:id="@+id/gameinfo_cover"
-                    android:layout_width="150dp"
-                    android:layout_height="210dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="50dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/cover_na" />
+                    android:src="@color/colorPrimary" />
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/gradient" />
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/gameinfo_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/gameinfo_cover"
+                android:layout_width="150dp"
+                android:layout_height="210dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:text="@string/gameinfo_placeholder_title"
-                android:textAlignment="center"
-                android:textColor="#000"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="50dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/cover_na" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/gameinfo_recyclerview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
+        </FrameLayout>
 
-            <RatingBar
-                android:id="@+id/gameinfo_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:rating="3.5" />
+        <TextView
+            android:id="@+id/gameinfo_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="@string/gameinfo_placeholder_title"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/gameinfo_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/gameinfo_placeholder_description"
-                android:textColor="#99000000"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gameinfo_recyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
 
-            <View
-                android:id="@+id/gameinfo_desc_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="8dp"
-                android:background="@color/blackStroke" />
+        <RatingBar
+            android:id="@+id/gameinfo_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:rating="3.5" />
 
+        <TextView
+            android:id="@+id/gameinfo_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/gameinfo_placeholder_description"
+            android:textColor="#99000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/gameinfo_desc_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/gameinfo_storyline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/gameinfo_placeholder_storyline"
-                android:textColor="#99000000"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/gameinfo_storyline_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="8dp"
-                android:background="@color/blackStroke" />
-
-            <TextView
-                android:id="@+id/gameinfo_storyline_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/gameinfo_gameplays"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/gameinfo_placeholder_gameplays"
-                android:textColor="#99000000"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+        <View
+            android:id="@+id/gameinfo_desc_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="8dp"
+            android:background="@color/blackStroke" />
 
 
-            <View
-                android:id="@+id/gameinfo_gameplays_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="8dp"
-                android:background="@color/blackStroke" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/gameinfo_desc_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/gameinfo_storyline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/gameinfo_placeholder_storyline"
+            android:textColor="#99000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/gameinfo_storyline_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="8dp"
+            android:background="@color/blackStroke" />
+
+        <TextView
+            android:id="@+id/gameinfo_storyline_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/gameinfo_gameplays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/gameinfo_placeholder_gameplays"
+            android:textColor="#99000000"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+
+        <View
+            android:id="@+id/gameinfo_gameplays_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="8dp"
+            android:background="@color/blackStroke" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

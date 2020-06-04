@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.GameInfoActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
 
@@ -40,7 +38,6 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_console, parent, false);
         ConsoleAdapter.ViewHolder holder = new ConsoleAdapter.ViewHolder(view);
-        final Intent intent = new Intent(mContext, GameInfoActivity.class);
         return holder;
     }
 
@@ -48,24 +45,27 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: Console Called.");
         Log.d(TAG, "onBindViewHolder: Platforms = " + gson.toJson(mPlatforms));
+        Log.d(TAG, "onBindViewHolder: Abbreviation " + mPlatforms.get(position).getAbbreviation());
         holder.consoleAbb.setText(mPlatforms.get(position).getAbbreviation());
+        if(mPlatforms.get(position).getAbbreviation() != null && mPlatforms.get(position).getAbbreviation().equals("XONE"))
+            holder.consoleAbb.setText("XBOX");
     }
 
 
     @Override
     public int getItemCount() {
-        return mPlatforms.size();
+        if(mPlatforms != null)
+            return mPlatforms.size();
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView consoleAbb;
-        RecyclerView recyclerView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             consoleAbb = itemView.findViewById(R.id.console_abb);
-            recyclerView = itemView.findViewById(R.id.card_recyclerview);
         }
     }
 

@@ -1,7 +1,9 @@
 package it.unimib.disco.gruppoade.gamenow.utils;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,9 @@ public class FullscreenHelper {
         }
 
         private void hideSystemUi(View mDecorView) {
+            ActionBar actionBar = context.getActionBar();
+            if(actionBar != null)
+                actionBar.hide();
             mDecorView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -73,8 +78,18 @@ public class FullscreenHelper {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
 
-        private void showSystemUi(View mDecorView) {
-            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        private void showSystemUi(final View mDecorView) {
+            ActionBar actionBar = context.getActionBar();
+            if(actionBar != null)
+                actionBar.show();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                }
+            }, 1000);
+
         }
 
 }
