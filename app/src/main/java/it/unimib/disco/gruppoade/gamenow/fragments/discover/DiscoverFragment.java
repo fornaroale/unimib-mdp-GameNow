@@ -188,6 +188,7 @@ public class DiscoverFragment extends Fragment {
         String description = null;
         String guid = null;
         LocalDateTime pubDate = null;
+        String contentEncoded = null;
 
         // mi trovo all'interno della notizia?
         boolean insideItem = false;
@@ -216,12 +217,26 @@ public class DiscoverFragment extends Fragment {
                         guid = xpp.nextText();
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
                         pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("content:encoded")) {
+                        contentEncoded = xpp.nextText();
+                        Log.d(TAG, "CONTENT ENCODED : " + contentEncoded);
                     }
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
                     if (title != null && link != null && description != null && pubDate != null) {
                         if (!checkNewsPresence(guid, provider.getPlatform())) {
-                            PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
+                            String imgUrl = extractImageUrl(description);
+                            String contentImgUrl = null;
+                            if(imgUrl.isEmpty() && contentEncoded!=null) {
+                                contentImgUrl = extractImageUrl(contentEncoded);
+                            }
+
+                            PieceOfNews item;
+                            if(contentImgUrl!=null) {
+                                item = new PieceOfNews(title, description, link, pubDate, contentImgUrl, guid, provider);
+                            } else {
+                                item = new PieceOfNews(title, description, link, pubDate, imgUrl, guid, provider);
+                            }
                             mFeedModelList.add(item);
                         }
                     }

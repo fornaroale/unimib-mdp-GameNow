@@ -32,8 +32,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdapter.SavedNewsModelViewHolder> {
 
-    private final static String TAG_BUG =  "TAG_BUG: SAVEDNEWS: ";
-
     private final FragmentActivity mContext;
     private List<PieceOfNews> mSavedNewsModels;
     private User user;
@@ -55,13 +53,20 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
         final PieceOfNews savedNewsModel = mSavedNewsModels.get(position);
 
         // Immagine
-        String imgUrl = mSavedNewsModels.get(holder.getAdapterPosition()).getImage();
-        if (!imgUrl.isEmpty())
+        String imgUrl = savedNewsModel.getImage();
+        if(imgUrl.isEmpty()) {
+            Picasso.get()
+                    .load(R.drawable.image_not_available)
+                    .fit()
+                    .centerCrop()
+                    .into((ImageView) holder.savedNewsView.findViewById(R.id.newsImage));
+        } else {
             Picasso.get()
                     .load(imgUrl)
                     .fit()
                     .centerCrop()
                     .into((ImageView) holder.savedNewsView.findViewById(R.id.newsImage));
+        }
 
         // Titolo
         ((TextView) holder.savedNewsView.findViewById(R.id.newsTitle)).setText(savedNewsModel.getTitle());
@@ -95,7 +100,6 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(favButton.isPressed()) {
-                    Log.d(TAG_BUG,""+ mSavedNewsModels.size());
                     if (user.removeSavedPieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()))) {
                         Snackbar.make(holder.savedNewsView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
