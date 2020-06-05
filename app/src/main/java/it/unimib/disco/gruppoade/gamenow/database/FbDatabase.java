@@ -32,7 +32,7 @@ public final class FbDatabase {
 
     public static void setUserReference(){
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        userReference = database.getReference(uid);
+        userReference = database.getReference("users/" + uid);
     }
 
     public static FirebaseDatabase getDatabase() {

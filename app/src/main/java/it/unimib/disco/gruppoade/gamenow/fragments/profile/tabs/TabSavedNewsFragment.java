@@ -31,7 +31,6 @@ public class TabSavedNewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private SavedNewsListAdapter adapter;
-    private List<PieceOfNews> mSavedNewsModelList;
 
     // Firebase
     private User user;
@@ -75,8 +74,6 @@ public class TabSavedNewsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-
             adapter.notifyDataSetChanged();
         }
 
