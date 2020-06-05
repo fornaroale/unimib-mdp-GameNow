@@ -5,6 +5,16 @@
     <string name="title_discover">Discover</string>
     <string name="title_comingsoon">Coming Soon</string>
     <string name="title_profile">Profile</string>
+
+    <!-- coming soon fragment-->
+    <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
+    <string name="incoming_card_available_for">Disponibile per</string>
+    <string name="console_name_placeholder">switch</string>
+    <string name="gameinfo_placeholder_title">Title</string>
+    <string name="gameinfo_placeholder_description">Descrizione</string>
+    <string name="gameinfo_placeholder_storyline">Storyline</string>
+    <string name="gameinfo_placeholder_gameplays">Videos</string>
+    <string name="cerca_gioco">Cerca Gioco</string>
     <string name="title_activity_sign_in">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -17,13 +27,13 @@
     <string name="title_activity_login">Sign in</string>
     <string name="action_undo">Annulla</string>
 
-    <!-- profile fragment-->
+    <!-- profile fragment -->
     <string name="txt_usernameTitle">USERNAME</string>
     <string name="txt_emailTitle">EMAIL</string>
     <string name="txt_platformTitle">PLATFORM</string>
     <string name="txt_piattaforme_di_interesseTitle">Piattaforme di interesse</string>
 
-    <!-- discover fragment-->
+    <!-- discover fragment -->
     <string name="news_img_description">Immagine della notizia</string>
     <string name="fav_tag_removed">Tag rimosso dai preferiti</string>
     <string name="fav_tag_added">Tag aggiunto ai preferiti</string>

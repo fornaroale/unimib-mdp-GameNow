@@ -2,9 +2,25 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
+import android.view.Menu;
+import android.view.MenuItem;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
+import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
+
+import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -18,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import it.unimib.disco.gruppoade.gamenow.R;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,13 +46,22 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
-    private static final String TAG = "FireBase UI Activity";
+    private static final String TAG = "MainActivity";
+
+    // Create an English-Italian translator:
+    public FirebaseTranslatorOptions options =
+            new FirebaseTranslatorOptions.Builder()
+                    .setSourceLanguage(FirebaseTranslateLanguage.EN)
+                    .setTargetLanguage(FirebaseTranslateLanguage.IT)
+                    .build();
+    public FirebaseTranslator enItTranslator =
+            FirebaseNaturalLanguage.getInstance().getTranslator(options);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        final BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -45,13 +71,59 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
+                .requireWifi()
+                .build();
+        enItTranslator.downloadModelIfNeeded(conditions)
+                .addOnSuccessListener(
+                        new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void v) {
+
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                e.printStackTrace();
+                                Snackbar.make(navView, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();                            }
+                        });
+
         // Retrieve user from current instance
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null)
             createSignInIntent();
     }
 
-    public void createSignInIntent() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.serach_menu, menu);
+        final MenuItem item = menu.findItem(R.id.serch_action);
+        final SearchView searchView = (SearchView) item.getActionView();
+        searchView.setQueryHint("Cerca Gioco...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                intent.putExtra("query", query);
+                startActivity(intent);
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+                item.collapseActionView();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+  
+  public void createSignInIntent() {
         Log.d(TAG , "Dentro: createSignInIntent()");
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
