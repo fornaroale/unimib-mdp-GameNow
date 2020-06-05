@@ -2,6 +2,8 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 
 import android.content.Intent;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +14,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,12 +42,13 @@ public class GameInfoActivity extends AppCompatActivity {
 
     private TextView gameDescription, gameTitle, gameStoryline;
     private TextView  gameDescriptionText, gameStorylineText, gameVideoText;
-    private ImageView gameCover;
+    private ImageView gameCover, gameScreen;
     private RecyclerView platformsRecycler;
     private RecyclerView videosRecycler;
     private View descDivider, storylineDivider, videoDivider;
     private RatingBar ratingBar;
     private ProgressBar descSpinner, storylineSpinner;
+    private Palette.Swatch vibrantSwatch, mutedSwatch;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
@@ -64,6 +69,7 @@ public class GameInfoActivity extends AppCompatActivity {
         descSpinner = findViewById(R.id.gameinfo_desc_spinner);
 
         gameTitle = findViewById(R.id.gameinfo_title);
+        gameScreen = findViewById(R.id.gameinfo_screen);
 
         ratingBar = findViewById(R.id.gameinfo_rating);
 
@@ -78,6 +84,8 @@ public class GameInfoActivity extends AppCompatActivity {
         gameCover = findViewById(R.id.gameinfo_cover);
         platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = findViewById(R.id.gameplays_recyclerview);
+
+
 
         Intent intent = getIntent();
         if( intent.getStringExtra("desc") != null) {
@@ -129,6 +137,20 @@ public class GameInfoActivity extends AppCompatActivity {
             gameCover.setImageResource(R.drawable.cover_na);
 
         }
+
+        Bitmap bitmap = ((BitmapDrawable) gameCover.getDrawable()).getBitmap();
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(@Nullable Palette palette) {
+                vibrantSwatch = palette.getVibrantSwatch();
+                mutedSwatch = palette.getMutedSwatch();
+                if(vibrantSwatch != null)
+                    gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
+                else
+                    gameScreen.setBackgroundColor(mutedSwatch.getRgb());
+
+            }
+        });
 
         initPlatformsRecyclerView();
         if(mVideos == null){
