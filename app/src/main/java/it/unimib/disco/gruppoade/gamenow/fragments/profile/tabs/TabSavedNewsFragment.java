@@ -10,24 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
-import org.threeten.bp.LocalDateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
 import it.unimib.disco.gruppoade.gamenow.adapters.SavedNewsListAdapter;
-import it.unimib.disco.gruppoade.gamenow.fragments.discover.DiscoverFragment;
-import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
-import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -37,7 +31,6 @@ public class TabSavedNewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private SavedNewsListAdapter adapter;
-    private List<PieceOfNews> mSavedNewsModelList;
 
     // Firebase
     private User user;
@@ -81,8 +74,6 @@ public class TabSavedNewsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-//            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-//
             adapter.notifyDataSetChanged();
         }
 

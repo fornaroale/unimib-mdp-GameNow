@@ -36,14 +36,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
-import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
@@ -65,7 +64,6 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
 
             // JSON to PieceOfNews Array
             List<PieceOfNews> locallySavedNews = new ArrayList<>();
@@ -103,8 +101,6 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-
             adapter.notifyDataSetChanged();
         }
 

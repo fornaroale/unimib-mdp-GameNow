@@ -51,7 +51,7 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
     }
 
     @Override
-    public void onBindViewHolder(final SavedNewsModelViewHolder holder, final int position) {
+    public void onBindViewHolder(final SavedNewsModelViewHolder holder, int position) {
         final PieceOfNews savedNewsModel = mSavedNewsModels.get(position);
 
         // Immagine
@@ -82,7 +82,7 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
         holder.savedNewsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(savedNewsModel.getLink()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mSavedNewsModels.get(holder.getAdapterPosition()).getLink()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
             }
@@ -94,11 +94,14 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
         favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d(TAG, "Tolgo notizia: " + mSavedNewsModels.get(holder.getAdapterPosition()).getTitle() + "   - Pos. adapater: " + holder.getAdapterPosition());
-                user.removeSavedPieceOfNews(mSavedNewsModels, savedNewsModel);
-                Snackbar snackbar = Snackbar.make(buttonView, "News rimossa da 'News salvate'", Snackbar.LENGTH_LONG);
-                snackbar.show();
-                // TODO: + fare UNDO
+                user.removeSavedPieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()));
+                Snackbar.make(holder.savedNewsView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.action_undo, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                user.savePieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()));
+                            }})
+                        .show();
             }
         });
 
