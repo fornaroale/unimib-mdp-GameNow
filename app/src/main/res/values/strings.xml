@@ -46,4 +46,9 @@
     <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
     <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
     <string name="username">username not found</string>
+    <string name="btn_switch">switch</string>
+    <string name="btn_pc">pc</string>
+    <string name="btn_xbox">xbox</string>
+    <string name="btn_ps4">PS4</string>
+    <string name="btn_all">all</string>
 </resources>
