@@ -45,7 +45,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
-import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class TabSettingsFragment extends Fragment {
