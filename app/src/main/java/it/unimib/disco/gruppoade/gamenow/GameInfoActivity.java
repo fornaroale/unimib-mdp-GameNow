@@ -51,20 +51,10 @@ public class GameInfoActivity extends AppCompatActivity {
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
 
-    private MainActivity translator = new MainActivity();
+    private FirebaseTranslator translator = new MainActivity().enItTranslator;
 
     private  String url;
     private Gson gson = new Gson();
-
-    // Create an English-Italian translator:
-    /*private FirebaseTranslatorOptions options =
-            new FirebaseTranslatorOptions.Builder()
-                    .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                    .setTargetLanguage(FirebaseTranslateLanguage.IT)
-                    .build();
-    private FirebaseTranslator enItTranslator =
-            FirebaseNaturalLanguage.getInstance().getTranslator(options);*/
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,30 +81,6 @@ public class GameInfoActivity extends AppCompatActivity {
         gameCover = findViewById(R.id.gameinfo_cover);
         platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = findViewById(R.id.gameplays_recyclerview);
-
-
-       /* FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
-                .requireWifi()
-                .build();
-        enItTranslator.downloadModelIfNeeded(conditions)
-                .addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void v) {
-                                Log.d(TAG, "onSuccess: Downloaded Model");
-                                descSpinner.setVisibility(View.GONE);
-                                storylineSpinner.setVisibility(View.GONE);
-
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                            }
-                        });*/
-
 
         Intent intent = getIntent();
         if( intent.getStringExtra("desc") != null) {
@@ -199,7 +165,7 @@ public class GameInfoActivity extends AppCompatActivity {
     }
 
     private void translate (String textToTranslate, final TextView v, final View spinner){
-        translator.enItTranslator.translate(textToTranslate)
+        translator.translate(textToTranslate)
                 .addOnSuccessListener(
                         new OnSuccessListener<String>() {
                             @Override
