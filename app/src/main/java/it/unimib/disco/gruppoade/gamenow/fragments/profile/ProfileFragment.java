@@ -33,19 +33,23 @@ public class ProfileFragment extends Fragment {
         profileViewModel =
                 ViewModelProviders.of(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        return root;
+    }
 
-        viewPager = root.findViewById(R.id.viewPager);
-        tabLayout = root.findViewById(R.id.tabLayout);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewPager = view.findViewById(R.id.viewPager);
+        tabLayout = view.findViewById(R.id.tabLayout);
 
         viewPager.setOffscreenPageLimit(3);
 
         setPagerAdapter();
         setTabLayout();
         setRetainInstance(true);
-        
-        setHasOptionsMenu(true);
 
-        return root;
+        setHasOptionsMenu(true);
     }
 
     private void setPagerAdapter() {

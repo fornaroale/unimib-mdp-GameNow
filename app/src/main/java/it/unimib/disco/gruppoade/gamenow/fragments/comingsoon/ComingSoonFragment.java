@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,13 +50,18 @@ public class ComingSoonFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_comingsoon, container, false);
+        return root;
+    }
 
-        allBtn = root.findViewById(R.id.button_all);
-        ps4Btn = root.findViewById(R.id.button_ps4);
-        xboxBtn = root.findViewById(R.id.button_xbox);
-        pcBtn = root.findViewById(R.id.button_pc);
-        switchBtn = root.findViewById(R.id.button_switch);
-        recyclerView = root.findViewById(R.id.recyclerview);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        allBtn = view.findViewById(R.id.button_all);
+        ps4Btn = view.findViewById(R.id.button_ps4);
+        xboxBtn = view.findViewById(R.id.button_xbox);
+        pcBtn = view.findViewById(R.id.button_pc);
+        switchBtn = view.findViewById(R.id.button_switch);
+        recyclerView = view.findViewById(R.id.recyclerview);
 
         //Buttons Listeners
         ps4Btn.setOnClickListener(new View.OnClickListener() {
@@ -98,12 +104,12 @@ public class ComingSoonFragment extends Fragment {
             }
         });
 
-        lottieAnimationView = root.findViewById(R.id.animation_view);
+        lottieAnimationView = view.findViewById(R.id.animation_view);
 
         resetBody();
         retrieveJson(body);
-        return root;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void chooseButton(int buttonId){
 
@@ -193,7 +199,6 @@ public class ComingSoonFragment extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     mGames.clear();
                     mGames = response.body();
-                    Collections.sort(mGames, new GameComparator());
                     Log.d(TAG, "onResponse: Response Body = "+ gson.toJson(mGames));
                     initRecyclerView();
                     lottieAnimationView.setVisibility(GONE);
@@ -217,12 +222,4 @@ public class ComingSoonFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    public class GameComparator implements Comparator<Game> {
-
-        @Override
-        public int compare(Game o1, Game o2) {
-            return o1.getDate().compareTo(o2.getDate());
-        }
-
-    }
 }

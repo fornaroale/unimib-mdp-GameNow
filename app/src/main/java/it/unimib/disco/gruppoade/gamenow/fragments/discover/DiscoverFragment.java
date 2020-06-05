@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -118,14 +119,20 @@ public class DiscoverFragment extends Fragment {
 
         root = inflater.inflate(R.layout.fragment_discover, container, false);
 
+
+
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         // Swipe per Refresh Manuale
         mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
-
-        return root;
     }
 
     private List<NewsProvider> readProvidersCsv() {
