@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow;
+package it.unimib.disco.gruppoade.gamenow.activities;
 
 import android.content.Intent;
 
@@ -19,20 +19,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
-import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
-import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
-import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
 import it.unimib.disco.gruppoade.gamenow.models.Video;
-import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.ConsoleAdapter;
-import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.VideoAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.ConsoleAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.VideoAdapter;
 
 
 public class GameInfoActivity extends AppCompatActivity {

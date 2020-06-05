@@ -1,6 +1,5 @@
-package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,23 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -33,8 +24,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.MainActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import retrofit2.Call;
 import retrofit2.Callback;

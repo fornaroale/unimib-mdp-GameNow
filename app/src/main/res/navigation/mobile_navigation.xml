@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/navigation_feed"
-        android:name="it.unimib.disco.gruppoade.gamenow.ui.feed.FeedFragment"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.feed.FeedFragment"
         tools:layout="@layout/fragment_feed" />
 
     <fragment
         android:id="@+id/navigation_discover"
-        android:name="it.unimib.disco.gruppoade.gamenow.ui.discover.DiscoverFragment"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.discover.DiscoverFragment"
         tools:layout="@layout/fragment_discover" />
 
     <fragment
         android:id="@+id/navigation_comingsoon"
-        android:name="it.unimib.disco.gruppoade.gamenow.ui.comingsoon.ComingSoonFragment"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.ComingSoonFragment"
         tools:layout="@layout/fragment_comingsoon" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="it.unimib.disco.gruppoade.gamenow.ui.profile.ProfileFragment"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.profile.ProfileFragment"
         tools:layout="@layout/fragment_profile" />
 </navigation>
