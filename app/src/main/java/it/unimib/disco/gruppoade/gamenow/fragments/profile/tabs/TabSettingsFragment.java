@@ -104,10 +104,6 @@ public class TabSettingsFragment extends Fragment {
 
         delteaccount.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
                 // cancello user da db
                 FbDatabase.getUserReference().removeValue();
 
@@ -128,21 +124,16 @@ public class TabSettingsFragment extends Fragment {
 
                         // cancella le credenziale e chiude l'activity
                         deleteAccountCredential();
-
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         // Uh-oh, an error occurred!
                         Log.d(TAG, "Errore nel cancellamento foto");
-
                     }
                 });
 
-                // effettuo il logout
-                firebaseAuth.signOut();
                 delteaccount.setClickable(false);
-
             }
         });
 
@@ -165,7 +156,23 @@ public class TabSettingsFragment extends Fragment {
         return view;
     }
 
+    private void deleteAccountCredential(){
+        // cancello account
+        FbDatabase.getUser().delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+
+                            // chiudo l'activity una volta cancellato l'account
+                            getActivity().finish();
+                        }
+                    }
+                });
+    }
     // usato per leggere dati dal DB
+
     ValueEventListener postListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -350,23 +357,6 @@ public class TabSettingsFragment extends Fragment {
 
         // ritorno la chip creata
         return chip;
-    }
-
-    private void deleteAccountCredential(){
-        // cancello account
-        FbDatabase.getUser().delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
-
-                            // chiudo l'activity una volta cancellato l'account
-                            getActivity().finish();
-
-                        }
-                    }
-                });
     }
 
 
