@@ -33,8 +33,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.FeedModelViewHolder> {
 
-    private final static String TAG_BUG =  "TAG_BUG: DISC-NEWS: ";
-
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
     private User user;
@@ -55,16 +53,23 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
     @Override
     public void onBindViewHolder(final FeedModelViewHolder holder, int position) {
-        final PieceOfNews rssFeedModel = mRssFeedModels.get(position);
+        PieceOfNews rssFeedModel = mRssFeedModels.get(position);
 
         // Immagine
         String imgUrl = rssFeedModel.getImage();
-        if (!imgUrl.isEmpty())
+        if(imgUrl.isEmpty()) {
+            Picasso.get()
+                    .load(R.drawable.image_not_available)
+                    .fit()
+                    .centerCrop()
+                    .into((ImageView) holder.rssFeedView.findViewById(R.id.newsImage));
+        } else {
             Picasso.get()
                     .load(imgUrl)
                     .fit()
                     .centerCrop()
                     .into((ImageView) holder.rssFeedView.findViewById(R.id.newsImage));
+        }
 
         // Titolo
         ((TextView) holder.rssFeedView.findViewById(R.id.newsTitle)).setText(rssFeedModel.getTitle());
@@ -93,7 +98,6 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
         // ToggleButton bookmark
         final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
-        Log.d(TAG_BUG, "CONTROLLO NOTIZIA: " + rssFeedModel.getTitle());
         if(user.checkSavedPieceOfNews(locallySavedNews, rssFeedModel)) {
             favButton.setChecked(true);
         } else {
@@ -104,7 +108,6 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(favButton.isPressed()) {
                     if (isChecked) {
-                        Log.d(TAG_BUG, "PRIMA SAVE: " + locallySavedNews.size());
                         if(user.savePieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()))) {
                             Snackbar.make(buttonView, R.string.fav_news_added, Snackbar.LENGTH_LONG)
                                     .setAction(R.string.action_undo, new View.OnClickListener() {
@@ -115,9 +118,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                                     })
                                     .show();
                         }
-                        Log.d(TAG_BUG, "DOPO SAVE: " + locallySavedNews.size());
                     } else {
-                        Log.d(TAG_BUG, "PRIMA DELETE: " + locallySavedNews.size());
                         if(user.removeSavedPieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()))) {
                             Snackbar.make(buttonView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
                                     .setAction(R.string.action_undo, new View.OnClickListener() {
@@ -128,7 +129,6 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                                     })
                                     .show();
                         }
-                        Log.d(TAG_BUG, "DOPO DELETE: " + locallySavedNews.size());
                     }
                 }
             }

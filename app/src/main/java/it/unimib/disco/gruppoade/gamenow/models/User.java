@@ -14,8 +14,6 @@ import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 @IgnoreExtraProperties
 public class User {
 
-    private final static String TAG = "TAG_BUG : User :";
-
     private String username;
     private String email;
     private List<String> tags;
@@ -59,12 +57,8 @@ public class User {
             locallySavedNews.add(pon);
             Gson gson = new Gson();
             String jsonPieceOfNews = gson.toJson(pon);
-            Log.d(TAG, "JSONPIECEOFNEWS TO SAVE: " + jsonPieceOfNews);
             List<String> userDbNews = getNews();
-            Log.d(TAG, "USERDBNEWS PRESE DA DB_UTENTE: " +  userDbNews.size() + " TO STRING:" + userDbNews.toString());
             userDbNews.add(jsonPieceOfNews);
-            Log.d(TAG, "USERDBNEWS DA CARICARE SU DB: " + userDbNews.size() + " TO STRING:" +  userDbNews.toString());
-            Log.d(TAG, "APPENA PRIMA DI CARICAM. SU DB: " + locallySavedNews.size());
             FbDatabase.FbDatabase().getUserReference().child("news").setValue(userDbNews);
             return true;
         } else {
@@ -77,7 +71,6 @@ public class User {
             locallySavedNews.remove(pon);
             List<String> newsToUpload = new ArrayList<>();
             Gson gson = new Gson();
-            Log.d(TAG, "PRIMA REM PON: " + locallySavedNews.size());
 
             for (PieceOfNews oldPon : locallySavedNews) {
                 newsToUpload.add(gson.toJson(oldPon));
@@ -98,12 +91,9 @@ public class User {
         Boolean savedNews = false;
         for(PieceOfNews pon : locallySavedNews){
             if(pon.equals(PON)) {
-                Log.d(TAG, " CheckSavedPON NOTIZIA GIÀ PRESENTE - Titolo: " + PON.getTitle());
                 savedNews = true;
             }
         }
-        if(!savedNews)
-            Log.d(TAG, " CheckSavedPON NOTIZIA NON PRESENTE - Titolo: " + PON.getTitle());
         return savedNews;
     }
 
