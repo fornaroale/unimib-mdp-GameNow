@@ -31,6 +31,7 @@ public class TabSavedNewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private SavedNewsListAdapter adapter;
+    private List<PieceOfNews> locallySavedNews;
 
     // Firebase
     private User user;
@@ -40,11 +41,11 @@ public class TabSavedNewsFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             // JSON to PieceOfNews Array
-            List<PieceOfNews> locallySavedNews = new ArrayList<>();
+            locallySavedNews.clear();
             Gson gson = new Gson();
-//            for(String jsonPON : user.getNews()){
-//                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-//            }
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {
@@ -74,6 +75,14 @@ public class TabSavedNewsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
+
+            // JSON to PieceOfNews Array
+            locallySavedNews.clear();
+            Gson gson = new Gson();
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
             adapter.notifyDataSetChanged();
         }
 
@@ -97,6 +106,9 @@ public class TabSavedNewsFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
+
+        // Inizializzo lista news mantenute salvate localmente
+        locallySavedNews = new ArrayList<>();
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);

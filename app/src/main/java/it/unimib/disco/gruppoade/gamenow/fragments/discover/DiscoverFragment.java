@@ -57,6 +57,7 @@ public class DiscoverFragment extends Fragment {
     private List<PieceOfNews> mFeedModelList;
     private DiscoverViewModel discoverViewModel;
     private RssFeedListAdapter adapter;
+    private List<PieceOfNews> locallySavedNews;
 
     // Firebase
     private User user;
@@ -66,7 +67,7 @@ public class DiscoverFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             // JSON to PieceOfNews Array
-            List<PieceOfNews> locallySavedNews = new ArrayList<>();
+            locallySavedNews.clear();
             Gson gson = new Gson();
             for(String jsonPON : user.getNews()){
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
@@ -101,6 +102,16 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
+
+            // JSON to PieceOfNews Array
+            Log.d(TAG, "Dimensione array locale news PRIMA clear: " + locallySavedNews.size());
+            locallySavedNews.clear();
+            Log.d(TAG, "Dimensione array locale news DOPO clear: " + locallySavedNews.size());
+            Gson gson = new Gson();
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
             adapter.notifyDataSetChanged();
         }
 
@@ -120,6 +131,9 @@ public class DiscoverFragment extends Fragment {
 
         // Swipe per Refresh Manuale
         mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
+
+        // Inizializzo lista news mantenute salvate localmente
+        locallySavedNews = new ArrayList<>();
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);

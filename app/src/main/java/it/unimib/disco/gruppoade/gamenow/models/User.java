@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
+import android.util.Log;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.gson.Gson;
@@ -11,6 +13,8 @@ import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 
 @IgnoreExtraProperties
 public class User {
+
+    private final static String TAG = "TAG_BUG : User :";
 
     private String username;
     private String email;
@@ -50,35 +54,56 @@ public class User {
         return email;
     }
 
-    public void savePieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
-        if(!locallySavedNews.contains(pon)) {
+    public boolean savePieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
+        if(!checkSavedPieceOfNews(locallySavedNews, pon)) {
             locallySavedNews.add(pon);
             Gson gson = new Gson();
             String jsonPieceOfNews = gson.toJson(pon);
+            Log.d(TAG, "JSONPIECEOFNEWS TO SAVE: " + jsonPieceOfNews);
             List<String> userDbNews = getNews();
+            Log.d(TAG, "USERDBNEWS PRESE DA DB_UTENTE: " +  userDbNews.size() + " TO STRING:" + userDbNews.toString());
             userDbNews.add(jsonPieceOfNews);
+            Log.d(TAG, "USERDBNEWS DA CARICARE SU DB: " + userDbNews.size() + " TO STRING:" +  userDbNews.toString());
+            Log.d(TAG, "APPENA PRIMA DI CARICAM. SU DB: " + locallySavedNews.size());
             FbDatabase.FbDatabase().getUserReference().child("news").setValue(userDbNews);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public void removeSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
-        if(locallySavedNews.contains(pon)) {
+    public boolean removeSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
+        if(checkSavedPieceOfNews(locallySavedNews, pon)) {
             locallySavedNews.remove(pon);
             List<String> newsToUpload = new ArrayList<>();
             Gson gson = new Gson();
+            Log.d(TAG, "PRIMA REM PON: " + locallySavedNews.size());
+
             for (PieceOfNews oldPon : locallySavedNews) {
                 newsToUpload.add(gson.toJson(oldPon));
             }
+
+            // Per sicurezza, tolgo anche dall'array locale:
+            news.remove(gson.toJson(pon));
+
             FbDatabase.FbDatabase().getUserReference().child("news").setValue(newsToUpload);
+
+            return true;
+        } else {
+            return false;
         }
     }
 
     public boolean checkSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews PON){
         Boolean savedNews = false;
         for(PieceOfNews pon : locallySavedNews){
-            if(pon.equals(PON))
+            if(pon.equals(PON)) {
+                Log.d(TAG, " CheckSavedPON NOTIZIA GIÀ PRESENTE - Titolo: " + PON.getTitle());
                 savedNews = true;
+            }
         }
+        if(!savedNews)
+            Log.d(TAG, " CheckSavedPON NOTIZIA NON PRESENTE - Titolo: " + PON.getTitle());
         return savedNews;
     }
 
