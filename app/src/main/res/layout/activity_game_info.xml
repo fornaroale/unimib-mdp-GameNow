@@ -25,10 +25,11 @@
                 android:layout_height="200dp">
 
                 <ImageView
+                    android:id="@+id/gameinfo_screen"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@color/colorPrimary" />
+                    android:background="@color/colorPrimary" />
 
                 <ImageView
                     android:layout_width="match_parent"
