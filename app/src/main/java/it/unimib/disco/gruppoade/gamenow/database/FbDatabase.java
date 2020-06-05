@@ -1,6 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.database;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -38,4 +39,6 @@ public final class FbDatabase {
     public static FirebaseDatabase getDatabase() {
         return database;
     }
+
+    public static FirebaseUser getUser() {return FirebaseAuth.getInstance().getCurrentUser();}
 }

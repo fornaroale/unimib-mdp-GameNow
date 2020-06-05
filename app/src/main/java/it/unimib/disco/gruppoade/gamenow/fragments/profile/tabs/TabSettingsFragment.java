@@ -14,10 +14,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
@@ -42,43 +45,37 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
+import it.unimib.disco.gruppoade.gamenow.models.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class TabSettingsFragment extends Fragment {
-
-    // firebase
-
-    // firebase auth
-    FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseAuth firebaseAuth;
-
-    // firebase db
-    FirebaseDatabase database;
-    DatabaseReference myRef;
 
     private static final String TAG = "TabSettingFragment";
 
     private static final int PICK_IMAGE_REQUEST = 234;
 
 
+    // firebase auth
+    FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth firebaseAuth;
+
     // recupero l'utente con i relativi dati dal db
-    private User theUser = null;
+    private User theUser;
 
 
     // inserisco variabili
-    private List<String> tags = null;
+    private List<String> tags;
 
     // oggetti activity
     private ChipGroup chipGroup;
     private TextView username;
     private TextView email;
-    private TextView platform;
+    private CardView logout;
+    private CardView delteaccount;
     private CircleImageView profilePicture;
-    private String userUid;
     private File localFile;
 
     public TabSettingsFragment() {
-        //theUser = getUserOnDb();
     }
 
     @Override
@@ -94,9 +91,11 @@ public class TabSettingsFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
         profilePicture = view.findViewById(R.id.profile_image);
-        Button button = view.findViewById(R.id.button_signOut);
+        logout = view.findViewById(R.id.cv_logout);
+        delteaccount = view.findViewById(R.id.cv_deleteaccount);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        // assegno l'azione di SignOut alla Cardview
+        logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signOut();
@@ -104,10 +103,55 @@ public class TabSettingsFragment extends Fragment {
             }
         });
 
+        delteaccount.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+                // cancello user da db
+                FbDatabase.getUserReference().removeValue();
+
+                // cancello la foto profilo
+                // creo un riferimento allo storage
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                // costruisco iol nome del file con lo user Uid
+                StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
+
+
+
+                // Delete the file
+                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // File deleted successfully
+                        Log.d(TAG, "Foto cancellata");
+
+                        // cancella le credenziale e chiude l'activity
+                        deleteAccountCredential();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Uh-oh, an error occurred!
+                        Log.d(TAG, "Errore nel cancellamento foto");
+
+                    }
+                });
+
+                // effettuo il logout
+                firebaseAuth.signOut();
+                delteaccount.setClickable(false);
+
+            }
+        });
+
+        // assegno una azione alla foto profilo
         profilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d(TAG, "Foto profilo cliccata");
             }
         });
 
@@ -115,10 +159,9 @@ public class TabSettingsFragment extends Fragment {
 
         // recupero l'user
         Log.d(TAG, "Dentro getUserOnDb()");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FbDatabase.getUserReference().addListenerForSingleValueEvent(postListener);
 
-        userUid = user.getUid();
+        // collego un listener all'user su Db
+        FbDatabase.getUserReference().addListenerForSingleValueEvent(postListener);
 
         return view;
     }
@@ -128,8 +171,8 @@ public class TabSettingsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             theUser = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + theUser.toString());
 
+            // quando leggo l'user da db, chiamo il motodo che inizializza l'activity
             setUp(getActivity().findViewById(android.R.id.content).getRootView());
         }
 
@@ -139,23 +182,6 @@ public class TabSettingsFragment extends Fragment {
             Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
         }
     };
-
-    private String findPlatform(List<String> tags) {
-        String tempPlatform = "";
-
-        for (String temp : tags) {
-            temp.toLowerCase();
-
-            if (temp.equalsIgnoreCase("xbox") ||
-                    temp.equalsIgnoreCase("pc") ||
-                    temp.equalsIgnoreCase("ps4") ||
-                    temp.equalsIgnoreCase("switcg")) {
-                tempPlatform += temp + " ";
-            }
-        }
-
-        return tempPlatform;
-    }
 
     private void sortedAdd(String element, List<String> tags) {
         // aggiungo l'elemento all'oggetto user
@@ -175,9 +201,8 @@ public class TabSettingsFragment extends Fragment {
 
     private void setUp(View view) {
 
-        //theUser = getUserOnDb();
 
-        // se non è vuoto
+        // se ho uno user
         if(theUser != null){
 
             Log.d(TAG, "theUser: " + theUser.toString());
@@ -186,22 +211,14 @@ public class TabSettingsFragment extends Fragment {
             chipGroup = view.findViewById(R.id.chipGroup);
             username = view.findViewById((R.id.Username));
             email = view.findViewById((R.id.Email));
-            platform = view.findViewById((R.id.Platform));
 
             // setto i valori
             username.setText(theUser.getUsername());
             email.setText(theUser.getEmail());
 
-            // setto piattaforma usando un metodo
-            // che analizza i tag e trova le piattaforme
-            if (theUser.getTags() != null)
-                platform.setText(findPlatform(theUser.getTags()));
-
             // riempio i tag
             tags = theUser.getTags();
         }
-
-
 
         // popolo con i tags
         if (tags != null)
@@ -214,18 +231,18 @@ public class TabSettingsFragment extends Fragment {
                     // creo la chip
                     Chip chip = creaChip(text, view);
 
-                    // aggiunta chips alla chipsvgroup
+                    // aggiunta chips alla chips group
                     chipGroup.addView(chip);
                     chipGroup.setVisibility(view.getVisibility());
                 }
             }
 
 
-        // load prfile picture
-        // Create a storage reference
+
+        // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        // build th ename file with the Iid
-        StorageReference imagesRef = storage.getReference().child("images").child(userUid + ".jpg");
+        // costruisco iol nome del file con lo user Uid
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
 
         localFile = null;
 
@@ -235,6 +252,7 @@ public class TabSettingsFragment extends Fragment {
             e.printStackTrace();
         }
 
+        // se riesco a scaricare la foto profilo la mostro con picasso
         imagesRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -256,23 +274,6 @@ public class TabSettingsFragment extends Fragment {
 
 
     }
-
-//    User getUserOnDb(){
-//        User tempUser = null;
-//
-//        Log.d(TAG, "Dentro getUserOnDb()");
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//
-//        String usernameDb = user.getUid();
-//        myRef = database.getReference(usernameDb);
-//        myRef.addListenerForSingleValueEvent(postListener);
-//
-//
-//
-//
-//
-//        return tempUser;
-//    }
 
     private Chip creaChip(String text, View tempView) {
 
@@ -329,14 +330,8 @@ public class TabSettingsFragment extends Fragment {
                         // salvo l'user su db
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                        String usernameDb = user.getUid();
-
-                        myRef = database.getReference(usernameDb);
-
-                        // aggiorno le piattaforme
-                        platform.setText(findPlatform(theUser.getTags()));
                         // salvo user su DB
-                        myRef.setValue(theUser);
+                        FbDatabase.getUserReference().setValue(theUser);
 
                     }
                 });
@@ -344,26 +339,35 @@ public class TabSettingsFragment extends Fragment {
                 mySnackbar.show();
 
                 Log.d(TAG, "Inizio aggiornamento");
-                // salvo l'user su db
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                String usernameDb = user.getUid();
-
-                Log.d(TAG, "UsernameDb: " + usernameDb);
-                myRef = database.getReference(usernameDb);
+               // myRef = database.getReference(usernameDb);
                 Log.d(TAG, "Tag theUser: " + theUser.getTags());
                 Log.d(TAG, "New theUser: " + theUser.toString());
 
-                // aggiorno le piattaforme
-                platform.setText(findPlatform(theUser.getTags()));
-
                 // salvo user su DB
-                myRef.setValue(theUser);
+                FbDatabase.getUserReference().setValue(theUser);
             }
         });
 
         // ritorno la chip creata
         return chip;
+    }
+
+    private void deleteAccountCredential(){
+        // cancello account
+        FbDatabase.getUser().delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+
+                            // chiudo l'activity una volta cancellato l'account
+                            getActivity().finish();
+
+                        }
+                    }
+                });
     }
 
 

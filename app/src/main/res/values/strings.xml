@@ -21,7 +21,7 @@
     <string name="txt_usernameTitle">USERNAME</string>
     <string name="txt_emailTitle">EMAIL</string>
     <string name="txt_platformTitle">PLATFORM</string>
-    <string name="txt_topics_di_interesseTitle">Topics di interesse</string>
+    <string name="txt_piattaforme_di_interesseTitle">Piattaforme di interesse</string>
 
     <!-- discover fragment-->
     <string name="news_img_description">Immagine della notizia</string>
@@ -35,4 +35,5 @@
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
     <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
     <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
+    <string name="username">username not found</string>
 </resources>
