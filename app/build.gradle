@@ -35,29 +35,60 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.2.2'
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    //Design
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    //Retrofit
+
+    // Design
+    // implementation 'com.google.android.material:material:1.0.0'
+    // implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    // Dipendenze per fragment profilo
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
+    implementation 'com.android.support:design:29.0.0'
+
+    // SwipeRefresh
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
+    // Picasso per rendering immagini
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // JSoup per analisi codice html/js
+    implementation 'org.jsoup:jsoup:1.13.1'
+
+    // Gestione date con classe time.date (supporto per v. Android < O)
+    implementation 'org.threeten:threetenbp:1.4.4'
+    
+    // Firebase DB
+    implementation 'com.google.firebase:firebase-database:19.3.0'
+
+    // Firebase Auth Libraries
+    implementation 'com.google.firebase:firebase-auth:19.3.1'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
+    
+    // Firebase UI
+    implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
+    
+    // Firebase Translate
+    implementation 'com.google.firebase:firebase-ml-natural-language:22.0.0'
+    implementation 'com.google.firebase:firebase-ml-natural-language-translate-model:20.0.8'
+    
+    // Firebase Storage
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    
+    // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.2.0'
-    //Date/Time
-    implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
-    //Picasso for image url
-    implementation 'com.squareup.picasso:picasso:2.5.0'
-    //Lottie
+    
+    // Lottie
     implementation 'com.airbnb.android:lottie:3.4.0'
-
-    //Youtube Player Soffritti
+    
+    // Youtube Player Soffritti
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 
-    //Firebase
-    implementation 'com.google.firebase:firebase-analytics:17.4.2'
-    implementation 'com.google.firebase:firebase-ml-natural-language:22.0.0'
-    implementation 'com.google.firebase:firebase-ml-natural-language-translate-model:20.0.8'
+    // Json parser for Firebase
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

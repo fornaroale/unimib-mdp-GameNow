@@ -1,11 +1,12 @@
 <resources>
+    <!-- generali -->
     <string name="app_name">GameNow</string>
     <string name="title_feed">Feed</string>
     <string name="title_discover">Discover</string>
     <string name="title_comingsoon">Coming Soon</string>
     <string name="title_profile">Profile</string>
 
-    //Edo
+    <!-- coming soon fragment-->
     <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
     <string name="incoming_card_available_for">Disponibile per</string>
     <string name="console_name_placeholder">switch</string>
@@ -13,9 +14,36 @@
     <string name="gameinfo_placeholder_description">Descrizione</string>
     <string name="gameinfo_placeholder_storyline">Storyline</string>
     <string name="gameinfo_placeholder_gameplays">Videos</string>
-
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="cerca_gioco">Cerca Gioco</string>
+    <string name="title_activity_sign_in">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="action_undo">Annulla</string>
+
+    <!-- profile fragment -->
+    <string name="txt_usernameTitle">USERNAME</string>
+    <string name="txt_emailTitle">EMAIL</string>
+    <string name="txt_platformTitle">PLATFORM</string>
+    <string name="txt_piattaforme_di_interesseTitle">Piattaforme di interesse</string>
+
+    <!-- discover fragment -->
+    <string name="news_img_description">Immagine della notizia</string>
+    <string name="fav_tag_removed">Tag rimosso dai preferiti</string>
+    <string name="fav_tag_added">Tag aggiunto ai preferiti</string>
+    <string name="fav_news_removed">News rimossa dalle salvate</string>
+    <string name="fav_news_added">News salvata</string>
+    <string name="no_data_available">Hai selezionato tutti i tag disponibili, oppure non sono disponibili informazioni per i tag che non segui. Ti invitiamo ad utilizzare il Feed.</string>
+
+    <!-- saved news tab -->
+    <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
+    <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
+    <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
+    <string name="username">username not found</string>
 </resources>
