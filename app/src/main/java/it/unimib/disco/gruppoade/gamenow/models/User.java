@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
+
 @IgnoreExtraProperties
 public class User {
 
@@ -69,6 +71,15 @@ public class User {
             }
             FbDatabase.FbDatabase().getUserReference().child("news").setValue(newsToUpload);
         }
+    }
+
+    public boolean checkSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews PON){
+        Boolean savedNews = false;
+        for(PieceOfNews pon : locallySavedNews){
+            if(pon.equals(PON))
+                savedNews = true;
+        }
+        return savedNews;
     }
 
     public void addTag(String tag) {

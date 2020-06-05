@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.models;
+package it.unimib.disco.gruppoade.gamenow.database;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -13,14 +13,13 @@ public final class FbDatabase {
 
     private FbDatabase() {
         database = FirebaseDatabase.getInstance();
-        String uid = null;
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             setUserReference();
         }
     }
 
     public static FbDatabase FbDatabase() {
-        // To ensure only one instance is created
+        // Per esser sicuri che venga creata una sola istanza:
         synchronized (FbDatabase.class) {
             if (db_instance == null)
                 db_instance = new FbDatabase();
