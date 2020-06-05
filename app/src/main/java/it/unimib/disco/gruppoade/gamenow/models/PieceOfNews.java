@@ -63,4 +63,3 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
         return o.getGuid().equals(this.getGuid());
     }
 }
-
