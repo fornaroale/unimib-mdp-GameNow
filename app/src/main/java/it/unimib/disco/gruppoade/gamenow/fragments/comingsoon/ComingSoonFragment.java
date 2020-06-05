@@ -226,8 +226,3 @@ public class ComingSoonFragment extends Fragment {
 
     }
 }
-
-
-
-
-
