@@ -42,9 +42,9 @@ public class TabSavedNewsFragment extends Fragment {
             // JSON to PieceOfNews Array
             List<PieceOfNews> locallySavedNews = new ArrayList<>();
             Gson gson = new Gson();
-            for(String jsonPON : user.getNews()){
-                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-            }
+//            for(String jsonPON : user.getNews()){
+//                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+//            }
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {
