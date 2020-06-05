@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -12,8 +11,6 @@ import androidx.lifecycle.ViewModelProviders;
 import it.unimib.disco.gruppoade.gamenow.R;
 
 public class FeedFragment extends Fragment {
-
-
 
     private FeedViewModel feedViewModel;
 

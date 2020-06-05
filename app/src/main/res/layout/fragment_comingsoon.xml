@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.comingsoon.ComingSoonFragment">
@@ -10,14 +11,82 @@
         android:id="@+id/text_comingsoon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center_horizontal" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+        <Button
+            android:id="@+id/button_all"
+            android:textSize="10sp"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:text="all"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorAccent"/>
+        <Button
+            android:id="@+id/button_ps4"
+            android:layout_marginLeft="4dp"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:text="PS4"
+            android:textSize="10sp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/buttonBackground"/>
+        <Button
+            android:id="@+id/button_xbox"
+            android:layout_marginLeft="4dp"
+            android:layout_width="65dp"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"
+            android:text="xbox"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/buttonBackground"/>
+        <Button
+            android:id="@+id/button_pc"
+            android:layout_marginLeft="4dp"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="pc"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/buttonBackground"/>
+
+        <Button
+            android:id="@+id/button_switch"
+            android:layout_marginLeft="4dp"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="switch"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/buttonBackground"/>
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="8dp"
+        android:background="@color/blackStroke"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="55dp"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            app:lottie_rawRes="@raw/pacman_loading"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true" />
+    </FrameLayout>
+
+</LinearLayout>

@@ -115,6 +115,7 @@ public class DiscoverFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
+
         root = inflater.inflate(R.layout.fragment_discover, container, false);
 
         // Swipe per Refresh Manuale

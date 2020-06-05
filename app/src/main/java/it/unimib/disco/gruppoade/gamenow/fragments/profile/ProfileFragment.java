@@ -2,11 +2,17 @@ package it.unimib.disco.gruppoade.gamenow.fragments.profile;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
@@ -28,6 +34,8 @@ public class ProfileFragment extends Fragment {
                 ViewModelProviders.of(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        final TextView textView = root.findViewById(R.id.text_profile);
+
         viewPager = root.findViewById(R.id.viewPager);
         tabLayout = root.findViewById(R.id.tabLayout);
 
@@ -36,6 +44,8 @@ public class ProfileFragment extends Fragment {
         setPagerAdapter();
         setTabLayout();
         setRetainInstance(true);
+        
+        setHasOptionsMenu(true);
 
         return root;
     }
@@ -51,5 +61,11 @@ public class ProfileFragment extends Fragment {
         tabLayout.getTabAt(0).setText("News");
         tabLayout.getTabAt(1).setText("Giochi");
         tabLayout.getTabAt(2).setText("Utente");
+    }
+    
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
     }
 }
