@@ -5,16 +5,16 @@
     tools:context=".activities.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.comingsoon.ComingSoonFragment">
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/text_comingsoon"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp">
+
         <Button
             android:id="@+id/button_all"
             android:textSize="10sp"
@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:text="all"
             android:textColor="@color/white"
-            android:backgroundTint="@color/colorAccent"/>
+            android:backgroundTint="@color/colorAccent" />
+
         <Button
             android:id="@+id/button_ps4"
             android:layout_marginLeft="4dp"
@@ -31,7 +32,8 @@
             android:text="PS4"
             android:textSize="10sp"
             android:textColor="@color/white"
-            android:backgroundTint="@color/buttonBackground"/>
+            android:backgroundTint="@color/buttonBackground" />
+
         <Button
             android:id="@+id/button_xbox"
             android:layout_marginLeft="4dp"
@@ -40,7 +42,8 @@
             android:layout_height="wrap_content"
             android:text="xbox"
             android:textColor="@color/white"
-            android:backgroundTint="@color/buttonBackground"/>
+            android:backgroundTint="@color/buttonBackground" />
+
         <Button
             android:id="@+id/button_pc"
             android:layout_marginLeft="4dp"
@@ -49,7 +52,7 @@
             android:textSize="10sp"
             android:text="pc"
             android:textColor="@color/white"
-            android:backgroundTint="@color/buttonBackground"/>
+            android:backgroundTint="@color/buttonBackground" />
 
         <Button
             android:id="@+id/button_switch"
@@ -62,6 +65,7 @@
             android:backgroundTint="@color/buttonBackground"/>
 
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -76,8 +80,7 @@
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="55dp"
-            />
+            android:layout_marginBottom="55dp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view"
@@ -87,6 +90,7 @@
             app:lottie_rawRes="@raw/pacman_loading"
             app:lottie_loop="true"
             app:lottie_autoPlay="true" />
+
     </FrameLayout>
 
 </LinearLayout>

@@ -121,7 +121,10 @@ public class GameInfoActivity extends AppCompatActivity {
         url = intent.getStringExtra("imageUrl");
         Log.d(TAG, "onCreate: URl + " + url);
         if (!url.isEmpty()) {
-            Picasso.with(this).load(url).placeholder(R.drawable.img).into(gameCover);
+            Picasso.get()
+                    .load(url)
+                    .placeholder(R.drawable.img)
+                    .into(gameCover);
         } else {
             gameCover.setImageResource(R.drawable.cover_na);
 
