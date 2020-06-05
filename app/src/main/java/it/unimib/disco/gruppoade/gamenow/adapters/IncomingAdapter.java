@@ -69,7 +69,9 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
         if(game.getCover() != null) {
             coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
             url = "https:" + coverBig;
-            Picasso.with(mContext).load(url).into(holder.imageView);
+            Picasso.get()
+                    .load(url)
+                    .into(holder.imageView);
 
         } else {
             holder.imageView.setImageResource(R.drawable.cover_na);
