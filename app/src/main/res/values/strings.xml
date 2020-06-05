@@ -25,7 +25,11 @@
 
     <!-- discover fragment-->
     <string name="news_img_description">Immagine della notizia</string>
-    <string name="no_data_available">Hai selezionato tutti i tag disponibili, oppure non sono disponibili informazioni per i tag non selezionati. Ti invitiamo ad utilizzare il Feed.</string>
+    <string name="fav_tag_removed">Tag rimosso dai preferiti</string>
+    <string name="fav_tag_added">Tag aggiunto ai preferiti</string>
+    <string name="fav_news_removed">News rimossa dalle salvate</string>
+    <string name="fav_news_added">News salvata</string>
+    <string name="no_data_available">Hai selezionato tutti i tag disponibili, oppure non sono disponibili informazioni per i tag che non segui. Ti invitiamo ad utilizzare il Feed.</string>
 
     <!-- saved news tab -->
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
