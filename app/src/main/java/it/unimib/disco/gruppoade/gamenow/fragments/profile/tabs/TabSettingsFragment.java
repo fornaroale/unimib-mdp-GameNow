@@ -40,6 +40,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -115,14 +116,9 @@ public class TabSettingsFragment extends Fragment {
         // recupero l'user
         Log.d(TAG, "Dentro getUserOnDb()");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String usernameDb = user.getUid();
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference(usernameDb);
-        myRef.addListenerForSingleValueEvent(postListener);
+        FbDatabase.getUserReference().addListenerForSingleValueEvent(postListener);
 
         userUid = user.getUid();
-
-
 
         return view;
     }
