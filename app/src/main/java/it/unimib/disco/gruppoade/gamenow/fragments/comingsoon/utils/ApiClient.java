@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -10,7 +10,7 @@ public class ApiClient {
     private static Retrofit retrofit;
 
     private ApiClient(){
-        retrofit = new Retrofit.Builder().baseUrl(new Constants().BASE_URL)
+        retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.adapters;
 
 import android.content.Context;
 import android.util.Log;

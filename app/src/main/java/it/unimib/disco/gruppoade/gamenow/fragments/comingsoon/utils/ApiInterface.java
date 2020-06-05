@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils;
 
 import java.util.List;
 
@@ -20,6 +20,4 @@ public interface ApiInterface {
     Call<List<Game>> getGames(
             @Body String body
     );
-
-
 }

@@ -1,4 +1,4 @@
-package it.unimib.disco.gruppoade.gamenow;
+package it.unimib.disco.gruppoade.gamenow.activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,9 +19,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
-import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.ApiClient;
-import it.unimib.disco.gruppoade.gamenow.ui.comingsoon.IncomingAdapter;
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
+import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -1,8 +1,7 @@
-package it.unimib.disco.gruppoade.gamenow.ui.comingsoon;
+package it.unimib.disco.gruppoade.gamenow.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.GameInfoActivity;
+import it.unimib.disco.gruppoade.gamenow.activities.GameInfoActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
