@@ -2,6 +2,7 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,9 +10,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.Gravity;
+import android.view.View;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -65,24 +68,27 @@ public class SearchActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(Call<List<Game>> call, Response<List<Game>> response) {
-                if(response.isSuccessful() && response.body() != null){
+                if(response.body() != null){
                     mGames.clear();
                     mGames = response.body();
-                    for(Game game : mGames){
-                        Log.d(TAG, "onResponse: Release date = " + game.getDate() + " Name  = " + game.getName() + "\n");
-                    }
-                    Log.d(TAG, "onResponse: Games size " + mGames.size());
-
-
                     initRecyclerView();
                     lottieAnimationView.setVisibility(GONE);
                 }
+                if (response.body().isEmpty()){
+                    CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator);
+                    Snackbar snackbar =  Snackbar.make( coordinatorLayout, "Nessun gioco trovato...", Snackbar.LENGTH_LONG);
+                    View view = snackbar.getView();
+                    CoordinatorLayout.LayoutParams params=(CoordinatorLayout.LayoutParams)view.getLayoutParams();
+                    params.gravity = Gravity.TOP;
+                    view.setLayoutParams(params);
+                    snackbar.show();
+                   }
+
             }
 
             @Override
             public void onFailure(Call<List<Game>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                Log.d(TAG, "onFailure: Failed " + t.getLocalizedMessage());
+                Snackbar.make(recyclerView.getRootView(), t.getMessage(), Snackbar.LENGTH_LONG);
             }
         });
 
@@ -93,7 +99,7 @@ public class SearchActivity extends AppCompatActivity {
                         @Override
                         public int compare(Game o1, Game o2) {
                             if(o1.getDate() != null && o2.getDate() != null)
-                                return Integer.valueOf(o2.getDate()).compareTo(Integer.valueOf(o1.getDate()));
+                                return Long.valueOf(o2.getDate()).compareTo(Long.valueOf(o1.getDate()));
                             if(o1.getDate() == null && o2.getDate() == null)
                                 return 0;
                             if(o1.getDate() == null)
