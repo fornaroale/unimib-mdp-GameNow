@@ -7,6 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".activities.SearchActivity">
 
+<!--    Per mostrare la snackbar al centro dello schermo-->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/coordinator"
+        android:layout_gravity="center_vertical"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_recyclerview"
         android:layout_width="match_parent"
