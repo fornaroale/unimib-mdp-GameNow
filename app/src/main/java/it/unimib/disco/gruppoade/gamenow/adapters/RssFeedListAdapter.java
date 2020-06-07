@@ -36,13 +36,11 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
     private User user;
-    private List<PieceOfNews> locallySavedNews;
 
-    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user, List<PieceOfNews> locallySavedNews) {
+    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
         this.mContext = (FragmentActivity) mContext;
         this.mRssFeedModels = rssFeedModels;
         this.user = user;
-        this.locallySavedNews = locallySavedNews;
     }
 
     @Override
@@ -98,7 +96,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
         // ToggleButton bookmark
         final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
-        if(user.checkSavedPieceOfNews(locallySavedNews, rssFeedModel)) {
+        if(user.checkSavedPieceOfNews(rssFeedModel)) {
             favButton.setChecked(true);
         } else {
             favButton.setChecked(false);
@@ -107,24 +105,25 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(favButton.isPressed()) {
+                    final PieceOfNews ponClicked = mRssFeedModels.get(holder.getAdapterPosition());
                     if (isChecked) {
-                        if(user.savePieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()))) {
+                        if(user.savePieceOfNews(ponClicked)) {
                             Snackbar.make(buttonView, R.string.fav_news_added, Snackbar.LENGTH_LONG)
                                     .setAction(R.string.action_undo, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            user.removeSavedPieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
+                                            user.removeSavedPieceOfNews(ponClicked);
                                         }
                                     })
                                     .show();
                         }
                     } else {
-                        if(user.removeSavedPieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()))) {
+                        if(user.removeSavedPieceOfNews(ponClicked)) {
                             Snackbar.make(buttonView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
                                     .setAction(R.string.action_undo, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            user.savePieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
+                                            user.savePieceOfNews(ponClicked);
                                         }
                                     })
                                     .show();

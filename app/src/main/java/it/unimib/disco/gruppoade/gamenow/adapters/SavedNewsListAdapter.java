@@ -100,12 +100,13 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(favButton.isPressed()) {
-                    if (user.removeSavedPieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()))) {
+                    final PieceOfNews ponToRemove = mSavedNewsModels.get(holder.getAdapterPosition());
+                    if (user.removeSavedPieceOfNews(ponToRemove)) {
                         Snackbar.make(holder.savedNewsView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        user.savePieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()));
+                                        user.savePieceOfNews(ponToRemove);
                                     }
                                 })
                                 .show();

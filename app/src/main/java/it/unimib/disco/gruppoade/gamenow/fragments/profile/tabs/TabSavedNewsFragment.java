@@ -47,6 +47,8 @@ public class TabSavedNewsFragment extends Fragment {
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
 
+            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
+
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {
                 getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
@@ -61,7 +63,6 @@ public class TabSavedNewsFragment extends Fragment {
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
             mRecyclerView.setAdapter(adapter);
         }
 
@@ -83,7 +84,14 @@ public class TabSavedNewsFragment extends Fragment {
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
 
-            adapter.notifyDataSetChanged();
+            if (locallySavedNews.isEmpty()) {
+                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+            } else {
+                getActivity().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+                getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
+            }
         }
 
         @Override
