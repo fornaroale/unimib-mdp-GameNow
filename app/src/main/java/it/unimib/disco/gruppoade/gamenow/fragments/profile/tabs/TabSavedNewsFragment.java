@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 public class TabSavedNewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
+    private TextView mEmptyTV;
     private SavedNewsListAdapter adapter;
     private List<PieceOfNews> locallySavedNews;
 
@@ -50,15 +52,14 @@ public class TabSavedNewsFragment extends Fragment {
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {
-                getView().findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                getView().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setVisibility(View.VISIBLE);
             } else {
-                getView().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
-                getView().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
             }
 
             // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mRecyclerView = getActivity().findViewById(R.id.recyclerView);
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
@@ -80,6 +81,15 @@ public class TabSavedNewsFragment extends Fragment {
             Gson gson = new Gson();
             for(String jsonPON : user.getNews()){
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
+            // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+            if (locallySavedNews.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
             }
 
             adapter.notifyDataSetChanged();
@@ -113,6 +123,10 @@ public class TabSavedNewsFragment extends Fragment {
 
         // Inizializzo lista news mantenute salvate localmente
         locallySavedNews = new ArrayList<>();
+
+        // Binding elementi visuali
+        mRecyclerView = getView().findViewById(R.id.tabsavednews_recycler_view);
+        mEmptyTV = getView().findViewById(R.id.tabsavednews_empty_view);
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);

@@ -1,7 +1,5 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
-import android.util.Log;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.gson.Gson;
@@ -68,7 +66,22 @@ public class User {
     public boolean removeSavedPieceOfNews(PieceOfNews pon){
         if(checkSavedPieceOfNews(pon)) {
             Gson gson = new Gson();
-            news.remove(gson.toJson(pon));
+
+            // Siccome i tag locali potrebbero differire da quelli remoti,
+            // li rendo uguali (così che l'eliminazione possa avvenire
+            // senza errori)
+            for(int i = 0; i < news.size(); i++) {
+                // Per evitare uno spreco computazionale, eseguo comparazione news
+                // solo se i primi 50 caratteri sono uguali
+                if (news.get(i).substring(0, 49).equals(gson.toJson(pon).substring(0, 49))) {
+                    // Se i primi 50 caratteri sono uguali, confronto il GUID
+                    PieceOfNews cloudPonObj = gson.fromJson(news.get(i), PieceOfNews.class);
+                    if (cloudPonObj.equals(pon)) {
+                        news.remove(i);  // Se il GUID coincide, rimuovo la news
+                    }
+                }
+            }
+
             FbDatabase.FbDatabase().getUserReference().child("news").setValue(news);
             return true;
         } else {
@@ -76,17 +89,23 @@ public class User {
         }
     }
 
-    public boolean checkSavedPieceOfNews(PieceOfNews pon){
-        Boolean savedNews = false;
+    public boolean checkSavedPieceOfNews(PieceOfNews localPon){
         Gson gson = new Gson();
+        String ponToString = gson.toJson(localPon);
 
-        for(String ponUser : news){
-            if(ponUser.equals(gson.toJson(pon))) {
-                savedNews = true;
+        for(String cloudPon : news){
+            // Per evitare uno spreco computazionale, eseguo comparazione news
+            // solo se i primi 50 caratteri sono uguali
+            if(cloudPon.substring(0,49).equals(ponToString.substring(0,49))) {
+                // Se i primi 50 caratteri sono uguali, confronto il GUID
+                PieceOfNews cloudPonObj = gson.fromJson(cloudPon, PieceOfNews.class);
+                if(cloudPonObj.equals(localPon)) {
+                    return true;
+                }
             }
         }
 
-        return savedNews;
+        return false;
     }
 
     public void addTag(String tag) {
