@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -89,6 +90,29 @@ public class TabSettingsFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
 
+
+        return view;
+    }
+
+    private void deleteAccountCredential(){
+        // cancello account
+        FbDatabase.getUser().delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+
+                            // chiudo l'activity una volta cancellato l'account
+                            getActivity().finish();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         profilePicture = view.findViewById(R.id.profile_image);
         logout = view.findViewById(R.id.cv_logout);
         delteaccount = view.findViewById(R.id.cv_deleteaccount);
@@ -153,24 +177,8 @@ public class TabSettingsFragment extends Fragment {
         // collego un listener all'user su Db
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListener);
 
-        return view;
     }
 
-    private void deleteAccountCredential(){
-        // cancello account
-        FbDatabase.getUser().delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
-
-                            // chiudo l'activity una volta cancellato l'account
-                            getActivity().finish();
-                        }
-                    }
-                });
-    }
     // usato per leggere dati dal DB
 
     ValueEventListener postListener = new ValueEventListener() {

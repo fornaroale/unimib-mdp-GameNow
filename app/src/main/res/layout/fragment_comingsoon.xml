@@ -8,7 +8,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
@@ -17,50 +17,60 @@
 
         <Button
             android:id="@+id/button_all"
+            android:layout_gravity="center_vertical"
             android:textSize="10sp"
-            android:layout_width="65dp"
+            android:layout_width="0dp"
+            android:layout_weight=".20"
             android:layout_height="wrap_content"
-            android:text="all"
+            android:text="@string/btn_all"
             android:textColor="@color/white"
             android:backgroundTint="@color/colorAccent" />
 
         <Button
             android:id="@+id/button_ps4"
-            android:layout_marginLeft="4dp"
-            android:layout_width="65dp"
+            android:layout_marginStart="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".20"
             android:layout_height="wrap_content"
-            android:text="PS4"
+            android:text="@string/btn_ps4"
             android:textSize="10sp"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground" />
 
         <Button
             android:id="@+id/button_xbox"
-            android:layout_marginLeft="4dp"
-            android:layout_width="65dp"
+            android:layout_marginStart="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".20"
             android:textSize="10sp"
             android:layout_height="wrap_content"
-            android:text="xbox"
+            android:text="@string/btn_xbox"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground" />
 
         <Button
             android:id="@+id/button_pc"
-            android:layout_marginLeft="4dp"
-            android:layout_width="65dp"
+            android:layout_marginStart="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".20"
             android:layout_height="wrap_content"
             android:textSize="10sp"
-            android:text="pc"
+            android:text="@string/btn_pc"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground" />
 
         <Button
             android:id="@+id/button_switch"
-            android:layout_marginLeft="4dp"
-            android:layout_width="65dp"
+            android:layout_marginStart="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".20"
             android:layout_height="wrap_content"
             android:textSize="10sp"
-            android:text="switch"
+            android:text="@string/btn_switch"
             android:textColor="@color/white"
             android:backgroundTint="@color/buttonBackground"/>
 
@@ -80,7 +90,7 @@
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="55dp" />
+            android:layout_marginBottom="56dp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view"
