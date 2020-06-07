@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,7 +50,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class DiscoverFragment extends Fragment {
 
-    private View root;
     private static final String TAG = "DiscoverFragment";
 
     private RecyclerView mRecyclerView;
@@ -74,7 +74,7 @@ public class DiscoverFragment extends Fragment {
             }
 
             // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mRecyclerView = root.findViewById(R.id.recyclerView);
+            mRecyclerView = getView().findViewById(R.id.recyclerView);
             mFeedModelList = new ArrayList<>();
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
@@ -125,10 +125,16 @@ public class DiscoverFragment extends Fragment {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
 
-        root = inflater.inflate(R.layout.fragment_discover, container, false);
+        View view = inflater.inflate(R.layout.fragment_discover, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Swipe per Refresh Manuale
-        mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
+        mSwipeLayout = view.getRootView().findViewById(R.id.swipeRefresh);
 
         // Inizializzo lista news mantenute salvate localmente
         locallySavedNews = new ArrayList<>();
@@ -136,8 +142,6 @@ public class DiscoverFragment extends Fragment {
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
-
-        return root;
     }
 
     private List<NewsProvider> readProvidersCsv() {
@@ -291,11 +295,11 @@ public class DiscoverFragment extends Fragment {
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
-                    root.findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                    root.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    getView().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                    getView().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                 } else {
-                    root.findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
-                    root.findViewById(R.id.empty_view).setVisibility(View.GONE);
+                    getView().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+                    getView().findViewById(R.id.empty_view).setVisibility(View.GONE);
                 }
 
                 // Riempo la RecyclerView con le schede notizie
