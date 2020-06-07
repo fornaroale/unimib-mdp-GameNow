@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.ComingSoonFragment;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiInterface;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
@@ -39,7 +40,7 @@ public class GameRepository {
         return instance;
     }
 
-    public void getGames(MutableLiveData<List<Game>> games, String body){
+    public void getGames(final MutableLiveData<List<Game>> games, String body){
         final Gson gson = new Gson();
 
         Call<List<Game>> call = apiInterface.getGames(body);
@@ -50,8 +51,6 @@ public class GameRepository {
                     games.postValue(null);
                     games.postValue(response.body());
                     Log.d(TAG, "onResponse: Response Body = "+ gson.toJson(games));
-                    //initRecyclerView();
-                    //lottieAnimationView.setVisibility(GONE);
                 }
             }
 

@@ -2,12 +2,13 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.GameInfoActivity"
+    tools:context=".fragments.comingsoon.GameInfoFragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
     android:id="@+id/gameinfo_parent"
-    android:scrollbars="none">
+    android:scrollbars="none"
+    android:layout_marginBottom="56dp">
 
     <LinearLayout
         android:layout_width="match_parent"

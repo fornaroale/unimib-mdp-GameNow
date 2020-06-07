@@ -1,25 +1,26 @@
-package it.unimib.disco.gruppoade.gamenow.activities;
+package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
 import android.content.Intent;
-
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,15 +31,17 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.models.Platform;
-import it.unimib.disco.gruppoade.gamenow.models.Video;
+import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
 import it.unimib.disco.gruppoade.gamenow.adapters.ConsoleAdapter;
 import it.unimib.disco.gruppoade.gamenow.adapters.VideoAdapter;
+import it.unimib.disco.gruppoade.gamenow.models.Game;
+import it.unimib.disco.gruppoade.gamenow.models.Platform;
+import it.unimib.disco.gruppoade.gamenow.models.Video;
 
 
-public class GameInfoActivity extends AppCompatActivity {
+public class GameInfoFragment extends Fragment {
 
-    private static final String TAG = "GameInfoActivity";
+    private static final String TAG = "GameInfoFragment";
 
     private TextView gameDescription, gameTitle, gameStoryline;
     private TextView  gameDescriptionText, gameStorylineText, gameVideoText;
@@ -55,41 +58,50 @@ public class GameInfoActivity extends AppCompatActivity {
 
     private FirebaseTranslator translator = new MainActivity().enItTranslator;
 
-    private  String url;
     private Gson gson = new Gson();
 
+
+    public static GameInfoFragment newInstance(String param1, String param2) {
+        GameInfoFragment fragment = new GameInfoFragment();
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_info);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_game_info, container, false);
+    }
 
-        gameDescription = findViewById(R.id.gameinfo_desc);
-        gameDescriptionText = findViewById(R.id.gameinfo_desc_text);
-        descDivider = findViewById(R.id.gameinfo_desc_divider);
-        descSpinner = findViewById(R.id.gameinfo_desc_spinner);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Game game = GameInfoFragmentArgs.fromBundle(getArguments()).getGame();
 
-        gameTitle = findViewById(R.id.gameinfo_title);
-        gameScreen = findViewById(R.id.gameinfo_screen);
+        gameDescription = view.findViewById(R.id.gameinfo_desc);
+        gameDescriptionText = view.findViewById(R.id.gameinfo_desc_text);
+        descDivider = view.findViewById(R.id.gameinfo_desc_divider);
+        descSpinner = view.findViewById(R.id.gameinfo_desc_spinner);
 
-        ratingBar = findViewById(R.id.gameinfo_rating);
+        gameTitle = view.findViewById(R.id.gameinfo_title);
+        gameScreen = view.findViewById(R.id.gameinfo_screen);
 
-        storylineDivider = findViewById(R.id.gameinfo_storyline_divider);
-        gameStoryline = findViewById(R.id.gameinfo_storyline);
-        gameStorylineText = findViewById(R.id.gameinfo_storyline_text);
-        storylineSpinner = findViewById(R.id.gameinfo_storyline_spinner);
+        ratingBar = view.findViewById(R.id.gameinfo_rating);
 
-        gameVideoText = findViewById(R.id.gameinfo_gameplays);
-        videoDivider = findViewById(R.id.gameinfo_gameplays_divider);
+        storylineDivider = view.findViewById(R.id.gameinfo_storyline_divider);
+        gameStoryline = view.findViewById(R.id.gameinfo_storyline);
+        gameStorylineText = view.findViewById(R.id.gameinfo_storyline_text);
+        storylineSpinner = view.findViewById(R.id.gameinfo_storyline_spinner);
 
-        gameCover = findViewById(R.id.gameinfo_cover);
-        platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
-        videosRecycler = findViewById(R.id.gameplays_recyclerview);
+        gameVideoText = view.findViewById(R.id.gameinfo_gameplays);
+        videoDivider = view.findViewById(R.id.gameinfo_gameplays_divider);
 
+        gameCover = view.findViewById(R.id.gameinfo_cover);
+        platformsRecycler = view.findViewById(R.id.gameinfo_recyclerview);
+        videosRecycler = view.findViewById(R.id.gameplays_recyclerview);
 
-
-        Intent intent = getIntent();
-        if( intent.getStringExtra("desc") != null) {
-            final String desc = intent.getStringExtra("desc");
+        if( game.getSummary() != null) {
+            final String desc = game.getSummary();
             translate(desc, gameDescriptionText,descSpinner);
 
         } else {
@@ -98,14 +110,14 @@ public class GameInfoActivity extends AppCompatActivity {
             gameDescriptionText.setVisibility(View.GONE);
             descSpinner.setVisibility(View.GONE);
         }
-        if(intent.getDoubleExtra("rating", 0) == 0){
+        if(game.getRating() == 0){
             ratingBar.setVisibility(View.GONE);
         } else {
-            ratingBar.setRating(setRating(intent.getDoubleExtra("rating", 0)));
+            ratingBar.setRating(setRating(game.getRating()));
         }
 
-        gameTitle.setText(intent.getStringExtra("title"));
-        String storyline = intent.getStringExtra("storyline");
+        gameTitle.setText(game.getName());
+        String storyline = game.getStoryline();
         Log.d(TAG, "onCreate: Storyline = " + storyline);
         if( storyline != null) {
             translate(storyline, gameStorylineText, storylineSpinner);
@@ -117,16 +129,21 @@ public class GameInfoActivity extends AppCompatActivity {
             storylineSpinner.setVisibility(View.GONE);
         }
 
-        mPlatforms = intent.getParcelableArrayListExtra("platforms");
-        mVideos = intent.getParcelableArrayListExtra("videos");
+        mPlatforms = game.getPlatforms();
+        mVideos = game.getVideos();
 
         if (mVideos == null){
             gameVideoText.setVisibility(View.GONE);
             videoDivider.setVisibility(View.GONE);
         }
         Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
+        String coverBig, url;
 
-        url = intent.getStringExtra("imageUrl");
+        if(game.getCover() != null){
+             coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
+             url = "https:" + coverBig;}
+        else
+            url = "";
         Log.d(TAG, "onCreate: URl + " + url);
         if (!url.isEmpty()) {
             Picasso.get()
@@ -163,12 +180,12 @@ public class GameInfoActivity extends AppCompatActivity {
 
     private void initPlatformsRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
-        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,this);
+        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,getActivity());
         platformsRecycler.setAdapter(consoleAdapter);
         if(mPlatforms.size() > 4)
-            platformsRecycler.setLayoutManager(new GridLayoutManager(this, 4));
+            platformsRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         else
-            platformsRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+            platformsRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
 
     }
 
@@ -176,7 +193,7 @@ public class GameInfoActivity extends AppCompatActivity {
         Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
         VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle());
         videosRecycler.setAdapter(videoAdapter);
-        videosRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+        videosRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
 
     }
 

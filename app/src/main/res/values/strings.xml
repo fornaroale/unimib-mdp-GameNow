@@ -51,4 +51,6 @@
     <string name="btn_xbox">xbox</string>
     <string name="btn_ps4">PS4</string>
     <string name="btn_all">all</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

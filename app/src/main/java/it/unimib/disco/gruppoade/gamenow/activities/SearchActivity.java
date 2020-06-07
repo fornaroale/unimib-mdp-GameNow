@@ -107,7 +107,12 @@ public class SearchActivity extends AppCompatActivity {
                             return -1;
                         }
                     });
-        IncomingAdapter incomingAdapter = new IncomingAdapter(getApplicationContext(), mGames);
+        IncomingAdapter incomingAdapter = new IncomingAdapter(getApplicationContext(), mGames, new IncomingAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Game game) {
+
+            }
+        });
         recyclerView.setAdapter(incomingAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }

@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,6 +48,7 @@ public class ComingSoonFragment extends Fragment {
     private List<Game> mGames = new ArrayList<>();
     private Button allBtn, ps4Btn, xboxBtn, pcBtn, switchBtn;
     private RecyclerView recyclerView;
+    private Observer<List<Game>> observer;
 
     final Gson gson = new Gson();
 
@@ -66,12 +68,23 @@ public class ComingSoonFragment extends Fragment {
         switchBtn = view.findViewById(R.id.button_switch);
         recyclerView = view.findViewById(R.id.recyclerview);
 
-        comingSoonViewModel = new ViewModelProvider(this).get(ComingSoonViewModel.class);
+        comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
 
-        final Observer<List<Game>> observer = new Observer<List<Game>>() {
+        observer = new Observer<List<Game>>() {
             @Override
             public void onChanged(List<Game> games) {
-                Log.d(TAG, "onChanged: From Observer = " + gson.toJson(games));
+                Log.d(TAG, "initRecyclerView: Init RecyclerView");
+
+                IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), games, new IncomingAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Game game) {
+                        ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
+                        Navigation.findNavController(view).navigate(action);
+                    }
+                });
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                recyclerView.setAdapter(incomingAdapter);
+                lottieAnimationView.setVisibility(GONE);
             }
         };
 
@@ -121,8 +134,6 @@ public class ComingSoonFragment extends Fragment {
 
         lottieAnimationView = view.findViewById(R.id.animation_view);
 
-        resetBody();
-        retrieveJson(body);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -232,9 +243,15 @@ public class ComingSoonFragment extends Fragment {
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init RecyclerView");
 
-        IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), mGames);
-        recyclerView.setAdapter(incomingAdapter);
+        IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), mGames, new IncomingAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Game game) {
+                Log.d(TAG, "onItemClick: Elemento premuto = " + game.getName());
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(incomingAdapter);
+
     }
 
 }
