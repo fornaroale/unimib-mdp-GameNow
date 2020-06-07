@@ -29,6 +29,7 @@ import java.util.List;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.Constants;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,7 +75,6 @@ public class ComingSoonFragment extends Fragment {
             @Override
             public void onChanged(List<Game> games) {
                 Log.d(TAG, "initRecyclerView: Init RecyclerView");
-
                 IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), games, new IncomingAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Game game) {
@@ -151,7 +151,7 @@ public class ComingSoonFragment extends Fragment {
 
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {48}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit 100;\n";
+                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
                 retrieveJson(body);
                 break;
 
@@ -165,7 +165,7 @@ public class ComingSoonFragment extends Fragment {
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit 100;\n";
+                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
                 retrieveJson(body);
                 break;
             case R.id.button_pc:
@@ -178,7 +178,7 @@ public class ComingSoonFragment extends Fragment {
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit 100;\n";
+                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
                 retrieveJson(body);
                 break;
             case R.id.button_switch:
@@ -191,7 +191,7 @@ public class ComingSoonFragment extends Fragment {
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit 100;\n";
+                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
                 retrieveJson(body);
                 break;
             default:
@@ -211,7 +211,7 @@ public class ComingSoonFragment extends Fragment {
     private void resetBody(){
         body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                 "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n" +
-                "sort first_release_date asc;\nlimit 100;\n";
+                "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
     }
 
     private void retrieveJson(String body){
@@ -246,7 +246,8 @@ public class ComingSoonFragment extends Fragment {
         IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), mGames, new IncomingAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Game game) {
-                Log.d(TAG, "onItemClick: Elemento premuto = " + game.getName());
+                ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
+                Navigation.findNavController(getView()).navigate(action);
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
