@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,7 +50,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class DiscoverFragment extends Fragment {
 
-    private View root;
     private static final String TAG = "DiscoverFragment";
 
     private RecyclerView mRecyclerView;
@@ -57,6 +57,7 @@ public class DiscoverFragment extends Fragment {
     private List<PieceOfNews> mFeedModelList;
     private DiscoverViewModel discoverViewModel;
     private RssFeedListAdapter adapter;
+    private List<PieceOfNews> locallySavedNews;
 
     // Firebase
     private User user;
@@ -66,19 +67,19 @@ public class DiscoverFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             // JSON to PieceOfNews Array
-            List<PieceOfNews> locallySavedNews = new ArrayList<>();
+            locallySavedNews.clear();
             Gson gson = new Gson();
             for(String jsonPON : user.getNews()){
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
 
             // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mRecyclerView = root.findViewById(R.id.recyclerView);
+            mRecyclerView = getView().findViewById(R.id.recyclerView);
             mFeedModelList = new ArrayList<>();
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user, locallySavedNews);
+            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());
@@ -101,6 +102,14 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
+
+            // JSON to PieceOfNews Array
+            locallySavedNews.clear();
+            Gson gson = new Gson();
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
             adapter.notifyDataSetChanged();
         }
 
@@ -116,16 +125,23 @@ public class DiscoverFragment extends Fragment {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
 
-        root = inflater.inflate(R.layout.fragment_discover, container, false);
+        View view = inflater.inflate(R.layout.fragment_discover, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Swipe per Refresh Manuale
-        mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
+        mSwipeLayout = view.getRootView().findViewById(R.id.swipeRefresh);
+
+        // Inizializzo lista news mantenute salvate localmente
+        locallySavedNews = new ArrayList<>();
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
-
-        return root;
     }
 
     private List<NewsProvider> readProvidersCsv() {
@@ -160,7 +176,6 @@ public class DiscoverFragment extends Fragment {
                 String tmpPlatform = pieceOfNews.getProvider().getPlatform();
                 if (tmpPlatform.indexOf(platform) == -1)
                     pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
-                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
                 return true;
             }
         }
@@ -174,6 +189,7 @@ public class DiscoverFragment extends Fragment {
         String description = null;
         String guid = null;
         LocalDateTime pubDate = null;
+        String contentEncoded = null;
 
         // mi trovo all'interno della notizia?
         boolean insideItem = false;
@@ -202,12 +218,25 @@ public class DiscoverFragment extends Fragment {
                         guid = xpp.nextText();
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
                         pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("content:encoded")) {
+                        contentEncoded = xpp.nextText();
                     }
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
                     if (title != null && link != null && description != null && pubDate != null) {
                         if (!checkNewsPresence(guid, provider.getPlatform())) {
-                            PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
+                            String imgUrl = extractImageUrl(description);
+                            String contentImgUrl = null;
+                            if(imgUrl.isEmpty() && contentEncoded!=null) {
+                                contentImgUrl = extractImageUrl(contentEncoded);
+                            }
+
+                            PieceOfNews item;
+                            if(contentImgUrl!=null) {
+                                item = new PieceOfNews(title, description, link, pubDate, contentImgUrl, guid, provider);
+                            } else {
+                                item = new PieceOfNews(title, description, link, pubDate, imgUrl, guid, provider);
+                            }
                             mFeedModelList.add(item);
                         }
                     }
@@ -266,17 +295,17 @@ public class DiscoverFragment extends Fragment {
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
-                    root.findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                    root.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    getView().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                    getView().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                 } else {
-                    root.findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
-                    root.findViewById(R.id.empty_view).setVisibility(View.GONE);
+                    getView().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+                    getView().findViewById(R.id.empty_view).setVisibility(View.GONE);
                 }
 
                 // Riempo la RecyclerView con le schede notizie
                 adapter.notifyDataSetChanged();
             } else {
-                Log.d("RSS URL", "Enter a valid Rss feed url");
+                Log.d("RSS URL", "NOT valid Rss feed url");
             }
         }
     }

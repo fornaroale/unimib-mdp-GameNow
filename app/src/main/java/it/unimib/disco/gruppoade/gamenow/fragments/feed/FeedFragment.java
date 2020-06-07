@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -19,7 +20,13 @@ public class FeedFragment extends Fragment {
         feedViewModel =
                 ViewModelProviders.of(this).get(FeedViewModel.class);
         View root = inflater.inflate(R.layout.fragment_feed, container, false);
-
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
     }
 }

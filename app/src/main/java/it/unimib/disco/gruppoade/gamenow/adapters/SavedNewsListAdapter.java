@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +32,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdapter.SavedNewsModelViewHolder> {
 
-    private final static String TAG = "SavedNewsListAdapter";
     private final FragmentActivity mContext;
     private List<PieceOfNews> mSavedNewsModels;
     private User user;
@@ -56,12 +54,19 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
 
         // Immagine
         String imgUrl = savedNewsModel.getImage();
-        if (!imgUrl.isEmpty())
+        if(imgUrl.isEmpty()) {
+            Picasso.get()
+                    .load(R.drawable.image_not_available)
+                    .fit()
+                    .centerCrop()
+                    .into((ImageView) holder.savedNewsView.findViewById(R.id.newsImage));
+        } else {
             Picasso.get()
                     .load(imgUrl)
                     .fit()
                     .centerCrop()
                     .into((ImageView) holder.savedNewsView.findViewById(R.id.newsImage));
+        }
 
         // Titolo
         ((TextView) holder.savedNewsView.findViewById(R.id.newsTitle)).setText(savedNewsModel.getTitle());
@@ -94,14 +99,19 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
         favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                user.removeSavedPieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()));
-                Snackbar.make(holder.savedNewsView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.action_undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                user.savePieceOfNews(mSavedNewsModels, mSavedNewsModels.get(holder.getAdapterPosition()));
-                            }})
-                        .show();
+                if(favButton.isPressed()) {
+                    final PieceOfNews ponToRemove = mSavedNewsModels.get(holder.getAdapterPosition());
+                    if (user.removeSavedPieceOfNews(ponToRemove)) {
+                        Snackbar.make(holder.savedNewsView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
+                                .setAction(R.string.action_undo, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        user.savePieceOfNews(ponToRemove);
+                                    }
+                                })
+                                .show();
+                    }
+                }
             }
         });
 
@@ -109,7 +119,7 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
         ChipGroup chipGroup = holder.savedNewsView.findViewById(R.id.newsTagsChipGroup);
         chipGroup.removeAllViews();
         for (String newsTag : savedNewsModel.getProvider().getPlatform().split(",")) {
-            final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.chip_tag_layout, chipGroup, false);
+            final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.layout_chip_tag, chipGroup, false);
             chip.setText(newsTag);
             chip.setChipIcon(null);
             chipGroup.addView(chip);

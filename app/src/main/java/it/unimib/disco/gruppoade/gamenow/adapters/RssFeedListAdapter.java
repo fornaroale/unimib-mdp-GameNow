@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,14 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -40,13 +36,11 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
     private User user;
-    private List<PieceOfNews> locallySavedNews;
 
-    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user, List<PieceOfNews> locallySavedNews) {
+    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
         this.mContext = (FragmentActivity) mContext;
         this.mRssFeedModels = rssFeedModels;
         this.user = user;
-        this.locallySavedNews = locallySavedNews;
     }
 
     @Override
@@ -57,16 +51,23 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
     @Override
     public void onBindViewHolder(final FeedModelViewHolder holder, int position) {
-        final PieceOfNews rssFeedModel = mRssFeedModels.get(position);
+        PieceOfNews rssFeedModel = mRssFeedModels.get(position);
 
         // Immagine
         String imgUrl = rssFeedModel.getImage();
-        if (!imgUrl.isEmpty())
+        if(imgUrl.isEmpty()) {
+            Picasso.get()
+                    .load(R.drawable.image_not_available)
+                    .fit()
+                    .centerCrop()
+                    .into((ImageView) holder.rssFeedView.findViewById(R.id.newsImage));
+        } else {
             Picasso.get()
                     .load(imgUrl)
                     .fit()
                     .centerCrop()
                     .into((ImageView) holder.rssFeedView.findViewById(R.id.newsImage));
+        }
 
         // Titolo
         ((TextView) holder.rssFeedView.findViewById(R.id.newsTitle)).setText(rssFeedModel.getTitle());
@@ -95,7 +96,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
 
         // ToggleButton bookmark
         final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
-        if(user.checkSavedPieceOfNews(locallySavedNews, rssFeedModel)) {
+        if(user.checkSavedPieceOfNews(rssFeedModel)) {
             favButton.setChecked(true);
         } else {
             favButton.setChecked(false);
@@ -104,24 +105,29 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(favButton.isPressed()) {
+                    final PieceOfNews ponClicked = mRssFeedModels.get(holder.getAdapterPosition());
                     if (isChecked) {
-                        user.savePieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
-                        Snackbar.make(buttonView, R.string.fav_news_added, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.action_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        user.removeSavedPieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
-                                    }})
-                                .show();
+                        if(user.savePieceOfNews(ponClicked)) {
+                            Snackbar.make(buttonView, R.string.fav_news_added, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.action_undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            user.removeSavedPieceOfNews(ponClicked);
+                                        }
+                                    })
+                                    .show();
+                        }
                     } else {
-                        user.removeSavedPieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
-                        Snackbar.make(buttonView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.action_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        user.savePieceOfNews(locallySavedNews, mRssFeedModels.get(holder.getAdapterPosition()));
-                                    }})
-                                .show();
+                        if(user.removeSavedPieceOfNews(ponClicked)) {
+                            Snackbar.make(buttonView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.action_undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            user.savePieceOfNews(ponClicked);
+                                        }
+                                    })
+                                    .show();
+                        }
                     }
                 }
             }
@@ -131,7 +137,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
         ChipGroup chipGroup = holder.rssFeedView.findViewById(R.id.newsTagsChipGroup);
         chipGroup.removeAllViews();
         for (String newsTag : rssFeedModel.getProvider().getPlatform().split(",")) {
-            final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.chip_tag_layout, chipGroup, false);
+            final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.layout_chip_tag, chipGroup, false);
             chip.setText(newsTag);
             chipGroup.addView(chip);
             setNewsTagsIcon(chip, holder);
