@@ -21,11 +21,23 @@
         android:id="@+id/navigation_comingsoon"
         android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.ComingSoonFragment"
         android:label="@string/title_comingsoon"
-        tools:layout="@layout/fragment_comingsoon" />
+        tools:layout="@layout/fragment_comingsoon" >
+        <action
+            android:id="@+id/displayGameInfo"
+            app:destination="@id/gameInfoFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="it.unimib.disco.gruppoade.gamenow.fragments.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/gameInfoFragment"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.GameInfoFragment"
+        tools:layout="@layout/fragment_game_info" >
+        <argument
+            android:name="game"
+            app:argType="it.unimib.disco.gruppoade.gamenow.models.Game" />
+    </fragment>
 </navigation>
