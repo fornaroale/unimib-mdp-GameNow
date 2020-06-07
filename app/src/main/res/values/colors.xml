@@ -13,5 +13,6 @@
     <color name="black_overlay">#66000000</color>
 
     <color name="ColorBgTag">#8000</color>
+    <color name="ColorBgProvider">#5000</color>
     <color name="ColorTextTag">#FFFF</color>
 </resources>

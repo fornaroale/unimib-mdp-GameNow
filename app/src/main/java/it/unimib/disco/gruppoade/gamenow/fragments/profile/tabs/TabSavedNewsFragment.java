@@ -28,10 +28,9 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class TabSavedNewsFragment extends Fragment {
 
-    private final String TAG = "TabSavedNews";
-
     private RecyclerView mRecyclerView;
     private SavedNewsListAdapter adapter;
+    private List<PieceOfNews> locallySavedNews;
 
     // Firebase
     private User user;
@@ -41,19 +40,21 @@ public class TabSavedNewsFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             // JSON to PieceOfNews Array
-            List<PieceOfNews> locallySavedNews = new ArrayList<>();
+            locallySavedNews.clear();
             Gson gson = new Gson();
-//            for(String jsonPON : user.getNews()){
-//                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-//            }
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
+            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {
-                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                getView().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
             } else {
-                getActivity().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                getView().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
+                getView().findViewById(R.id.empty_view).setVisibility(View.GONE);
             }
 
             // Recupero il recyclerview dal layout xml e imposto l'adapter
@@ -61,13 +62,11 @@ public class TabSavedNewsFragment extends Fragment {
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
             mRecyclerView.setAdapter(adapter);
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
             throw databaseError.toException();
         }
     };
@@ -75,12 +74,19 @@ public class TabSavedNewsFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
+
+            // JSON to PieceOfNews Array
+            locallySavedNews.clear();
+            Gson gson = new Gson();
+            for(String jsonPON : user.getNews()){
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+            }
+
             adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
             throw databaseError.toException();
         }
     };
@@ -97,17 +103,18 @@ public class TabSavedNewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        final View root = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
-
-        // Recupero dati database
-
-
-        return root;
+        View view = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Inizializzo lista news mantenute salvate localmente
+        locallySavedNews = new ArrayList<>();
+
+        // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
     }
