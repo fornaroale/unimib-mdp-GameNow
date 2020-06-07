@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
-                .requireWifi()
                 .build();
         enItTranslator.downloadModelIfNeeded(conditions)
                 .addOnSuccessListener(
