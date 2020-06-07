@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,8 +22,6 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +38,7 @@ import static android.view.View.GONE;
 public class ComingSoonFragment extends Fragment {
 
     private static final String TAG = "ComingSoonFragment";
+    private ComingSoonViewModel comingSoonViewModel;
 
     private long todayInSecs = (new Date().getTime()/1000);
 
@@ -46,6 +47,8 @@ public class ComingSoonFragment extends Fragment {
     private List<Game> mGames = new ArrayList<>();
     private Button allBtn, ps4Btn, xboxBtn, pcBtn, switchBtn;
     private RecyclerView recyclerView;
+
+    final Gson gson = new Gson();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +65,18 @@ public class ComingSoonFragment extends Fragment {
         pcBtn = view.findViewById(R.id.button_pc);
         switchBtn = view.findViewById(R.id.button_switch);
         recyclerView = view.findViewById(R.id.recyclerview);
+
+        comingSoonViewModel = new ViewModelProvider(this).get(ComingSoonViewModel.class);
+
+        final Observer<List<Game>> observer = new Observer<List<Game>>() {
+            @Override
+            public void onChanged(List<Game> games) {
+                Log.d(TAG, "onChanged: From Observer = " + gson.toJson(games));
+            }
+        };
+
+        resetBody();
+        comingSoonViewModel.getGames(body).observe(getViewLifecycleOwner(), observer);
 
         //Buttons Listeners
         ps4Btn.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +96,7 @@ public class ComingSoonFragment extends Fragment {
         });
 
         xboxBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @RequiresApi( api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 chooseButton(xboxBtn.getId());
@@ -189,7 +204,7 @@ public class ComingSoonFragment extends Fragment {
     }
 
     private void retrieveJson(String body){
-        final Gson gson = new Gson();
+
 
         Call<List<Game>> call = ApiClient.getInstance().getApi().getGames(body);
         call.enqueue(new Callback<List<Game>>() {

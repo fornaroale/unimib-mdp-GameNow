@@ -1,19 +1,27 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.List;
+
+import it.unimib.disco.gruppoade.gamenow.models.Game;
+import it.unimib.disco.gruppoade.gamenow.repositories.GameRepository;
+
 public class ComingSoonViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private static final String TAG = "ComingSoonViewModel";
 
-    public ComingSoonViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is coming-soon fragment");
-    }
+    private MutableLiveData<List<Game>> mGames;
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<Game>> getGames(String body) {
+        if(mGames == null){
+            mGames = new MutableLiveData<>();
+            GameRepository.getInstance().getGames(mGames, body);
+        }
+        return mGames;
     }
 }

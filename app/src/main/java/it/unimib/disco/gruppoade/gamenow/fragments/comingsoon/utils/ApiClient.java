@@ -10,7 +10,8 @@ public class ApiClient {
     private static Retrofit retrofit;
 
     private ApiClient(){
-        retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL)
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
