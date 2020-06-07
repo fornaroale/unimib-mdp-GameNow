@@ -79,7 +79,7 @@ public class DiscoverFragment extends Fragment {
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user, locallySavedNews);
+            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());
@@ -104,9 +104,7 @@ public class DiscoverFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             // JSON to PieceOfNews Array
-            Log.d(TAG, "Dimensione array locale news PRIMA clear: " + locallySavedNews.size());
             locallySavedNews.clear();
-            Log.d(TAG, "Dimensione array locale news DOPO clear: " + locallySavedNews.size());
             Gson gson = new Gson();
             for(String jsonPON : user.getNews()){
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
@@ -174,7 +172,6 @@ public class DiscoverFragment extends Fragment {
                 String tmpPlatform = pieceOfNews.getProvider().getPlatform();
                 if (tmpPlatform.indexOf(platform) == -1)
                     pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
-                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
                 return true;
             }
         }
@@ -219,7 +216,6 @@ public class DiscoverFragment extends Fragment {
                         pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("content:encoded")) {
                         contentEncoded = xpp.nextText();
-                        Log.d(TAG, "CONTENT ENCODED : " + contentEncoded);
                     }
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
@@ -305,7 +301,7 @@ public class DiscoverFragment extends Fragment {
                 // Riempo la RecyclerView con le schede notizie
                 adapter.notifyDataSetChanged();
             } else {
-                Log.d("RSS URL", "Enter a valid Rss feed url");
+                Log.d("RSS URL", "NOT valid Rss feed url");
             }
         }
     }
