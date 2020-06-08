@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/serch_action"
+        android:id="@+id/search_action"
         android:title="@string/cerca_gioco"
         android:icon="@drawable/ic_baseline_search_24"
         app:showAsAction="always|collapseActionView"

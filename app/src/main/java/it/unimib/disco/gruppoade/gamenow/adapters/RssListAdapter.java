@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +30,13 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
-public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.FeedModelViewHolder> {
+public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedModelViewHolder> {
 
     private final FragmentActivity mContext;
     private List<PieceOfNews> mRssFeedModels;
     private User user;
 
-    public RssFeedListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
+    public RssListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
         this.mContext = (FragmentActivity) mContext;
         this.mRssFeedModels = rssFeedModels;
         this.user = user;
@@ -144,7 +143,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
             chip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String chipTagText = chip.getText().toString();
+                    final String chipTagText = chip.getText().toString();
                     if (user.getTags().contains(chipTagText)) {
                         user.removeTag(chipTagText);
                         chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
@@ -152,7 +151,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        user.addTag(chip.getText().toString());
+                                        user.addTag(chipTagText);
                                     }})
                                 .show();
                     } else {
@@ -162,7 +161,7 @@ public class RssFeedListAdapter extends RecyclerView.Adapter<RssFeedListAdapter.
                                 .setAction(R.string.action_undo, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        user.removeTag(chip.getText().toString());
+                                        user.removeTag(chipTagText);
                                     }})
                                 .show();
                     }

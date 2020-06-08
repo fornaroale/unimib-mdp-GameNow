@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +20,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.RssListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
@@ -53,33 +53,24 @@ public class DiscoverFragment extends Fragment {
     private static final String TAG = "DiscoverFragment";
 
     private RecyclerView mRecyclerView;
+    private TextView mEmptyTV;
     private SwipeRefreshLayout mSwipeLayout;
     private List<PieceOfNews> mFeedModelList;
     private DiscoverViewModel discoverViewModel;
-    private RssFeedListAdapter adapter;
-    private List<PieceOfNews> locallySavedNews;
-
-    // Firebase
+    private RssListAdapter adapter;
     private User user;
+
     private ValueEventListener postListenerFirstUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            // JSON to PieceOfNews Array
-            locallySavedNews.clear();
-            Gson gson = new Gson();
-            for(String jsonPON : user.getNews()){
-                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-            }
-
             // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mRecyclerView = getView().findViewById(R.id.recyclerView);
             mFeedModelList = new ArrayList<>();
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
+            adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());
@@ -94,7 +85,6 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
             throw databaseError.toException();
         }
     };
@@ -102,20 +92,11 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-
-            // JSON to PieceOfNews Array
-            locallySavedNews.clear();
-            Gson gson = new Gson();
-            for(String jsonPON : user.getNews()){
-                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-            }
-
             adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
             throw databaseError.toException();
         }
     };
@@ -125,19 +106,17 @@ public class DiscoverFragment extends Fragment {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
 
-        View view = inflater.inflate(R.layout.fragment_discover, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_discover, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Swipe per Refresh Manuale
-        mSwipeLayout = view.getRootView().findViewById(R.id.swipeRefresh);
-
-        // Inizializzo lista news mantenute salvate localmente
-        locallySavedNews = new ArrayList<>();
+        // Binding elementi visuali
+        mSwipeLayout = getView().findViewById(R.id.discover_swipe_refresh);
+        mRecyclerView = getView().findViewById(R.id.discover_recycler_view);
+        mEmptyTV = getView().findViewById(R.id.discover_empty_view);
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
@@ -261,6 +240,9 @@ public class DiscoverFragment extends Fragment {
             // Pulisco array di notizie
             mFeedModelList.clear();
 
+            // Messaggio caricamento notizie
+            mEmptyTV.setText(R.string.news_loading);
+
             for (NewsProvider provider : providers[0]) {
                 URL urlLink = provider.getRssUrl();
 
@@ -295,11 +277,12 @@ public class DiscoverFragment extends Fragment {
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
-                    getView().findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                    getView().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setText(R.string.no_data_available_discover);
+                    mEmptyTV.setVisibility(View.VISIBLE);
                 } else {
-                    getView().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
-                    getView().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mEmptyTV.setVisibility(View.GONE);
                 }
 
                 // Riempo la RecyclerView con le schede notizie

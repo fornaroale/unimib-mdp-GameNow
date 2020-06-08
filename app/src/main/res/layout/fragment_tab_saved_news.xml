@@ -18,14 +18,14 @@
             android:layout_height="match_parent" >
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/tabsavednews_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <TextView
-            android:id="@+id/empty_view"
+            android:id="@+id/tabsavednews_empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

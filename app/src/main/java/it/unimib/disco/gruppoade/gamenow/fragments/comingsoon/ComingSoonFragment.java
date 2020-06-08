@@ -115,13 +115,13 @@ public class ComingSoonFragment extends Fragment {
 
         switch (buttonId){
             case R.id.button_ps4:
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
 
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {48}& first_release_date > "+ todayInSecs +";\n" +
@@ -130,52 +130,52 @@ public class ComingSoonFragment extends Fragment {
                 break;
 
             case R.id.button_xbox:
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
                 break;
             case R.id.button_pc:
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
                 break;
             case R.id.button_switch:
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit 100;\n";
                 retrieveJson(body);
                 break;
             default:
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
                 resetBody();
                 retrieveJson(body);
         }

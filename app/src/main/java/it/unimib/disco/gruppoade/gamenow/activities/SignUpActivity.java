@@ -19,8 +19,17 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
+import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -50,12 +59,14 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forum);
+        setContentView(R.layout.activity_signup);
 
         // actyivity obj
         Button submit_button = findViewById(R.id.submit);
         Button photo_choose_button = findViewById(R.id.btn_photo);
         profile_photo = findViewById(R.id.img_profilepicture);
+
+        Log.d(TAG, "TAG LETTI DA CSV: " + readTagsCsv().toString());
 
         // checkbox
         pc = findViewById(R.id.cb_pc);
@@ -128,6 +139,8 @@ public class SignUpActivity extends AppCompatActivity {
                         FbDatabase.getUserReference().setValue(theUser);
 
                         // chiudo l'activity
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
                         finish();
                     }
                 });
@@ -157,11 +170,26 @@ public class SignUpActivity extends AppCompatActivity {
                         .fit()
                         .centerCrop()
                         .into((ImageView) profile_photo);
-
             }
-
         }
     }
 
+    private List<String> readTagsCsv() {
+        List<String> tags = new ArrayList<>();
+        InputStream is = getResources().openRawResource(R.raw.providers);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+        String line = "";
 
+        try {
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split("@@@");
+                if(!tags.contains(tokens[0]))
+                    tags.add(tokens[0]);
+            }
+        } catch (IOException e) {
+            Log.e("CSV ERROR LOG ----->>> ", "Error: " + e);
+        }
+
+        return tags;
+    }
 }
