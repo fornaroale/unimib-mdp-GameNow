@@ -59,6 +59,7 @@ public class FeedFragment extends Fragment {
     private FeedViewModel feedViewModel;
     private RssListAdapter adapter;
     private User user;
+    private boolean firstTimeSentinel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        firstTimeSentinel = false;
 
         // Binding elementi visuali
         mSwipeLayout = getView().findViewById(R.id.feed_swipe_refresh);
@@ -95,6 +97,8 @@ public class FeedFragment extends Fragment {
                 adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
                 mRecyclerView.setAdapter(adapter);
 
+                firstTimeSentinel = true;
+
                 new ProcessInBackground().execute(readProvidersCsv());
 
                 mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -117,6 +121,18 @@ public class FeedFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             if(user!=null) {
+                if(!firstTimeSentinel){
+                    // Recupero il recyclerview dal layout xml e imposto l'adapter
+                    mFeedModelList = new ArrayList<>();
+                    LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                    mRecyclerView.setLayoutManager(manager);
+                    mRecyclerView.setHasFixedSize(true);
+                    adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
+                    mRecyclerView.setAdapter(adapter);
+
+                    firstTimeSentinel=true;
+                }
+
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
                     mRecyclerView.setVisibility(View.GONE);
@@ -148,6 +164,9 @@ public class FeedFragment extends Fragment {
 
             // Pulisco array di notizie
             mFeedModelList.clear();
+
+            // Messaggio caricamento notizie
+            mEmptyTV.setText(R.string.news_loading);
 
             for (NewsProvider provider : providers[0]) {
                 URL urlLink = provider.getRssUrl();
@@ -184,6 +203,7 @@ public class FeedFragment extends Fragment {
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
                     mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setText(R.string.no_data_available_feed);
                     mEmptyTV.setVisibility(View.VISIBLE);
                 } else {
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -266,7 +286,7 @@ public class FeedFragment extends Fragment {
     }
 
     private List<NewsProvider> readProvidersCsv() {
-        List<NewsProvider> providers = new ArrayList<NewsProvider>();
+        List<NewsProvider> providers = new ArrayList<>();
         InputStream is = getResources().openRawResource(R.raw.providers);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         String line = "";
