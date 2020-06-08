@@ -65,22 +65,24 @@ public class DiscoverFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mFeedModelList = new ArrayList<>();
-            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            mRecyclerView.setLayoutManager(manager);
-            mRecyclerView.setHasFixedSize(true);
-            adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
-            mRecyclerView.setAdapter(adapter);
+            if(user!=null) {
+                // Recupero il recyclerview dal layout xml e imposto l'adapter
+                mFeedModelList = new ArrayList<>();
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                mRecyclerView.setLayoutManager(manager);
+                mRecyclerView.setHasFixedSize(true);
+                adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
+                mRecyclerView.setAdapter(adapter);
 
-            new ProcessInBackground().execute(readProvidersCsv());
+                new ProcessInBackground().execute(readProvidersCsv());
 
-            mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new ProcessInBackground().execute(readProvidersCsv());
-                }
-            });
+                mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        new ProcessInBackground().execute(readProvidersCsv());
+                    }
+                });
+            }
         }
 
         @Override
@@ -92,7 +94,9 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            adapter.notifyDataSetChanged();
+            if(user!=null) {
+                adapter.notifyDataSetChanged();
+            }
         }
 
         @Override

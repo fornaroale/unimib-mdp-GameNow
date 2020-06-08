@@ -86,22 +86,24 @@ public class FeedFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mFeedModelList = new ArrayList<>();
-            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            mRecyclerView.setLayoutManager(manager);
-            mRecyclerView.setHasFixedSize(true);
-            adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
-            mRecyclerView.setAdapter(adapter);
+            if(user!=null) {
+                // Recupero il recyclerview dal layout xml e imposto l'adapter
+                mFeedModelList = new ArrayList<>();
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                mRecyclerView.setLayoutManager(manager);
+                mRecyclerView.setHasFixedSize(true);
+                adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
+                mRecyclerView.setAdapter(adapter);
 
-            new ProcessInBackground().execute(readProvidersCsv());
+                new ProcessInBackground().execute(readProvidersCsv());
 
-            mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new ProcessInBackground().execute(readProvidersCsv());
-                }
-            });
+                mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        new ProcessInBackground().execute(readProvidersCsv());
+                    }
+                });
+            }
         }
 
         @Override
@@ -114,16 +116,18 @@ public class FeedFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
-            if (user.getTags().isEmpty()) {
-                mRecyclerView.setVisibility(View.GONE);
-                mEmptyTV.setVisibility(View.VISIBLE);
-            } else {
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mEmptyTV.setVisibility(View.GONE);
-            }
+            if(user!=null) {
+                // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+                if (mFeedModelList.isEmpty()) {
+                    mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setVisibility(View.VISIBLE);
+                } else {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mEmptyTV.setVisibility(View.GONE);
+                }
 
-            adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+            }
         }
 
         @Override

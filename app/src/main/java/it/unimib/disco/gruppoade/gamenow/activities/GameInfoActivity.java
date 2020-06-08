@@ -12,6 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,7 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
+import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -48,14 +54,17 @@ public class GameInfoActivity extends AppCompatActivity {
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
 
-    private FirebaseTranslator translator = new MainActivity().enItTranslator;
 
-    private  String url;
+    private String url;
     private Gson gson = new Gson();
+
+    private FirebaseTranslatorOptions options;
+    private FirebaseTranslator translator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_game_info);
 
         gameDescription = findViewById(R.id.gameinfo_desc);
@@ -79,17 +88,8 @@ public class GameInfoActivity extends AppCompatActivity {
         platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = findViewById(R.id.gameplays_recyclerview);
 
-        Intent intent = getIntent();
-        if( intent.getStringExtra("desc") != null) {
-            final String desc = intent.getStringExtra("desc");
-            translate(desc, gameDescriptionText,descSpinner);
+        final Intent intent = getIntent();
 
-        } else {
-            gameDescription.setVisibility(View.GONE);
-            descDivider.setVisibility(View.GONE);
-            gameDescriptionText.setVisibility(View.GONE);
-            descSpinner.setVisibility(View.GONE);
-        }
         if(intent.getDoubleExtra("rating", 0) == 0){
             ratingBar.setVisibility(View.GONE);
         } else {
@@ -97,17 +97,9 @@ public class GameInfoActivity extends AppCompatActivity {
         }
 
         gameTitle.setText(intent.getStringExtra("title"));
-        String storyline = intent.getStringExtra("storyline");
+        final String storyline = intent.getStringExtra("storyline");
         Log.d(TAG, "onCreate: Storyline = " + storyline);
-        if( storyline != null) {
-            translate(storyline, gameStorylineText, storylineSpinner);
 
-        } else {
-            storylineDivider.setVisibility(View.GONE);
-            gameStoryline.setVisibility(View.GONE);
-            gameStorylineText.setVisibility(View.GONE);
-            storylineSpinner.setVisibility(View.GONE);
-        }
 
         mPlatforms = intent.getParcelableArrayListExtra("platforms");
         mVideos = intent.getParcelableArrayListExtra("videos");
@@ -137,6 +129,50 @@ public class GameInfoActivity extends AppCompatActivity {
         } else
             initVideosRecyclerView();
 
+        // Crea un traduttore English-Italiano
+        options = new FirebaseTranslatorOptions.Builder()
+                .setSourceLanguage(FirebaseTranslateLanguage.EN)
+                .setTargetLanguage(FirebaseTranslateLanguage.IT)
+                .build();
+        translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
+
+        // Traduzione
+        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
+                .build();
+        translator.downloadModelIfNeeded(conditions)
+                .addOnSuccessListener(
+                        new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void v) {
+                                if( intent.getStringExtra("desc") != null) {
+                                    final String desc = intent.getStringExtra("desc");
+                                    translate(desc, gameDescriptionText,descSpinner);
+
+                                } else {
+                                    gameDescription.setVisibility(View.GONE);
+                                    descDivider.setVisibility(View.GONE);
+                                    gameDescriptionText.setVisibility(View.GONE);
+                                    descSpinner.setVisibility(View.GONE);
+                                }
+                                if( storyline != null) {
+                                    translate(storyline, gameStorylineText, storylineSpinner);
+
+                                } else {
+                                    storylineDivider.setVisibility(View.GONE);
+                                    gameStoryline.setVisibility(View.GONE);
+                                    gameStorylineText.setVisibility(View.GONE);
+                                    storylineSpinner.setVisibility(View.GONE);
+                                }
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                e.printStackTrace();
+                                //Snackbar.make(, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();
+                            }
+                        });
     }
 
     private void initPlatformsRecyclerView() {
@@ -184,3 +220,8 @@ public class GameInfoActivity extends AppCompatActivity {
     }
 
 }
+
+
+
+
+

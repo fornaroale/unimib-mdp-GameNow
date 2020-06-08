@@ -5,6 +5,7 @@
     <string name="title_discover">Discover</string>
     <string name="title_comingsoon">Coming Soon</string>
     <string name="title_profile">Profile</string>
+    <string name="news_loading">Attendere, caricamento notizie in corso...</string>
 
     <!-- coming soon fragment-->
     <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
