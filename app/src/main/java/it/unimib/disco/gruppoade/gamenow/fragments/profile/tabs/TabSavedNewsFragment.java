@@ -41,32 +41,29 @@ public class TabSavedNewsFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            if(user!=null) {
-
-                // JSON to PieceOfNews Array
-                locallySavedNews.clear();
-                Gson gson = new Gson();
-                for (String jsonPON : user.getNews()) {
-                    locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-                }
-
-                adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
-
-                // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
-                if (locallySavedNews.isEmpty()) {
-                    mRecyclerView.setVisibility(View.GONE);
-                    mEmptyTV.setVisibility(View.VISIBLE);
-                } else {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    mEmptyTV.setVisibility(View.GONE);
-                }
-
-                // Recupero il recyclerview dal layout xml e imposto l'adapter
-                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-                mRecyclerView.setLayoutManager(manager);
-                mRecyclerView.setHasFixedSize(true);
-                mRecyclerView.setAdapter(adapter);
+            // JSON to PieceOfNews Array
+            locallySavedNews.clear();
+            Gson gson = new Gson();
+            for (String jsonPON : user.getNews()) {
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
+
+            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
+
+            // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+            if (locallySavedNews.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
+            }
+
+            // Recupero il recyclerview dal layout xml e imposto l'adapter
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setAdapter(adapter);
         }
 
         @Override
@@ -79,25 +76,23 @@ public class TabSavedNewsFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            if(user!=null) {
-                // JSON to PieceOfNews Array
-                locallySavedNews.clear();
-                Gson gson = new Gson();
-                for (String jsonPON : user.getNews()) {
-                    locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-                }
-
-                // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
-                if (locallySavedNews.isEmpty()) {
-                    mRecyclerView.setVisibility(View.GONE);
-                    mEmptyTV.setVisibility(View.VISIBLE);
-                } else {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    mEmptyTV.setVisibility(View.GONE);
-                }
-
-                adapter.notifyDataSetChanged();
+            // JSON to PieceOfNews Array
+            locallySavedNews.clear();
+            Gson gson = new Gson();
+            for (String jsonPON : user.getNews()) {
+                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
+
+            // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+            if (locallySavedNews.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
+            }
+
+            adapter.notifyDataSetChanged();
         }
 
         @Override

@@ -65,24 +65,22 @@ public class DiscoverFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            if(user!=null) {
-                // Recupero il recyclerview dal layout xml e imposto l'adapter
-                mFeedModelList = new ArrayList<>();
-                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-                mRecyclerView.setLayoutManager(manager);
-                mRecyclerView.setHasFixedSize(true);
-                adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
-                mRecyclerView.setAdapter(adapter);
+            // Recupero il recyclerview dal layout xml e imposto l'adapter
+            mFeedModelList = new ArrayList<>();
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setHasFixedSize(true);
+            adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
+            mRecyclerView.setAdapter(adapter);
 
-                new ProcessInBackground().execute(readProvidersCsv());
+            new ProcessInBackground().execute(readProvidersCsv());
 
-                mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new ProcessInBackground().execute(readProvidersCsv());
-                    }
-                });
-            }
+            mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new ProcessInBackground().execute(readProvidersCsv());
+                }
+            });
         }
 
         @Override
@@ -94,9 +92,7 @@ public class DiscoverFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            if(user!=null) {
-                adapter.notifyDataSetChanged();
-            }
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -244,6 +240,9 @@ public class DiscoverFragment extends Fragment {
             // Pulisco array di notizie
             mFeedModelList.clear();
 
+            // Messaggio caricamento notizie
+            mEmptyTV.setText(R.string.news_loading);
+
             for (NewsProvider provider : providers[0]) {
                 URL urlLink = provider.getRssUrl();
 
@@ -279,6 +278,7 @@ public class DiscoverFragment extends Fragment {
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
                     mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setText(R.string.no_data_available_discover);
                     mEmptyTV.setVisibility(View.VISIBLE);
                 } else {
                     mRecyclerView.setVisibility(View.VISIBLE);
