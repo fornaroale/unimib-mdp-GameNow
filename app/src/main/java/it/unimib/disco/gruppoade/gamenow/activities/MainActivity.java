@@ -6,18 +6,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 
 import android.util.Log;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
@@ -28,7 +24,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +34,6 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import java.util.Arrays;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -47,59 +41,27 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "MainActivity";
-
-    // Create an English-Italian translator:
-    public FirebaseTranslatorOptions options =
-            new FirebaseTranslatorOptions.Builder()
-                    .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                    .setTargetLanguage(FirebaseTranslateLanguage.IT)
-                    .build();
-    public FirebaseTranslator enItTranslator =
-            FirebaseNaturalLanguage.getInstance().getTranslator(options);
+    private AppCompatActivity appCompatActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        final BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
 
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
-                .build();
-        enItTranslator.downloadModelIfNeeded(conditions)
-                .addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void v) {
-
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                                Snackbar.make(navView, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();                            }
-                        });
-
-        // Retrieve user from current instance
+        // User identification
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null)
+
+        appCompatActivity = this;
+        if (user == null) {
             createSignInIntent();
+        } else {
+            createFeed();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.serach_menu, menu);
-        final MenuItem item = menu.findItem(R.id.serch_action);
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        final MenuItem item = menu.findItem(R.id.search_action);
         final SearchView searchView = (SearchView) item.getActionView();
         searchView.setQueryHint("Cerca Gioco...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -121,9 +83,8 @@ public class MainActivity extends AppCompatActivity {
         });
         return super.onCreateOptionsMenu(menu);
     }
-  
-  public void createSignInIntent() {
-        Log.d(TAG , "Dentro: createSignInIntent()");
+
+    public void createSignInIntent() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
@@ -161,14 +122,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
-
                         if(user == null){
                             // lancio la activity che mi fa compilare la pagina di preset
-                            Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-
-                            Log.d(TAG , "chiamo:  startActivity(intent)");
-                            startActivity(intent);
+                            Intent signUpIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                            startActivity(signUpIntent);
                         }
+
+                        createFeed();
                     }
 
                     @Override
@@ -184,5 +144,16 @@ public class MainActivity extends AppCompatActivity {
                 // ...
             }
         }
+    }
+
+    private void createFeed(){
+        setContentView(R.layout.activity_main);
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
+                .build();
+        NavController navController = Navigation.findNavController(appCompatActivity, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(appCompatActivity, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
     }
 }
