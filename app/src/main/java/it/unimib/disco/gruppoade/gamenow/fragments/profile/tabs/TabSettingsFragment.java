@@ -44,6 +44,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 import it.unimib.disco.gruppoade.gamenow.models.User;
@@ -96,6 +97,7 @@ public class TabSettingsFragment extends Fragment {
 
     private void deleteAccountCredential(){
         // cancello account
+        Log.d(TAG, "Dentro deleteAccountCredential");
         FbDatabase.getUser().delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -103,9 +105,41 @@ public class TabSettingsFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "User account deleted.");
 
-                            // chiudo l'activity una volta cancellato l'account
-                            getActivity().finish();
+
+                            // delete profile photo
+                            deleteprofilePhoto();
+
                         }
+                    }
+                });
+    }
+
+    private void deleteprofilePhoto(){
+        // cancello la foto profilo
+        // creo un riferimento allo storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // costruisco iol nome del file con lo user Uid
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
+
+        // Delete the file
+                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // File deleted successfully
+                        Log.d(TAG, "Foto cancellata");
+                        // chiudo l'activity una volta cancellato l'account
+                        firebaseAuth.signOut();
+                        getActivity().finish();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Uh-oh, an error occurred!
+                        Log.d(TAG, "Errore nel cancellamento foto");
+                        // chiudo l'activity una volta cancellato l'account
+                        firebaseAuth.signOut();
+                        getActivity().finish();
                     }
                 });
     }
@@ -121,41 +155,52 @@ public class TabSettingsFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                Intent intent = new Intent(getContext(), MainActivity.class);
                 firebaseAuth.signOut();
+                startActivity(intent);
                 getActivity().finish();
             }
         });
 
         delteaccount.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+
+
                 // cancello user da db
                 FbDatabase.getUserReference().removeValue();
 
-                // cancello la foto profilo
-                // creo un riferimento allo storage
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                // costruisco iol nome del file con lo user Uid
-                StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
 
 
 
-                // Delete the file
-                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // File deleted successfully
-                        Log.d(TAG, "Foto cancellata");
+                Log.d(TAG, "Prima di cancellare la foto profilo");
 
-                        // cancella le credenziale e chiude l'activity
-                        deleteAccountCredential();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Uh-oh, an error occurred!
-                        Log.d(TAG, "Errore nel cancellamento foto");
-                    }
-                });
+                // delete credential
+                deleteAccountCredential();
+
+                // delelte profile photo
+                //deleteprofilePhoto();
+
+                firebaseAuth.signOut();
+
+//                // Delete the file
+//                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        // File deleted successfully
+//                        Log.d(TAG, "Foto cancellata");
+//
+//                        // cancella le credenziale e chiude l'activity
+//                        deleteAccountCredential();
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception exception) {
+//                        // Uh-oh, an error occurred!
+//                        Log.d(TAG, "Errore nel cancellamento foto");
+//                    }
+//                });
+
 
                 delteaccount.setClickable(false);
             }
