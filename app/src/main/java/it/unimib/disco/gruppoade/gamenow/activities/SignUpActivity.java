@@ -155,8 +155,8 @@ public class SignUpActivity extends AppCompatActivity {
                         FbDatabase.getUserReference().setValue(theUser);
 
                         // chiudo l'activity
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                        startActivity(intent);
                         finish();
                     }
                 });
