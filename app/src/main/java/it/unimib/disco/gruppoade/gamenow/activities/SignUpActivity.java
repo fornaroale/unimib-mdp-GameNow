@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,17 +51,23 @@ public class SignUpActivity extends AppCompatActivity {
     private Uri filePath;
     private ImageView profile_photo;
 
+    // lista di tag
+    private List<String> tagList;
+
+    // tag selezionati da utente
+    private  List<String> tagSelected;
+
     // activity obj
-    private CheckBox pc;
-    private CheckBox xbox;
-    private CheckBox ps4;
-    private CheckBox nintendo;
+    private LinearLayout container_cb;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        tagList = readTagsCsv();
+        tagSelected = new ArrayList<>();
 
         // actyivity obj
         Button submit_button = findViewById(R.id.submit);
@@ -68,11 +76,27 @@ public class SignUpActivity extends AppCompatActivity {
 
         Log.d(TAG, "TAG LETTI DA CSV: " + readTagsCsv().toString());
 
-        // checkbox
-        pc = findViewById(R.id.cb_pc);
-        xbox = findViewById(R.id.cb_xbox);
-        ps4 = findViewById(R.id.cb_ps4);
-        nintendo = findViewById(R.id.cb_Switch);
+        // container checkbox
+        container_cb = findViewById(R.id.container_cb);
+
+
+        // creazione dinamica cjeckbox
+        for(String tag : tagList){
+            final CheckBox cb = new CheckBox(getApplicationContext());
+            cb.setText(tag);
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(cb.isChecked()){
+                        tagSelected.add((String) cb.getText());
+                    }
+                    else{
+                        tagSelected.remove((String) cb.getText());
+                    }
+                }
+            });
+            container_cb.addView(cb);
+        }
 
 
         Log.d(TAG, "Activity partita");
@@ -123,17 +147,9 @@ public class SignUpActivity extends AppCompatActivity {
                         theUser = new User(FbDatabase.getUser().getDisplayName(), FbDatabase.getUser().getEmail());
 
                         // setto i tag
-                        if(pc.isChecked())
-                            theUser.addTagNoDbUpdate("PC");
-
-                        if(xbox.isChecked())
-                            theUser.addTagNoDbUpdate("XBOX ONE/X");
-
-                        if(ps4.isChecked())
-                            theUser.addTagNoDbUpdate("PS4/5");
-
-                        if(nintendo.isChecked())
-                            theUser.addTagNoDbUpdate("Nintendo");
+                        for(String tag : tagSelected){
+                            theUser.addTagNoDbUpdate(tag);
+                        }
 
                         // salvo user su DB
                         FbDatabase.getUserReference().setValue(theUser);
