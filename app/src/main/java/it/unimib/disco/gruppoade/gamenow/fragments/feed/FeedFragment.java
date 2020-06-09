@@ -59,7 +59,7 @@ public class FeedFragment extends Fragment {
     private FeedViewModel feedViewModel;
     private RssListAdapter adapter;
     private User user;
-    private boolean firstTimeSentinel;
+    private boolean recyclerViewInitialized;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        firstTimeSentinel = false;
+        recyclerViewInitialized = false;
 
         // Binding elementi visuali
         mSwipeLayout = getView().findViewById(R.id.feed_swipe_refresh);
@@ -89,24 +89,7 @@ public class FeedFragment extends Fragment {
             user = dataSnapshot.getValue(User.class);
 
             if(user!=null) {
-                // Recupero il recyclerview dal layout xml e imposto l'adapter
-                mFeedModelList = new ArrayList<>();
-                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-                mRecyclerView.setLayoutManager(manager);
-                mRecyclerView.setHasFixedSize(true);
-                adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
-                mRecyclerView.setAdapter(adapter);
-
-                firstTimeSentinel = true;
-
-                new ProcessInBackground().execute(readProvidersCsv());
-
-                mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new ProcessInBackground().execute(readProvidersCsv());
-                    }
-                });
+                initializeRecyclerView();
             }
         }
 
@@ -115,22 +98,15 @@ public class FeedFragment extends Fragment {
             throw databaseError.toException();
         }
     };
+
     private ValueEventListener postListenerUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
             if(user!=null) {
-                if(!firstTimeSentinel){
-                    // Recupero il recyclerview dal layout xml e imposto l'adapter
-                    mFeedModelList = new ArrayList<>();
-                    LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-                    mRecyclerView.setLayoutManager(manager);
-                    mRecyclerView.setHasFixedSize(true);
-                    adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
-                    mRecyclerView.setAdapter(adapter);
-
-                    firstTimeSentinel=true;
+                if(!recyclerViewInitialized){
+                    initializeRecyclerView();
                 }
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
@@ -151,6 +127,27 @@ public class FeedFragment extends Fragment {
             throw databaseError.toException();
         }
     };
+
+    private void initializeRecyclerView() {
+        // Recupero il recyclerview dal layout xml e imposto l'adapter
+        mFeedModelList = new ArrayList<>();
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setHasFixedSize(true);
+        adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
+        mRecyclerView.setAdapter(adapter);
+
+        new ProcessInBackground().execute(readProvidersCsv());
+
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new ProcessInBackground().execute(readProvidersCsv());
+            }
+        });
+
+        recyclerViewInitialized = true;
+    }
 
     public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
 
