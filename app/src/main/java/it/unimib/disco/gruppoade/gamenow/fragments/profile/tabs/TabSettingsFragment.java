@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,13 +51,6 @@ public class TabSettingsFragment extends Fragment {
 
     private static final String TAG = "TabSettingFragment";
 
-    private static final int PICK_IMAGE_REQUEST = 234;
-
-
-    // firebase auth
-    FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseAuth firebaseAuth;
-
     // recupero l'utente con i relativi dati dal db
     private User theUser;
 
@@ -67,9 +63,10 @@ public class TabSettingsFragment extends Fragment {
     private TextView username;
     private TextView email;
     private CardView logout;
-    private CardView delteaccount;
+    private CardView deleteaccount;
     private CircleImageView profilePicture;
     private File localFile;
+    private boolean userDeleted;
 
     public TabSettingsFragment() {
     }
@@ -84,10 +81,7 @@ public class TabSettingsFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_tab_settings, container, false);
-
-
-        return view;
+        return inflater.inflate(R.layout.fragment_tab_settings, container, false);
     }
 
     @Override
@@ -95,7 +89,9 @@ public class TabSettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         profilePicture = view.findViewById(R.id.profile_image);
         logout = view.findViewById(R.id.cv_logout);
-        delteaccount = view.findViewById(R.id.cv_deleteaccount);
+        deleteaccount = view.findViewById(R.id.cv_deleteaccount);
+
+        userDeleted = false;
 
         // assegno l'azione di SignOut alla Cardview
         logout.setOnClickListener(new View.OnClickListener() {
@@ -109,61 +105,29 @@ public class TabSettingsFragment extends Fragment {
         });
 
         // associo azione delete
-        delteaccount.setOnClickListener(new View.OnClickListener() {
+        deleteaccount.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Eliminazione account")
+                        .setMessage("Sei sicuro di voler eliminare il tuo account?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Log.d(TAG, "DELETE -> Cancello utente.");
+                                deleteAccount();
 
-                // cancello account
-                FirebaseUser userToDel =  FbDatabase.getUserAuth();
-                String uid = userToDel.getUid();
+                                Log.d(TAG, "DELETE -> Sign out.");
+                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                firebaseAuth.signOut();
 
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                firebaseAuth.signOut();
+                                Log.d(TAG, "DELETE -> Start mainActivity intent.");
+                                Intent intent = new Intent(getContext(), MainActivity.class);
+                                startActivity(intent);
 
-                userToDel.delete()
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "User account deleted.");
-                                }
-                            }
-                        });
-
-
-
-                // cancelliamo dati dal database
-                FbDatabase.getUserReference().removeValue();
-
-                // cancelliamo la foto profilo
-
-                // Create a storage reference
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                // build th ename file with the Iid
-                StorageReference imagesRef = storage.getReference().child("images").child(uid + ".jpg");
-
-                Log.d(TAG, "Prima imageref: UID: " + uid);
-
-                // Delete the file
-                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // File deleted successfully
-                        Log.d(TAG, "FILE CANCELLATO");
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Uh-oh, an error occurred!
-                    }
-                });
-
-                Log.d(TAG, "Dopo imageref");
-
-                // sign out
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-
+                                Log.d(TAG, "DELETE -> Finish sulla vecchia mainActivity.");
+                                getActivity().finish();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
             }
         });
 
@@ -171,7 +135,7 @@ public class TabSettingsFragment extends Fragment {
         profilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Foto profilo cliccata");
+            Log.d(TAG, "Foto profilo cliccata");
             }
         });
 
@@ -185,15 +149,54 @@ public class TabSettingsFragment extends Fragment {
 
     }
 
-    // usato per leggere dati dal DB
+    private void deleteAccount(){
+        userDeleted = true;
+
+        String uid = FbDatabase.getUserAuth().getUid();
+
+        // Cancello foto profilo utente (se presente)
+        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid + ".jpg");
+        Log.d(TAG, "Sto cancellando l'immagine.");
+        imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Ho cancellato l'immagine.");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "Non sono riuscito a cancellare l'immagine. Errore: " + exception);
+            }
+        });
+
+        // Cancello credenziali autenticazione
+        Log.d(TAG, "Sto cancellando le credenziali di auth.");
+        FirebaseUser FBAuthUserToDel = FbDatabase.getUserAuth();
+        FBAuthUserToDel
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+                        }
+                    }
+                });
+
+        // Cancello dati utente database
+        Log.d(TAG, "Sto cancellando i dati del realtime database.");
+        FbDatabase.getUserReference().removeValue();
+    }
 
     ValueEventListener postListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            theUser = dataSnapshot.getValue(User.class);
+            if(!userDeleted) {
+                theUser = dataSnapshot.getValue(User.class);
 
-            // quando leggo l'user da db, chiamo il motodo che inizializza l'activity
-            setUp(getActivity().findViewById(android.R.id.content).getRootView());
+                // quando leggo l'user da db, chiamo il motodo che inizializza l'activity
+                setUp(getActivity().findViewById(android.R.id.content).getRootView());
+            }
         }
 
         @Override
@@ -220,7 +223,6 @@ public class TabSettingsFragment extends Fragment {
     }
 
     private void setUp(View view) {
-
 
         // se ho uno user
         if(theUser != null){
@@ -257,11 +259,8 @@ public class TabSettingsFragment extends Fragment {
                 }
             }
 
-
-
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        // costruisco iol nome del file con lo user Uid
         StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
 
         localFile = null;
@@ -372,7 +371,5 @@ public class TabSettingsFragment extends Fragment {
         // ritorno la chip creata
         return chip;
     }
-
-
 
 }

@@ -106,7 +106,6 @@ public class FeedFragment extends Fragment {
 
             if(user!=null) {
                 if(!recyclerViewInitialized){
-
                     initializeRecyclerView();
                 }
 
@@ -130,7 +129,6 @@ public class FeedFragment extends Fragment {
     };
 
     private void initializeRecyclerView() {
-
         // Recupero il recyclerview dal layout xml e imposto l'adapter
         mFeedModelList = new ArrayList<>();
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -149,7 +147,6 @@ public class FeedFragment extends Fragment {
         });
 
         recyclerViewInitialized = true;
-
     }
 
     public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
