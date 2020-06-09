@@ -1,15 +1,12 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,8 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -95,55 +90,6 @@ public class TabSettingsFragment extends Fragment {
         return view;
     }
 
-    private void deleteAccountCredential(){
-        // cancello account
-        Log.d(TAG, "Dentro deleteAccountCredential");
-        FbDatabase.getUser().delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
-
-
-                            // delete profile photo
-                            deleteprofilePhoto();
-
-                        }
-                    }
-                });
-    }
-
-    private void deleteprofilePhoto(){
-        // cancello la foto profilo
-        // creo un riferimento allo storage
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        // costruisco iol nome del file con lo user Uid
-        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
-
-        // Delete the file
-                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // File deleted successfully
-                        Log.d(TAG, "Foto cancellata");
-                        // chiudo l'activity una volta cancellato l'account
-                        firebaseAuth.signOut();
-                        getActivity().finish();
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Uh-oh, an error occurred!
-                        Log.d(TAG, "Errore nel cancellamento foto");
-                        // chiudo l'activity una volta cancellato l'account
-                        firebaseAuth.signOut();
-                        getActivity().finish();
-                    }
-                });
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -155,54 +101,69 @@ public class TabSettingsFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                Intent intent = new Intent(getContext(), MainActivity.class);
                 firebaseAuth.signOut();
+                Intent intent = new Intent(getContext(), MainActivity.class);
                 startActivity(intent);
                 getActivity().finish();
             }
         });
 
+        // associo azione delete
         delteaccount.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                // cancello account
+                FirebaseUser userToDel =  FbDatabase.getUserAuth();
+                String uid = userToDel.getUid();
 
-
-                // cancello user da db
-                FbDatabase.getUserReference().removeValue();
-
-
-
-
-                Log.d(TAG, "Prima di cancellare la foto profilo");
-
-                // delete credential
-                deleteAccountCredential();
-
-                // delelte profile photo
-                //deleteprofilePhoto();
-
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 firebaseAuth.signOut();
 
-//                // Delete the file
-//                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        // File deleted successfully
-//                        Log.d(TAG, "Foto cancellata");
-//
-//                        // cancella le credenziale e chiude l'activity
-//                        deleteAccountCredential();
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception exception) {
-//                        // Uh-oh, an error occurred!
-//                        Log.d(TAG, "Errore nel cancellamento foto");
-//                    }
-//                });
+                userToDel.delete()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User account deleted.");
+                                }
+                            }
+                        });
 
 
-                delteaccount.setClickable(false);
+
+                // cancelliamo dati dal database
+                FbDatabase.getUserReference().removeValue();
+
+                // cancelliamo la foto profilo
+
+                // Create a storage reference
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                // build th ename file with the Iid
+                StorageReference imagesRef = storage.getReference().child("images").child(uid + ".jpg");
+
+                Log.d(TAG, "Prima imageref: UID: " + uid);
+
+                // Delete the file
+                imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // File deleted successfully
+                        Log.d(TAG, "FILE CANCELLATO");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Uh-oh, an error occurred!
+                    }
+                });
+
+                Log.d(TAG, "Dopo imageref");
+
+                // sign out
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+
             }
         });
 
@@ -301,7 +262,7 @@ public class TabSettingsFragment extends Fragment {
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // costruisco iol nome del file con lo user Uid
-        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
 
         localFile = null;
 
