@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -44,6 +46,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
+import it.unimib.disco.gruppoade.gamenow.fragments.profile.ModifyProfileFragment;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -64,6 +67,7 @@ public class TabSettingsFragment extends Fragment {
     private TextView email;
     private CardView logout;
     private CardView deleteaccount;
+    private CardView cv_infoaccount;
     private CircleImageView profilePicture;
     private File localFile;
     private boolean userDeleted;
@@ -85,13 +89,74 @@ public class TabSettingsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         profilePicture = view.findViewById(R.id.profile_image);
         logout = view.findViewById(R.id.cv_logout);
         deleteaccount = view.findViewById(R.id.cv_deleteaccount);
+        cv_infoaccount = view.findViewById(R.id.cv_infoaccount);
 
         userDeleted = false;
+
+        // chiamo fragment che modifica account
+        cv_infoaccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                // Begin the transaction
+//                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+//                // Replace the contents of the container with the new fragment
+//                ft.replace(R.id.fm_placehoplder, new ModifyProfileFragment());
+//                // or ft.replace(R.id.your_placeholder, new FooFragment());
+//                // Complete the changes added above
+//                ft.commit();
+
+//                ModifyProfileFragment nextFrag= new ModifyProfileFragment();
+//                getActivity().getSupportFragmentManager().beginTransaction()
+//                        .replace( ((ViewGroup)getView().getParent()).getId(), nextFrag, "fModifyFragment")
+//                        .addToBackStack(null)
+//                        .commit();
+//
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                // Check that the activity is using the layout version with
+                // the fragment_container FrameLayout
+//                if (view.findViewById(R.id.fragment_container) != null) {
+//
+//                    // However, if we're being restored from a previous state,
+//                    // then we don't need to do anything and should return or else
+//                    // we could end up with overlapping fragments.
+//                    if (savedInstanceState != null) {
+//                        return;
+//                    }
+//
+//                    // Create a new Fragment to be placed in the activity layout
+//                    ModifyProfileFragment firstFragment = new ModifyProfileFragment();
+//
+//
+//                    // Add the fragment to the 'fragment_container' FrameLayout
+//                    getChildFragmentManager().beginTransaction()
+//                            .add(R.id.fragment_container, firstFragment).commit();
+//                }
+//
+                // Create fragment and give it an argument specifying the article it should show
+                ModifyProfileFragment newFragment = new ModifyProfileFragment();
+
+
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack so the user can navigate back
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.addToBackStack(null);
+
+// Commit the transaction
+                transaction.commit();
+
+
+            }
+        });
 
         // assegno l'azione di SignOut alla Cardview
         logout.setOnClickListener(new View.OnClickListener() {
