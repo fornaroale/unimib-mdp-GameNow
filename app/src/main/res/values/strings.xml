@@ -13,11 +13,6 @@
     <string name="signup_foto_profilo">Opzionale: Seleziona dal tuo dispositivo una foto per personalizzare il tuo profilo:</string>
     <string name="signup_btn_sel_foto">Seleziona Immagine</string>
     <string name="username">username not found</string>
-    <string name="btn_switch">switch</string>
-    <string name="btn_pc">pc</string>
-    <string name="btn_xbox">xbox</string>
-    <string name="btn_ps4">PS4</string>
-    <string name="btn_all">all</string>
 
     <!-- coming soon fragment-->
     <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
