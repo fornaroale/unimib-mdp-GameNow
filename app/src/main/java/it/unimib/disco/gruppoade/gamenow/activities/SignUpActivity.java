@@ -31,7 +31,6 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
-import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -122,7 +121,7 @@ public class SignUpActivity extends AppCompatActivity {
                             // Create a storage reference
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             // build th ename file with the Iid
-                            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUser().getUid() + ".jpg");
+                            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
 
                             // upload file on firestore
                             UploadTask uploadTask = imagesRef.putFile(filePath);
@@ -144,7 +143,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
                         // creo User
-                        theUser = new User(FbDatabase.getUser().getDisplayName(), FbDatabase.getUser().getEmail());
+                        theUser = new User(FbDatabase.getUserAuth().getDisplayName(), FbDatabase.getUserAuth().getEmail());
 
                         // setto i tag
                         for(String tag : tagSelected){
@@ -155,8 +154,8 @@ public class SignUpActivity extends AppCompatActivity {
                         FbDatabase.getUserReference().setValue(theUser);
 
                         // chiudo l'activity
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                        startActivity(intent);
                         finish();
                     }
                 });
@@ -186,6 +185,8 @@ public class SignUpActivity extends AppCompatActivity {
                         .fit()
                         .centerCrop()
                         .into((ImageView) profile_photo);
+
+                profile_photo.setVisibility(View.VISIBLE);
             }
         }
     }

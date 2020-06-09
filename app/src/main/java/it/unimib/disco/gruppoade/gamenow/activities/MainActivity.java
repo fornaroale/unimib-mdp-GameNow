@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
                 // ...
+                finish();
             }
         }
     }
