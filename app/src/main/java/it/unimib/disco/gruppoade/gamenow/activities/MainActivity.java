@@ -17,6 +17,8 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
         // User identification
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        FragmentTransaction fragmentManager = getSupportFragmentManager().beginTransaction();
 
         appCompatActivity = this;
         if (user == null) {
