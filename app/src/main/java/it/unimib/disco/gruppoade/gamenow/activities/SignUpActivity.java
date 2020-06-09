@@ -185,6 +185,8 @@ public class SignUpActivity extends AppCompatActivity {
                         .fit()
                         .centerCrop()
                         .into((ImageView) profile_photo);
+
+                profile_photo.setVisibility(View.VISIBLE);
             }
         }
     }

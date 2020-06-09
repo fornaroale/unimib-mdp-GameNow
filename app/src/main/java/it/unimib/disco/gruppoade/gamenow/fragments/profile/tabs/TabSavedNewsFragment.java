@@ -76,23 +76,25 @@ public class TabSavedNewsFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            // JSON to PieceOfNews Array
-            locallySavedNews.clear();
-            Gson gson = new Gson();
-            for (String jsonPON : user.getNews()) {
-                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-            }
+            if(user!=null) {
+                // JSON to PieceOfNews Array
+                locallySavedNews.clear();
+                Gson gson = new Gson();
+                for (String jsonPON : user.getNews()) {
+                    locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
+                }
 
-            // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
-            if (locallySavedNews.isEmpty()) {
-                mRecyclerView.setVisibility(View.GONE);
-                mEmptyTV.setVisibility(View.VISIBLE);
-            } else {
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mEmptyTV.setVisibility(View.GONE);
-            }
+                // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+                if (locallySavedNews.isEmpty()) {
+                    mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setVisibility(View.VISIBLE);
+                } else {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mEmptyTV.setVisibility(View.GONE);
+                }
 
-            adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+            }
         }
 
         @Override
