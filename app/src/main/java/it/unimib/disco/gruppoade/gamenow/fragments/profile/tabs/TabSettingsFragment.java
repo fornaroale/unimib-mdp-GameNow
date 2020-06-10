@@ -9,16 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -92,7 +89,7 @@ public class TabSettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        profilePicture = view.findViewById(R.id.profile_image);
+        profilePicture = view.findViewById(R.id.profile_image_change);
         logout = view.findViewById(R.id.cv_logout);
         deleteaccount = view.findViewById(R.id.cv_deleteaccount);
         cv_infoaccount = view.findViewById(R.id.cv_infoaccount);
