@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,13 +104,14 @@ public class TabSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-//                // Begin the transaction
-//                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-//                // Replace the contents of the container with the new fragment
-//                ft.replace(R.id.fm_placehoplder, new ModifyProfileFragment());
-//                // or ft.replace(R.id.your_placeholder, new FooFragment());
-//                // Complete the changes added above
-//                ft.commit();
+                // FUNZIONANTE
+                // Begin the transaction
+                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+                // Replace the contents of the container with the new fragment
+                ft.replace(R.id.fragment_container, new ModifyProfileFragment());
+                // or ft.replace(R.id.your_placeholder, new FooFragment());
+                // Complete the changes added above
+                ft.commit();
 
 //                ModifyProfileFragment nextFrag= new ModifyProfileFragment();
 //                getActivity().getSupportFragmentManager().beginTransaction()
@@ -141,18 +143,36 @@ public class TabSettingsFragment extends Fragment {
 //                }
 //
                 // Create fragment and give it an argument specifying the article it should show
-                ModifyProfileFragment newFragment = new ModifyProfileFragment();
+
+                // FUNZIONANTE
+//                ModifyProfileFragment newFragment = new ModifyProfileFragment();
+//
+//
+//                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+//
+//                // Replace whatever is in the fragment_container view with this fragment,
+//                // and add the transaction to the back stack so the user can navigate back
+//                transaction.replace(R.id.fragment_container, newFragment, "ModifyAccount");
+//
+//
+//                transaction.addToBackStack(null);
+//
+//                // Commit the transaction
+//                transaction.commit();
 
 
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack so the user can navigate back
-                transaction.replace(R.id.fragment_container, newFragment);
-                transaction.addToBackStack(null);
+                CardView cv_info = getView().findViewById(R.id.cv_infoaccount);
+                CardView cv_logout = getView().findViewById(R.id.cv_logout);
+                CardView cv_elimina = getView().findViewById(R.id.cv_deleteaccount);
+                CardView cv_topics = getView().findViewById(R.id.cv_topics);
+                CardView cv_email = getView().findViewById(R.id.cv_emailinfo);
 
-// Commit the transaction
-                transaction.commit();
+                cv_info.setVisibility(View.INVISIBLE);
+                cv_logout.setVisibility(View.INVISIBLE);
+                cv_elimina.setVisibility(View.INVISIBLE);
+                cv_topics.setVisibility(View.INVISIBLE);
+                cv_email.setVisibility(View.INVISIBLE);
 
 
             }
