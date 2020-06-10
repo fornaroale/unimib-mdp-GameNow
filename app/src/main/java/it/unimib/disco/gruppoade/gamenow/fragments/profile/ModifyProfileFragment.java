@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +17,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -93,6 +101,15 @@ public class ModifyProfileFragment extends Fragment {
             public void onClick(View v) {
                 if(!eliminaFotoPremuto){
                     eliminaFotoPremuto = true;
+
+
+                    Picasso.get()
+                            .load(R.drawable.profile)
+                            .fit()
+                            .centerCrop()
+                            .into((CircleImageView) profilePicture);
+
+
                     filePath = null;
                 }
 
@@ -111,6 +128,16 @@ public class ModifyProfileFragment extends Fragment {
         salvaModifiche.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(eliminaFotoPremuto)
+                    deleteProfilePhotoFromDB();
+                else
+                    uploadNewPhoto();
+
+                if(!FbDatabase.getUserAuth().getDisplayName().equals(editUsername.getText())){
+                    updateUsername(editUsername.getText());
+                }
+
                 getActivity().onBackPressed();
 
             }
@@ -118,8 +145,27 @@ public class ModifyProfileFragment extends Fragment {
 
     }
 
+    private void updateUsername(Editable newUSername){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(String.valueOf(newUSername))
+                .build();
 
-    private void delteProfilePhotoFromDB(){
+        FbDatabase.getUserAuth().updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // success!
+                        }
+                    }
+                });
+
+        // set the name in the database
+        FbDatabase.getUserReference().child("username").setValue(newUSername.toString());
+
+    }
+
+    private void deleteProfilePhotoFromDB(){
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
@@ -136,6 +182,32 @@ public class ModifyProfileFragment extends Fragment {
                 // Uh-oh, an error occurred!
             }
         });
+    }
+
+    private void uploadNewPhoto(){
+        if(filePath != null){
+            // reference to firestore
+            // Create a storage reference
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            // build th ename file with the Iid
+            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+
+            // upload file on firestore
+            UploadTask uploadTask = imagesRef.putFile(filePath);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            });
+        }
     }
 
     private void setProfilePhoto(){
@@ -164,6 +236,7 @@ public class ModifyProfileFragment extends Fragment {
                         .centerCrop()
                         .into((CircleImageView) profilePicture);
 
+                eliminaFotoPremuto = false;
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
