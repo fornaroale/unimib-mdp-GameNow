@@ -500,6 +500,8 @@ public class TabSettingsFragment extends Fragment {
 
                             if(!usernameET.getText().toString().isEmpty())
                                 updateUsername(usernameET.getText());
+                            else
+                                usernameET.setText(theUser.getUsername());
 
                             return true;
                         }
