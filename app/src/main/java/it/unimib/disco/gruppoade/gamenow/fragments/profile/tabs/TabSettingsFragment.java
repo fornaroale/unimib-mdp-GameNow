@@ -1,5 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,8 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,8 +47,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
+import it.unimib.disco.gruppoade.gamenow.adapters.MyFragmentPagerAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.ModifyProfileFragment;
+import it.unimib.disco.gruppoade.gamenow.fragments.profile.ProfileFragment;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -61,6 +66,7 @@ public class TabSettingsFragment extends Fragment {
     private List<String> tags;
 
     // oggetti activity
+    private EditText usernameET;
     private ChipGroup chipGroup;
     private TextView username;
     private TextView email;
@@ -87,6 +93,7 @@ public class TabSettingsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_tab_settings, container, false);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -94,15 +101,34 @@ public class TabSettingsFragment extends Fragment {
         logout = view.findViewById(R.id.cv_logout);
         deleteaccount = view.findViewById(R.id.cv_deleteaccount);
         cv_infoaccount = view.findViewById(R.id.cv_infoaccount);
+        usernameET = view.findViewById(R.id.Username);
 
         userDeleted = false;
+
+
+        usernameET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        Log.d(TAG, "Premuto check");
+
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         // chiamo fragment che modifica account
         cv_infoaccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
 
 
@@ -146,7 +172,7 @@ public class TabSettingsFragment extends Fragment {
 //
                 // Create fragment and give it an argument specifying the article it should show
 
-                // FUNZIONANTE
+//                // FUNZIONANTE
 //                ModifyProfileFragment newFragment = new ModifyProfileFragment();
 //
 //
@@ -170,11 +196,11 @@ public class TabSettingsFragment extends Fragment {
                 CardView cv_topics = getView().findViewById(R.id.cv_topics);
                 CardView cv_email = getView().findViewById(R.id.cv_emailinfo);
 
-                cv_info.setVisibility(View.INVISIBLE);
-                cv_logout.setVisibility(View.INVISIBLE);
-                cv_elimina.setVisibility(View.INVISIBLE);
-                cv_topics.setVisibility(View.INVISIBLE);
-                cv_email.setVisibility(View.INVISIBLE);
+//                cv_info.setVisibility(View.INVISIBLE);
+//                cv_logout.setVisibility(View.INVISIBLE);
+//                cv_elimina.setVisibility(View.INVISIBLE);
+//                cv_topics.setVisibility(View.INVISIBLE);
+//                cv_email.setVisibility(View.INVISIBLE);
 
 
             }
@@ -242,7 +268,7 @@ public class TabSettingsFragment extends Fragment {
         String uid = FbDatabase.getUserAuth().getUid();
 
         // Cancello foto profilo utente (se presente)
-        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid + ".jpg");
+        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid);
         Log.d(TAG, "Sto cancellando l'immagine.");
         imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -348,7 +374,7 @@ public class TabSettingsFragment extends Fragment {
 
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
 
         localFile = null;
 
@@ -459,4 +485,11 @@ public class TabSettingsFragment extends Fragment {
         return chip;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+
+    }
 }
