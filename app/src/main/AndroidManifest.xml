@@ -3,7 +3,6 @@
     package="it.unimib.disco.gruppoade.gamenow">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".handlers.FirebaseHandler"
@@ -13,19 +12,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SearchActivity"
-            android:launchMode = "singleTop"></activity>
+
+        <activity
+            android:name=".activities.SearchActivity"
+            android:launchMode="singleTop" />
         <activity
             android:name=".activities.GameInfoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout" />
-        <activity
-            android:name=".activities.SignUpActivity"/>
-        <activity
-            android:name=".activities.MainActivity">
+        <activity android:name=".activities.SignUpActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

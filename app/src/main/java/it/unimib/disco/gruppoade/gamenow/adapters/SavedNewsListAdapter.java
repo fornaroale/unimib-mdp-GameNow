@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -87,9 +88,11 @@ public class SavedNewsListAdapter extends RecyclerView.Adapter<SavedNewsListAdap
         holder.savedNewsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mSavedNewsModels.get(holder.getAdapterPosition()).getLink()));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                view.getContext().startActivity(intent);
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setToolbarColor(view.getResources().getColor(R.color.colorPrimary));
+                builder.setShowTitle(true);
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(view.getContext(), Uri.parse(mSavedNewsModels.get(holder.getAdapterPosition()).getLink()));
             }
         });
 
