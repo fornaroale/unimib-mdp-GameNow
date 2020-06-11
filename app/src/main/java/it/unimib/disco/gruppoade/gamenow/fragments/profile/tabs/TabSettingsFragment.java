@@ -349,7 +349,8 @@ public class TabSettingsFragment extends Fragment {
 
 
                 // Creo la snackbar
-                Snackbar mySnackbar = Snackbar.make(chipGroup, "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
+//                Snackbar mySnackbar = Snackbar.make(chipGroup, "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
+                Snackbar mySnackbar = Snackbar.make(getView().findViewById(R.id.main_layout), "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
 
                 // associo la funzione al tasto UNDO
                 mySnackbar.setAction("Undo", new View.OnClickListener() {
