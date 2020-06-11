@@ -121,7 +121,7 @@ public class SignUpActivity extends AppCompatActivity {
                             // Create a storage reference
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             // build th ename file with the Iid
-                            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+                            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
 
                             // upload file on firestore
                             UploadTask uploadTask = imagesRef.putFile(filePath);

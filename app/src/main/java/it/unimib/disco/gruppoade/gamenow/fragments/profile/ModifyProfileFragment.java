@@ -166,7 +166,7 @@ public class ModifyProfileFragment extends Fragment {
     private void deleteProfilePhotoFromDB(){
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
 
         // Delete the file
         imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -188,7 +188,7 @@ public class ModifyProfileFragment extends Fragment {
             // Create a storage reference
             FirebaseStorage storage = FirebaseStorage.getInstance();
             // build th ename file with the Iid
-            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
 
             // upload file on firestore
             UploadTask uploadTask = imagesRef.putFile(filePath);
@@ -213,7 +213,7 @@ public class ModifyProfileFragment extends Fragment {
 
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
 
         dbFile = null;
 
