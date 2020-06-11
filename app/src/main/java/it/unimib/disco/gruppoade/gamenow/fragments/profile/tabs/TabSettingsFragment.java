@@ -4,8 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,8 +22,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,12 +32,14 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -47,10 +50,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
-import it.unimib.disco.gruppoade.gamenow.adapters.MyFragmentPagerAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
-import it.unimib.disco.gruppoade.gamenow.fragments.profile.ModifyProfileFragment;
-import it.unimib.disco.gruppoade.gamenow.fragments.profile.ProfileFragment;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.TagComparator;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -58,12 +58,17 @@ public class TabSettingsFragment extends Fragment {
 
     private static final String TAG = "TabSettingFragment";
 
+    private static final int PICK_IMAGE_REQUEST = 234;
+
+
     // recupero l'utente con i relativi dati dal db
     private User theUser;
 
 
     // inserisco variabili
     private List<String> tags;
+    //a Uri object to store file path
+    private Uri filePath;
 
     // oggetti activity
     private EditText usernameET;
@@ -93,7 +98,6 @@ public class TabSettingsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_tab_settings, container, false);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -104,107 +108,9 @@ public class TabSettingsFragment extends Fragment {
         usernameET = view.findViewById(R.id.Username);
 
         userDeleted = false;
+       // usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.drawableRight, 0);
 
 
-        usernameET.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
-
-                if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        Log.d(TAG, "Premuto check");
-
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
-        // chiamo fragment che modifica account
-        cv_infoaccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-
-                // FUNZIONANTE
-                // Begin the transaction
-                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-                // Replace the contents of the container with the new fragment
-                ft.replace(R.id.fragment_container, new ModifyProfileFragment());
-                // or ft.replace(R.id.your_placeholder, new FooFragment());
-                // Complete the changes added above
-                ft.commit();
-
-//                ModifyProfileFragment nextFrag= new ModifyProfileFragment();
-//                getActivity().getSupportFragmentManager().beginTransaction()
-//                        .replace( ((ViewGroup)getView().getParent()).getId(), nextFrag, "fModifyFragment")
-//                        .addToBackStack(null)
-//                        .commit();
-//
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                // Check that the activity is using the layout version with
-                // the fragment_container FrameLayout
-//                if (view.findViewById(R.id.fragment_container) != null) {
-//
-//                    // However, if we're being restored from a previous state,
-//                    // then we don't need to do anything and should return or else
-//                    // we could end up with overlapping fragments.
-//                    if (savedInstanceState != null) {
-//                        return;
-//                    }
-//
-//                    // Create a new Fragment to be placed in the activity layout
-//                    ModifyProfileFragment firstFragment = new ModifyProfileFragment();
-//
-//
-//                    // Add the fragment to the 'fragment_container' FrameLayout
-//                    getChildFragmentManager().beginTransaction()
-//                            .add(R.id.fragment_container, firstFragment).commit();
-//                }
-//
-                // Create fragment and give it an argument specifying the article it should show
-
-//                // FUNZIONANTE
-//                ModifyProfileFragment newFragment = new ModifyProfileFragment();
-//
-//
-//                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//
-//                // Replace whatever is in the fragment_container view with this fragment,
-//                // and add the transaction to the back stack so the user can navigate back
-//                transaction.replace(R.id.fragment_container, newFragment, "ModifyAccount");
-//
-//
-//                transaction.addToBackStack(null);
-//
-//                // Commit the transaction
-//                transaction.commit();
-
-
-
-                CardView cv_info = getView().findViewById(R.id.cv_infoaccount);
-                CardView cv_logout = getView().findViewById(R.id.cv_logout);
-                CardView cv_elimina = getView().findViewById(R.id.cv_deleteaccount);
-                CardView cv_topics = getView().findViewById(R.id.cv_topics);
-                CardView cv_email = getView().findViewById(R.id.cv_emailinfo);
-
-//                cv_info.setVisibility(View.INVISIBLE);
-//                cv_logout.setVisibility(View.INVISIBLE);
-//                cv_elimina.setVisibility(View.INVISIBLE);
-//                cv_topics.setVisibility(View.INVISIBLE);
-//                cv_email.setVisibility(View.INVISIBLE);
-
-
-            }
-        });
 
         // assegno l'azione di SignOut alla Cardview
         logout.setOnClickListener(new View.OnClickListener() {
@@ -249,6 +155,7 @@ public class TabSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
             Log.d(TAG, "Foto profilo cliccata");
+                showFileChooser();
             }
         });
 
@@ -348,7 +255,8 @@ public class TabSettingsFragment extends Fragment {
             email = view.findViewById((R.id.Email));
 
             // setto i valori
-            username.setText(theUser.getUsername());
+            //username.setText(theUser.getUsername());
+            setEditUser();
             email.setText(theUser.getEmail());
 
             // riempio i tag
@@ -485,11 +393,139 @@ public class TabSettingsFragment extends Fragment {
         return chip;
     }
 
+    private void uploadNewPhoto(){
+        if(filePath != null){
+            // reference to firestore
+            // Create a storage reference
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            // build th ename file with the Iid
+            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
+
+            // upload file on firestore
+            UploadTask uploadTask = imagesRef.putFile(filePath);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            });
+        }
+    }
+
+    //method to show file chooser
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == -1 && data != null && data.getData() != null) {
 
+            // prendo il persocroso della foto
+            filePath = data.getData();
+
+            // la stampo usando picasso
+            if(filePath != null){
+                Picasso.get()
+                        .load(filePath)
+                        .fit()
+                        .centerCrop()
+                        .into((CircleImageView) profilePicture);
+
+                // aggiorno la foto sul database
+                uploadNewPhoto();
+
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setEditUser(){
+        // setto l'username
+        username.setText(theUser.getUsername());
+
+        // Rimuovo il chack
+        usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+        usernameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Rimuovo il chack
+                usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.toString().isEmpty())
+                    usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_username_check_24, 0);
+                else
+                    usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_error_24, 0);
+            }
+        });
+
+        usernameET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(usernameET.getCompoundDrawables()[DRAWABLE_RIGHT] != null)
+                        if(event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            Log.d(TAG, "Premuto check Right");
+
+                            // Rimuovo il chack
+                            usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                            if(!usernameET.getText().toString().isEmpty())
+                                updateUsername(usernameET.getText());
+
+                            return true;
+                        }
+                }
+                return false;
+            }
+        });
+    }
+
+    private void updateUsername(Editable newUSername){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(String.valueOf(newUSername))
+                .build();
+
+        FbDatabase.getUserAuth().updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // success!
+                        }
+                    }
+                });
+
+        // set the name in the database
+        FbDatabase.getUserReference().child("username").setValue(newUSername.toString());
 
     }
 }
