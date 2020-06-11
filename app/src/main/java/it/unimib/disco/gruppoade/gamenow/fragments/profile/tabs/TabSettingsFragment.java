@@ -1,16 +1,21 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,12 +32,14 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -51,19 +58,26 @@ public class TabSettingsFragment extends Fragment {
 
     private static final String TAG = "TabSettingFragment";
 
+    private static final int PICK_IMAGE_REQUEST = 234;
+
+
     // recupero l'utente con i relativi dati dal db
     private User theUser;
 
 
     // inserisco variabili
     private List<String> tags;
+    //a Uri object to store file path
+    private Uri filePath;
 
     // oggetti activity
+    private EditText usernameET;
     private ChipGroup chipGroup;
     private TextView username;
     private TextView email;
     private CardView logout;
     private CardView deleteaccount;
+    private CardView cv_infoaccount;
     private CircleImageView profilePicture;
     private File localFile;
     private boolean userDeleted;
@@ -85,13 +99,18 @@ public class TabSettingsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        profilePicture = view.findViewById(R.id.profile_image);
+        profilePicture = view.findViewById(R.id.profile_image_change);
         logout = view.findViewById(R.id.cv_logout);
         deleteaccount = view.findViewById(R.id.cv_deleteaccount);
+        cv_infoaccount = view.findViewById(R.id.cv_infoaccount);
+        usernameET = view.findViewById(R.id.Username);
 
         userDeleted = false;
+       // usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.drawableRight, 0);
+
+
 
         // assegno l'azione di SignOut alla Cardview
         logout.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +155,7 @@ public class TabSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
             Log.d(TAG, "Foto profilo cliccata");
+                showFileChooser();
             }
         });
 
@@ -155,7 +175,7 @@ public class TabSettingsFragment extends Fragment {
         String uid = FbDatabase.getUserAuth().getUid();
 
         // Cancello foto profilo utente (se presente)
-        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid + ".jpg");
+        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid);
         Log.d(TAG, "Sto cancellando l'immagine.");
         imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -235,7 +255,8 @@ public class TabSettingsFragment extends Fragment {
             email = view.findViewById((R.id.Email));
 
             // setto i valori
-            username.setText(theUser.getUsername());
+            //username.setText(theUser.getUsername());
+            setEditUser();
             email.setText(theUser.getEmail());
 
             // riempio i tag
@@ -261,7 +282,7 @@ public class TabSettingsFragment extends Fragment {
 
         // creo un riferimento allo storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid() + ".jpg");
+        StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
 
         localFile = null;
 
@@ -372,4 +393,141 @@ public class TabSettingsFragment extends Fragment {
         return chip;
     }
 
+    private void uploadNewPhoto(){
+        if(filePath != null){
+            // reference to firestore
+            // Create a storage reference
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            // build th ename file with the Iid
+            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
+
+            // upload file on firestore
+            UploadTask uploadTask = imagesRef.putFile(filePath);
+
+            // Register observers to listen for when the download is done or if it fails
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            });
+        }
+    }
+
+    //method to show file chooser
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == -1 && data != null && data.getData() != null) {
+
+            // prendo il persocroso della foto
+            filePath = data.getData();
+
+            // la stampo usando picasso
+            if(filePath != null){
+                Picasso.get()
+                        .load(filePath)
+                        .fit()
+                        .centerCrop()
+                        .into((CircleImageView) profilePicture);
+
+                // aggiorno la foto sul database
+                uploadNewPhoto();
+
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setEditUser(){
+        // setto l'username
+        username.setText(theUser.getUsername());
+
+        // Rimuovo il chack
+        usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+        usernameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Rimuovo il chack
+                usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.toString().isEmpty())
+                    usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_username_check_24, 0);
+                else
+                    usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_error_24, 0);
+            }
+        });
+
+        usernameET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(usernameET.getCompoundDrawables()[DRAWABLE_RIGHT] != null)
+                        if(event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            Log.d(TAG, "Premuto check Right");
+
+                            // Rimuovo il chack
+                            usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                            if(!usernameET.getText().toString().isEmpty())
+                                updateUsername(usernameET.getText());
+                            else
+                                usernameET.setText(theUser.getUsername());
+
+                            return true;
+                        }
+                }
+                return false;
+            }
+        });
+    }
+
+    private void updateUsername(Editable newUSername){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(String.valueOf(newUSername))
+                .build();
+
+        FbDatabase.getUserAuth().updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // success!
+                        }
+                    }
+                });
+
+        // set the name in the database
+        FbDatabase.getUserReference().child("username").setValue(newUSername.toString());
+
+    }
 }
