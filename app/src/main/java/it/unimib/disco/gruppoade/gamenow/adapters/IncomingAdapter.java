@@ -82,6 +82,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
 
         public void bind(final Game game, final OnItemClickListener onItemClickListener){
 
+
             if (game.getDate() != null) {
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
             } else {

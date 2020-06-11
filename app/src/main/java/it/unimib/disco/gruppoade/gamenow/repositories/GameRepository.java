@@ -50,7 +50,6 @@ public class GameRepository {
                 if(response.isSuccessful() && response.body() != null){
                     games.postValue(null);
                     games.postValue(response.body());
-                    Log.d(TAG, "onResponse: Response Body = "+ gson.toJson(games));
                 }
             }
 
