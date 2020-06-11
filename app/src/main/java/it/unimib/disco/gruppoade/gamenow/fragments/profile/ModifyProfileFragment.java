@@ -73,10 +73,6 @@ public class ModifyProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_modify_profile, container, false);
-
-
-
-
     }
 
     @Override
@@ -138,6 +134,8 @@ public class ModifyProfileFragment extends Fragment {
                     updateUsername(editUsername.getText());
                 }
 
+
+                //ProfileFragmentDirections.actionShowModProfile();
                 getActivity().onBackPressed();
 
             }
