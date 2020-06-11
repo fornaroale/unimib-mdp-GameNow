@@ -1,6 +1,5 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -191,7 +190,7 @@ public class GameInfoFragment extends Fragment {
 
     private void initVideosRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
-        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle());
+        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle(),getActivity());
         videosRecycler.setAdapter(videoAdapter);
         videosRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
 
@@ -199,7 +198,7 @@ public class GameInfoFragment extends Fragment {
 
     private float setRating(double totRating){
         double rating = Math.floor(totRating * 5) / 100;
-        double significance = 0.5;
+        double significance = 0.1;
         return (float) ((float)((int)(rating/significance) * significance) + significance);
     }
 

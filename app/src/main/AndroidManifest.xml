@@ -14,14 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.SearchActivity"
-            android:launchMode="singleTop" />
+            android:name=".activities.FullScreenActivity"
+            android:theme="@style/Theme.Design.NoActionBar"
+            android:configChanges="orientation|layoutDirection|screenSize|screenLayout" />
         <activity android:name=".activities.SignUpActivity" />
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

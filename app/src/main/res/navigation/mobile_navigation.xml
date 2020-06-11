@@ -40,4 +40,19 @@
             android:name="game"
             app:argType="it.unimib.disco.gruppoade.gamenow.models.Game" />
     </fragment>
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="query"
+            app:argType="string" />
+        <action
+            android:id="@+id/searchDisplayGameInfo"
+            app:destination="@id/gameInfoFragment" />
+    </fragment>
+    <action
+        android:id="@+id/searchAction"
+        app:destination="@id/navigation_search" />
 </navigation>

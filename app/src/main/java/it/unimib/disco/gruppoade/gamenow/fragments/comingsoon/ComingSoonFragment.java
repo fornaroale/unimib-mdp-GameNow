@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -47,9 +49,11 @@ public class ComingSoonFragment extends Fragment {
     private LottieAnimationView lottieAnimationView;
     private String body;
     private List<Game> mGames = new ArrayList<>();
-    private Button allBtn, ps4Btn, xboxBtn, pcBtn, switchBtn;
+    private ImageButton ps4Btn, xboxBtn, pcBtn, switchBtn;
+    private Button allBtn;
     private RecyclerView recyclerView;
     private Observer<List<Game>> observer;
+    private LiveData<List<Game>> gamesList;
 
     final Gson gson = new Gson();
 
@@ -71,6 +75,7 @@ public class ComingSoonFragment extends Fragment {
 
         comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
 
+
         observer = new Observer<List<Game>>() {
             @Override
             public void onChanged(List<Game> games) {
@@ -89,7 +94,8 @@ public class ComingSoonFragment extends Fragment {
         };
 
         resetBody();
-        comingSoonViewModel.getGames(body).observe(getViewLifecycleOwner(), observer);
+        gamesList = comingSoonViewModel.getGames(body);
+        gamesList.observe(getViewLifecycleOwner(), observer);
 
         //Buttons Listeners
         ps4Btn.setOnClickListener(new View.OnClickListener() {

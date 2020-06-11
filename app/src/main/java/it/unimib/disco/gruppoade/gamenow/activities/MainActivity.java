@@ -11,8 +11,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
+import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateRemoteModel;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 
@@ -23,23 +25,23 @@ import androidx.appcompat.widget.SearchView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import it.unimib.disco.gruppoade.gamenow.MobileNavigationDirections;
 import it.unimib.disco.gruppoade.gamenow.R;
 
 import java.util.Arrays;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.SearchFragment;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -47,44 +49,54 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "MainActivity";
+    private NavController navController;
 
     // Create an English-Italian translator:
-    public FirebaseTranslatorOptions options =
+    private FirebaseTranslatorOptions options =
             new FirebaseTranslatorOptions.Builder()
                     .setSourceLanguage(FirebaseTranslateLanguage.EN)
                     .setTargetLanguage(FirebaseTranslateLanguage.IT)
                     .build();
-    public FirebaseTranslator enItTranslator =
+    public final FirebaseTranslator enItTranslator =
             FirebaseNaturalLanguage.getInstance().getTranslator(options);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d(TAG, "monCreate: Window " + findViewById(R.id.container));
+
         final BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
-
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .build();
+        FirebaseModelManager manager = FirebaseModelManager.getInstance();
+        FirebaseTranslateRemoteModel itModel =
+                new FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.IT).build();
+        manager.deleteDownloadedModel(itModel);
+        FirebaseTranslateRemoteModel enModel =
+                new FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.EN).build();
         enItTranslator.downloadModelIfNeeded(conditions)
                 .addOnSuccessListener(
                         new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void v) {
-
+                                Log.d(TAG, "onSuccess: Model Downloaded");
                             }
                         })
                 .addOnFailureListener(
                         new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                manager.deleteDownloadedModel(itModel);
+                                manager.deleteDownloadedModel(enModel);
+                                manager.download(itModel, conditions);
+                                manager.download(enModel, conditions);
+                                enItTranslator.downloadModelIfNeeded();
                                 e.printStackTrace();
                                 Snackbar.make(navView, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();                            }
                         });
@@ -105,9 +117,11 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SearchFragment.class);
                 intent.putExtra("query", query);
-                startActivity(intent);
+                //startActivity(intent);
+                MobileNavigationDirections.SearchAction action = MobileNavigationDirections.searchAction(query);
+                navController.navigate(action);
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 item.collapseActionView();
