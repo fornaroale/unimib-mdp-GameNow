@@ -44,8 +44,6 @@ public class TabSavedNewsFragment extends Fragment {
             // JSON to PieceOfNews Array
             locallySavedNews.clear();
             Gson gson = new Gson();
-            // TODO: CONTROLLARE SE NON GEENRA ECCEZIONI
-            if(user != null)
             for (String jsonPON : user.getNews()) {
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }

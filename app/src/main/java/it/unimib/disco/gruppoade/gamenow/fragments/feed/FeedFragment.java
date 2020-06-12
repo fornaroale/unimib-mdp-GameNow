@@ -1,5 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.feed;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -42,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.activities.SignUpActivity;
 import it.unimib.disco.gruppoade.gamenow.adapters.RssListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
@@ -90,6 +92,9 @@ public class FeedFragment extends Fragment {
 
             if(user!=null) {
                 initializeRecyclerView();
+            } else {
+                Intent signUpIntent = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(signUpIntent);
             }
         }
 
