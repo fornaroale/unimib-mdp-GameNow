@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -54,6 +55,7 @@ public class ComingSoonFragment extends Fragment {
     private RecyclerView recyclerView;
     private Observer<List<Game>> observer;
     private LiveData<List<Game>> gamesList;
+    private IncomingAdapter incomingAdapter;
 
     final Gson gson = new Gson();
 
@@ -66,6 +68,9 @@ public class ComingSoonFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
+        resetBody();
+
         allBtn = view.findViewById(R.id.button_all);
         ps4Btn = view.findViewById(R.id.button_ps4);
         xboxBtn = view.findViewById(R.id.button_xbox);
@@ -73,27 +78,42 @@ public class ComingSoonFragment extends Fragment {
         switchBtn = view.findViewById(R.id.button_switch);
         recyclerView = view.findViewById(R.id.recyclerview);
 
-        comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
+        incomingAdapter = new IncomingAdapter(getActivity(), getGameList(body), new IncomingAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Game game) {
+                ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
+                Navigation.findNavController(view).navigate(action);
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(incomingAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
+                List<Game> gameList = new ArrayList<>();
+                MutableLiveData<List<Game>> gamesLiveData = comingSoonViewModel.getmGamesLiveData();
+
+                if(gamesLiveData.getValue() != null){
+                    List<Game> currentList = gamesLiveData.getValue();
+                    currentList.add(null);
+                    gameList.addAll(currentList);
+                    gamesLiveData.postValue(gameList);
+                }
+            }
+        });
 
 
         observer = new Observer<List<Game>>() {
             @Override
             public void onChanged(List<Game> games) {
                 Log.d(TAG, "initRecyclerView: Init RecyclerView");
-                IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), games, new IncomingAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Game game) {
-                        ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
-                        Navigation.findNavController(view).navigate(action);
-                    }
-                });
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                recyclerView.setAdapter(incomingAdapter);
+                incomingAdapter.setData(games);
                 lottieAnimationView.setVisibility(GONE);
             }
         };
 
-        resetBody();
+
         gamesList = comingSoonViewModel.getGames(body);
         gamesList.observe(getViewLifecycleOwner(), observer);
 
@@ -140,6 +160,13 @@ public class ComingSoonFragment extends Fragment {
 
         lottieAnimationView = view.findViewById(R.id.animation_view);
 
+    }
+
+    private List<Game> getGameList(String body){
+        LiveData<List<Game>> gameList = comingSoonViewModel.getGames(body);
+        if (gameList != null)
+            return gameList.getValue();
+        return null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -217,6 +244,7 @@ public class ComingSoonFragment extends Fragment {
     private void resetBody(){
         body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                 "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n" +
+                "offset " + comingSoonViewModel.getOffset() + ";\n" +
                 "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
     }
 
