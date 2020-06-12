@@ -121,26 +121,8 @@ public class MainActivity extends AppCompatActivity {
                 String usernameDb = user.getUid();
                 Log.d(TAG, "usernameDb: " + usernameDb);
 
-                FbDatabase.setUserReference();
-                FbDatabase.getUserReference().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        if(user == null){
-                            // lancio la activity che mi fa compilare la pagina di preset
-                            Intent signUpIntent = new Intent(getApplicationContext(), SignUpActivity.class);
-                            startActivity(signUpIntent);
-                        }
+                createFeed();
 
-                        createFeed();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
