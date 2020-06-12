@@ -132,6 +132,8 @@ public class DiscoverFragment extends Fragment {
         try {
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split("@@@");
+                // TODO: CONTROLLARE SE NON GEENRA ECCEZIONI
+                if(user != null)
                 if (user.getTags() != null) {
                     if (!user.getTags().contains(tokens[0]))
                         providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
