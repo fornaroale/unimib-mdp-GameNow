@@ -5,7 +5,7 @@
 
     <ProgressBar
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="160dp"
         android:id="@+id/loading_game"
         android:layout_gravity="center_horizontal"/>
 
