@@ -179,6 +179,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+
     //method to show file chooser
     private void showFileChooser() {
         Intent intent = new Intent();
