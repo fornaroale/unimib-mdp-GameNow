@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +23,11 @@ import java.util.List;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 
-public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHolder>{
+public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
+    private static final int GAME_VIEW_TYPE = 0;
+    private static final int LOADING_VIEW_TYPE = 1;
+
 
     public interface OnItemClickListener{
         void onItemClick(Game game);
@@ -45,23 +50,49 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_carditem, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        if(viewType == GAME_VIEW_TYPE)
+        {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_carditem, parent, false);
+            return new ViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loading_games, parent, false);
+            return new LoadingViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         final Game game = mGames.get(position);
-        holder.bind(game,this.onItemClickListener);
+        if(holder instanceof ViewHolder)
+            ((ViewHolder) holder).bind(game,this.onItemClickListener);
+        else if(holder instanceof LoadingViewHolder)
+            ((LoadingViewHolder) holder).loadingGame.setIndeterminate(true);
 
     }
 
     @Override
     public int getItemCount() {
-        return mGames.size();
+        if (mGames != null)
+            return mGames.size();
+        return 0;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mGames.get(position) == null)
+            return LOADING_VIEW_TYPE;
+        else
+            return GAME_VIEW_TYPE;
+    }
+
+    public void setData(List<Game> gameList){
+        if (gameList != null) {
+            this.mGames = gameList;
+            notifyDataSetChanged();
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -82,13 +113,11 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
 
         public void bind(final Game game, final OnItemClickListener onItemClickListener){
 
-
             if (game.getDate() != null) {
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
             } else {
                 itemTitle.setText(game.getName());
             }
-
             final String coverBig, url;
             Log.d(TAG, "onBindViewHolder: Game = " + gson.toJson(game));
 
@@ -98,7 +127,6 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
                 Picasso.get()
                         .load(url)
                         .into(imageView);
-
             } else {
                 imageView.setImageResource(R.drawable.cover_na);
                 url = "";
@@ -109,17 +137,22 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
             recyclerView.setAdapter(consoleAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
 
-
-
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onItemClickListener.onItemClick(game);
                 }
             });
+        }
+    }
 
+    public class LoadingViewHolder extends RecyclerView.ViewHolder{
 
+        ProgressBar loadingGame;
 
+        public LoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            loadingGame = itemView.findViewById(R.id.loading_game);
 
         }
     }
