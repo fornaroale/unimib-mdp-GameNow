@@ -1,7 +1,13 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageButton;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -10,6 +16,7 @@ import com.airbnb.lottie.L;
 
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import it.unimib.disco.gruppoade.gamenow.repositories.GameRepository;
 

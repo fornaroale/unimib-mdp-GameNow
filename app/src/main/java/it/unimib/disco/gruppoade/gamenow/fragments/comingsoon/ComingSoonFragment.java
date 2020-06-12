@@ -94,7 +94,10 @@ public class ComingSoonFragment extends Fragment {
                 List<Game> gameList = new ArrayList<>();
                 MutableLiveData<List<Game>> gamesLiveData = comingSoonViewModel.getmGamesLiveData();
 
-                if(gamesLiveData.getValue() != null){
+                boolean conditions = gamesLiveData.getValue() != null && gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
+
+
+                if(conditions){
                     List<Game> currentList = gamesLiveData.getValue();
                     currentList.add(null);
                     gameList.addAll(currentList);
@@ -185,7 +188,10 @@ public class ComingSoonFragment extends Fragment {
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {48}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                retrieveJson(body);
+                //retrieveJson(body);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                gamesList = comingSoonViewModel.changeConsole(body);
+                incomingAdapter.setData(gamesList.getValue());
                 break;
 
             case R.id.button_xbox:
@@ -199,7 +205,9 @@ public class ComingSoonFragment extends Fragment {
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                retrieveJson(body);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                gamesList = comingSoonViewModel.changeConsole(body);
+                incomingAdapter.setData(gamesList.getValue());
                 break;
             case R.id.button_pc:
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
@@ -212,7 +220,9 @@ public class ComingSoonFragment extends Fragment {
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                retrieveJson(body);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                gamesList = comingSoonViewModel.changeConsole(body);
+                incomingAdapter.setData(gamesList.getValue());
                 break;
             case R.id.button_switch:
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
@@ -225,7 +235,9 @@ public class ComingSoonFragment extends Fragment {
                 body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n" +
                         "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                retrieveJson(body);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                gamesList = comingSoonViewModel.changeConsole(body);
+                incomingAdapter.setData(gamesList.getValue());
                 break;
             default:
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
@@ -236,7 +248,9 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 resetBody();
-                retrieveJson(body);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                gamesList = comingSoonViewModel.changeConsole(body);
+                incomingAdapter.setData(gamesList.getValue());
         }
 
     }
@@ -248,7 +262,7 @@ public class ComingSoonFragment extends Fragment {
                 "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
     }
 
-    private void retrieveJson(String body){
+    /*private void retrieveJson(String body){
 
 
         Call<List<Game>> call = ApiClient.getInstance().getApi().getGames(body);
@@ -260,7 +274,7 @@ public class ComingSoonFragment extends Fragment {
                     mGames.clear();
                     mGames = response.body();
                     Log.d(TAG, "onResponse: Response Body = "+ gson.toJson(mGames));
-                    initRecyclerView();
+                    //initRecyclerView();
                     lottieAnimationView.setVisibility(GONE);
                 }
             }
@@ -287,6 +301,6 @@ public class ComingSoonFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(incomingAdapter);
 
-    }
+    }*/
 
 }
