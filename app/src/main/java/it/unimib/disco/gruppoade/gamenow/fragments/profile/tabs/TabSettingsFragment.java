@@ -353,7 +353,7 @@ public class TabSettingsFragment extends Fragment {
                 mySnackbar.setAnchorView(R.id.nav_view);
 
                 // associo la funzione al tasto UNDO
-                mySnackbar.setAction("Undo", new View.OnClickListener() {
+                mySnackbar.setAction(R.string.action_undo, new View.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onClick(View v) {
