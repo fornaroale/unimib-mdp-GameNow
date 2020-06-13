@@ -113,6 +113,10 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public void bind(final Game game, final OnItemClickListener onItemClickListener){
 
+            Log.d(TAG, "Incoming onBindViewHolder: Game = " + game.toString());
+            String gameString = gson.toJson(game.toString()).split(",")[0].replace("\"Game{", "");
+            Log.d(TAG, "Incoming bind: gameString " + gameString);
+
             if (game.getDate() != null)
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
              else if(game.getName() == null)
@@ -121,7 +125,6 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 itemTitle.setText(game.getName());
 
             final String coverBig, url;
-            Log.d(TAG, "onBindViewHolder: Game = " + gson.toJson(game));
 
             if(game.getCover() != null) {
                 coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
