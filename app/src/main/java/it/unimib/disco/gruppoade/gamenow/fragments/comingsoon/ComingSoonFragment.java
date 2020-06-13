@@ -48,14 +48,16 @@ public class ComingSoonFragment extends Fragment {
     private long todayInSecs = (new Date().getTime()/1000);
 
     private LottieAnimationView lottieAnimationView;
-    private String body;
-    private List<Game> mGames = new ArrayList<>();
+    private String body, bodystart, bodyOffset, bodyEnd;
     private ImageButton ps4Btn, xboxBtn, pcBtn, switchBtn;
     private Button allBtn;
     private RecyclerView recyclerView;
     private Observer<List<Game>> observer;
     private LiveData<List<Game>> gamesList;
+    private MutableLiveData<List<Game>> gamesLiveData;
     private IncomingAdapter incomingAdapter;
+
+    private int totalItemCount, lastVisibleItem, visibleItemCount, threshold = 1;
 
     final Gson gson = new Gson();
 
@@ -77,6 +79,8 @@ public class ComingSoonFragment extends Fragment {
         pcBtn = view.findViewById(R.id.button_pc);
         switchBtn = view.findViewById(R.id.button_switch);
         recyclerView = view.findViewById(R.id.recyclerview);
+        lottieAnimationView = view.findViewById(R.id.animation_view);
+
 
         incomingAdapter = new IncomingAdapter(getActivity(), getGameList(body), new IncomingAdapter.OnItemClickListener() {
             @Override
@@ -85,23 +89,36 @@ public class ComingSoonFragment extends Fragment {
                 Navigation.findNavController(view).navigate(action);
             }
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(incomingAdapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
-                List<Game> gameList = new ArrayList<>();
-                MutableLiveData<List<Game>> gamesLiveData = comingSoonViewModel.getmGamesLiveData();
+                totalItemCount = layoutManager.getItemCount();
+                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                visibleItemCount = layoutManager.getChildCount();
+                boolean conditions = totalItemCount == visibleItemCount ||(totalItemCount <= (lastVisibleItem + threshold) && dy > 0 && !comingSoonViewModel.isLoading());
 
-                boolean conditions = gamesLiveData.getValue() != null && gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
 
-
-                if(conditions){
-                    List<Game> currentList = gamesLiveData.getValue();
-                    currentList.add(null);
-                    gameList.addAll(currentList);
-                    gamesLiveData.postValue(gameList);
+                if (conditions) {
+                    List<Game> gameList = new ArrayList<>();
+                    boolean conditions2 = gamesLiveData.getValue() != null &&
+                            gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
+                    if (conditions2) {
+                        List<Game> currentList = gamesLiveData.getValue();
+                        currentList.add(null);
+                        gameList.addAll(currentList);
+                        gamesLiveData.postValue(gameList);
+                        int currentOffset = comingSoonViewModel.getOffset();
+                        comingSoonViewModel.setOffset(currentOffset + Constants.PAGE_SIZE);
+                        bodyOffset = "offset " + comingSoonViewModel.getOffset() + ";\n";
+                        body = bodystart + bodyOffset + bodyEnd;
+                        Log.d(TAG, "onScrolled: Body " + body);
+                        comingSoonViewModel.getMoreGames(body);
+                        comingSoonViewModel.setLoading(true);
+                    }
                 }
             }
         });
@@ -113,12 +130,17 @@ public class ComingSoonFragment extends Fragment {
                 Log.d(TAG, "initRecyclerView: Init RecyclerView");
                 incomingAdapter.setData(games);
                 lottieAnimationView.setVisibility(GONE);
+                if(comingSoonViewModel.isLoading()) {
+                    comingSoonViewModel.setLoading(false);
+                    comingSoonViewModel.setCurrentResults(games.size());
+                }
             }
         };
 
 
         gamesList = comingSoonViewModel.getGames(body);
         gamesList.observe(getViewLifecycleOwner(), observer);
+        gamesLiveData = comingSoonViewModel.getmGamesLiveData();
 
         //Buttons Listeners
         ps4Btn.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +183,7 @@ public class ComingSoonFragment extends Fragment {
             }
         });
 
-        lottieAnimationView = view.findViewById(R.id.animation_view);
+
 
     }
 
@@ -185,11 +207,15 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
 
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
-                        "where category = 0 & platforms= {48}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                //retrieveJson(body);
-                lottieAnimationView.setVisibility(View.VISIBLE);
+                comingSoonViewModel.setOffset(0);
+
+                bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
+                        "where category = 0 & platforms= {48}& first_release_date > "+ todayInSecs +";\n";
+                bodyOffset = "offset 0;\n";
+                bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
+
+                body = bodystart + bodyOffset + bodyEnd;
+                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -202,10 +228,18 @@ public class ComingSoonFragment extends Fragment {
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
-                        "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                lottieAnimationView.setVisibility(View.VISIBLE);
+
+                comingSoonViewModel.setOffset(0);
+
+
+                bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
+                        "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n";
+                bodyOffset = "offset 0;\n";
+                bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
+
+                body = bodystart + bodyOffset + bodyEnd;
+
+                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -217,10 +251,17 @@ public class ComingSoonFragment extends Fragment {
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
-                        "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                lottieAnimationView.setVisibility(View.VISIBLE);
+
+                comingSoonViewModel.setOffset(0);
+
+                bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
+                        "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n";
+                bodyOffset = "offset 0;\n";
+                bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
+
+                body = bodystart + bodyOffset + bodyEnd;
+
+                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -232,10 +273,17 @@ public class ComingSoonFragment extends Fragment {
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
-                        "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n" +
-                        "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
-                lottieAnimationView.setVisibility(View.VISIBLE);
+
+                comingSoonViewModel.setOffset(0);
+
+                bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
+                        "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n";
+                bodyOffset = "offset 0;\n";
+                bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
+
+                body = bodystart + bodyOffset + bodyEnd;
+
+                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -247,8 +295,11 @@ public class ComingSoonFragment extends Fragment {
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+
+                comingSoonViewModel.setOffset(0);
+
                 resetBody();
-                lottieAnimationView.setVisibility(View.VISIBLE);
+                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
         }
@@ -256,10 +307,13 @@ public class ComingSoonFragment extends Fragment {
     }
 
     private void resetBody(){
-        body ="fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
-                "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n" +
-                "offset " + comingSoonViewModel.getOffset() + ";\n" +
-                "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
+
+        bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
+                "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n";
+        bodyOffset = "offset 0;\n";
+        bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
+        body = bodystart + bodyOffset + bodyEnd;
+
     }
 
     /*private void retrieveJson(String body){

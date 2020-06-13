@@ -113,11 +113,13 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public void bind(final Game game, final OnItemClickListener onItemClickListener){
 
-            if (game.getDate() != null) {
+            if (game.getDate() != null)
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
-            } else {
+             else if(game.getName() == null)
+                itemTitle.setText("N/A");
+             else
                 itemTitle.setText(game.getName());
-            }
+
             final String coverBig, url;
             Log.d(TAG, "onBindViewHolder: Game = " + gson.toJson(game));
 
@@ -153,7 +155,6 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public LoadingViewHolder(@NonNull View itemView) {
             super(itemView);
             loadingGame = itemView.findViewById(R.id.loading_game);
-
         }
     }
 

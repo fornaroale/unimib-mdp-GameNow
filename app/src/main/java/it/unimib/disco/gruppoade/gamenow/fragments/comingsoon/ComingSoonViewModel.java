@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -13,6 +14,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.airbnb.lottie.L;
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class ComingSoonViewModel extends ViewModel {
     private int offset = 0;
     private int currentResults;
     private boolean isLoading;
+
 
     public LiveData<List<Game>> getGames(String body) {
         if(mGames == null){
@@ -73,6 +76,10 @@ public class ComingSoonViewModel extends ViewModel {
 
     public void setLoading(boolean loading) {
         isLoading = loading;
+    }
+
+    public void setmGames(MutableLiveData<List<Game>> mGames) {
+        this.mGames = mGames;
     }
 
     @Override
