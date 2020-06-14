@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingTop="?attr/actionBarSize"
-    tools:context=".fragments.profile.ProfileFragment"
-    android:paddingBottom="56dp" >
+    tools:context=".fragments.profile.ProfileFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_infoaccount"
@@ -18,54 +24,56 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="20dp">
 
-            <RelativeLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-
-                <TextView
-                    android:id="@+id/UsernameTitle"
+                <RelativeLayout
+                    android:id="@+id/linearLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/profile_username"
-                    android:textSize="18sp" />
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="20dp" >
 
-                <EditText
-                    android:id="@+id/Username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/UsernameTitle"
-                    android:drawableRight="@drawable/ic_username_check_24"
-                    android:inputType="none"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:drawablePadding="5dp"
-                    android:text="@string/profile_username_not_found"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/UsernameTitle"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/profile_username"
+                        android:textSize="18sp" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_image_change"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/profile" />
+                    <EditText
+                        android:id="@+id/Username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/UsernameTitle"
+                        android:inputType="none"
+                        android:paddingLeft="10dp"
+                        android:drawableRight="@drawable/ic_username_check_24"
+                        android:text="@string/profile_username_not_found"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/Username"
-                    android:layout_alignRight="@+id/Username"
-                    android:background="@null"
-                    android:drawableEnd="@drawable/ic_username_check_24"
-                    android:visibility="gone" />
 
-            </RelativeLayout>
+
+
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image_change"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/profile" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:drawableEnd="@drawable/ic_username_check_24"
+                        android:layout_alignRight="@+id/Username"
+                        android:layout_alignBaseline="@id/Username"
+                        android:background="@null"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"/>
+
+                </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
 
@@ -74,15 +82,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp" >
 
             <RelativeLayout
                 android:id="@+id/cl_emailinfo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="20dp"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp" >
 
                 <TextView
                     android:id="@+id/EmailTitle"
@@ -95,11 +103,11 @@
                     android:id="@+id/Email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/EmailTitle"
                     android:paddingLeft="10dp"
                     android:text="@string/profile_email_not_found"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_below="@id/EmailTitle" />
 
             </RelativeLayout>
 
@@ -109,14 +117,14 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_topics"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" >
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="20dp"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp" >
 
                 <TextView
                     android:id="@+id/topicsTitle"
@@ -125,27 +133,26 @@
                     android:text="@string/profile_platforms"
                     android:textSize="18sp" />
 
-                        <HorizontalScrollView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/topicsTitle"
-                            android:layout_marginRight="10dp"
-                            android:scrollbars="none">
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/topicsTitle"
+                    android:scrollbars="none"
+                    android:layout_marginRight="10dp">
 
-                        <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/chipGroup"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="20dp"
-                            android:paddingRight="10dp" />
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:paddingRight="10dp" />
 
-                    </HorizontalScrollView>
+                </HorizontalScrollView>
 
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
-
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_logout"
@@ -158,12 +165,12 @@
                 android:id="@+id/txt_press_logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/profile_logout"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:layout_marginStart="16dp" />
 
         </androidx.cardview.widget.CardView>
 
@@ -171,8 +178,8 @@
             android:id="@+id/cv_deleteaccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:layout_marginTop="2dp" >
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:id="@+id/txt_press_deleteaccount"
@@ -187,5 +194,8 @@
                 android:textSize="20sp" />
 
         </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
 
 </LinearLayout>

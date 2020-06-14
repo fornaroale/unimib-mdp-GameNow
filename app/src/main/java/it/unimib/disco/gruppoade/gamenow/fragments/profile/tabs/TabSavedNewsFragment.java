@@ -1,6 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.SavedNewsListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
@@ -30,7 +31,7 @@ public class TabSavedNewsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private TextView mEmptyTV;
-    private NewsListAdapter adapter;
+    private SavedNewsListAdapter adapter;
     private List<PieceOfNews> locallySavedNews;
 
     // Firebase
@@ -47,7 +48,7 @@ public class TabSavedNewsFragment extends Fragment {
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
 
-            adapter = new NewsListAdapter(getActivity(), locallySavedNews, user, true);
+            adapter = new SavedNewsListAdapter(getActivity(), locallySavedNews, user);
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {

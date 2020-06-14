@@ -12,4 +12,5 @@
     android:text="Ale"
     android:textColor="@color/ColorTextTag"
     app:chipBackgroundColor="@color/ColorBgTag"
+    app:chipIcon="@drawable/heart_pressed"
     app:chipSurfaceColor="@null" />
