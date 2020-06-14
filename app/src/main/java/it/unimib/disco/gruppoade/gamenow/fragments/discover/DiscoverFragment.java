@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +20,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
@@ -50,36 +50,27 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class DiscoverFragment extends Fragment {
 
-    private View root;
     private static final String TAG = "DiscoverFragment";
 
     private RecyclerView mRecyclerView;
+    private TextView mEmptyTV;
     private SwipeRefreshLayout mSwipeLayout;
     private List<PieceOfNews> mFeedModelList;
     private DiscoverViewModel discoverViewModel;
-    private RssFeedListAdapter adapter;
-
-    // Firebase
+    private NewsListAdapter adapter;
     private User user;
+
     private ValueEventListener postListenerFirstUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
 
-            // JSON to PieceOfNews Array
-            List<PieceOfNews> locallySavedNews = new ArrayList<>();
-            Gson gson = new Gson();
-            for(String jsonPON : user.getNews()){
-                locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
-            }
-
             // Recupero il recyclerview dal layout xml e imposto l'adapter
-            mRecyclerView = root.findViewById(R.id.recyclerView);
             mFeedModelList = new ArrayList<>();
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user, locallySavedNews);
+            adapter = new NewsListAdapter(getActivity(), mFeedModelList, user, false);
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());
@@ -94,7 +85,6 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
             throw databaseError.toException();
         }
     };
@@ -107,7 +97,6 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
             throw databaseError.toException();
         }
     };
@@ -117,18 +106,17 @@ public class DiscoverFragment extends Fragment {
         discoverViewModel =
                 ViewModelProviders.of(this).get(DiscoverViewModel.class);
 
-        root = inflater.inflate(R.layout.fragment_discover, container, false);
-
-
-
-        return root;
+        return inflater.inflate(R.layout.fragment_discover, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Swipe per Refresh Manuale
-        mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
+
+        // Binding elementi visuali
+        mSwipeLayout = getView().findViewById(R.id.discover_swipe_refresh);
+        mRecyclerView = getView().findViewById(R.id.discover_recycler_view);
+        mEmptyTV = getView().findViewById(R.id.discover_empty_view);
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
@@ -167,7 +155,6 @@ public class DiscoverFragment extends Fragment {
                 String tmpPlatform = pieceOfNews.getProvider().getPlatform();
                 if (tmpPlatform.indexOf(platform) == -1)
                     pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
-                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
                 return true;
             }
         }
@@ -181,6 +168,7 @@ public class DiscoverFragment extends Fragment {
         String description = null;
         String guid = null;
         LocalDateTime pubDate = null;
+        String contentEncoded = null;
 
         // mi trovo all'interno della notizia?
         boolean insideItem = false;
@@ -209,12 +197,25 @@ public class DiscoverFragment extends Fragment {
                         guid = xpp.nextText();
                     } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
                         pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
+                    } else if (insideItem && xpp.getName().equalsIgnoreCase("content:encoded")) {
+                        contentEncoded = xpp.nextText();
                     }
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
                     if (title != null && link != null && description != null && pubDate != null) {
                         if (!checkNewsPresence(guid, provider.getPlatform())) {
-                            PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
+                            String imgUrl = extractImageUrl(description);
+                            String contentImgUrl = null;
+                            if(imgUrl.isEmpty() && contentEncoded!=null) {
+                                contentImgUrl = extractImageUrl(contentEncoded);
+                            }
+
+                            PieceOfNews item;
+                            if(contentImgUrl!=null) {
+                                item = new PieceOfNews(title, description, link, pubDate, contentImgUrl, guid, provider);
+                            } else {
+                                item = new PieceOfNews(title, description, link, pubDate, imgUrl, guid, provider);
+                            }
                             mFeedModelList.add(item);
                         }
                     }
@@ -238,6 +239,9 @@ public class DiscoverFragment extends Fragment {
 
             // Pulisco array di notizie
             mFeedModelList.clear();
+
+            // Messaggio caricamento notizie
+            mEmptyTV.setText(R.string.news_loading);
 
             for (NewsProvider provider : providers[0]) {
                 URL urlLink = provider.getRssUrl();
@@ -273,17 +277,18 @@ public class DiscoverFragment extends Fragment {
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (mFeedModelList.isEmpty()) {
-                    root.findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                    root.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setText(R.string.no_data_available_discover);
+                    mEmptyTV.setVisibility(View.VISIBLE);
                 } else {
-                    root.findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
-                    root.findViewById(R.id.empty_view).setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mEmptyTV.setVisibility(View.GONE);
                 }
 
                 // Riempo la RecyclerView con le schede notizie
                 adapter.notifyDataSetChanged();
             } else {
-                Log.d("RSS URL", "Enter a valid Rss feed url");
+                Log.d("RSS URL", "NOT valid Rss feed url");
             }
         }
     }

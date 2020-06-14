@@ -6,12 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateRemoteModel;
@@ -19,10 +14,12 @@ import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 
 import android.util.Log;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -49,77 +46,33 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "MainActivity";
-    private NavController navController;
-
-    // Create an English-Italian translator:
-    private FirebaseTranslatorOptions options =
-            new FirebaseTranslatorOptions.Builder()
-                    .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                    .setTargetLanguage(FirebaseTranslateLanguage.IT)
-                    .build();
-    public final FirebaseTranslator enItTranslator =
-            FirebaseNaturalLanguage.getInstance().getTranslator(options);
+    private AppCompatActivity appCompatActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        Log.d(TAG, "monCreate: Window " + findViewById(R.id.container));
-
-        final BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupWithNavController(navView, navController);
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
-                .build();
-        FirebaseModelManager manager = FirebaseModelManager.getInstance();
-        FirebaseTranslateRemoteModel itModel =
-                new FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.IT).build();
-        manager.deleteDownloadedModel(itModel);
-        FirebaseTranslateRemoteModel enModel =
-                new FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.EN).build();
-        enItTranslator.downloadModelIfNeeded(conditions)
-                .addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void v) {
-                                Log.d(TAG, "onSuccess: Model Downloaded");
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                manager.deleteDownloadedModel(itModel);
-                                manager.deleteDownloadedModel(enModel);
-                                manager.download(itModel, conditions);
-                                manager.download(enModel, conditions);
-                                enItTranslator.downloadModelIfNeeded();
-                                e.printStackTrace();
-                                Snackbar.make(navView, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();                            }
-                        });
-
-        // Retrieve user from current instance
+        // User identification
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null)
+        FragmentTransaction fragmentManager = getSupportFragmentManager().beginTransaction();
+
+        appCompatActivity = this;
+        if (user == null) {
             createSignInIntent();
+        } else {
+            createFeed();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.serach_menu, menu);
-        final MenuItem item = menu.findItem(R.id.serch_action);
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        final MenuItem item = menu.findItem(R.id.search_action);
         final SearchView searchView = (SearchView) item.getActionView();
         searchView.setQueryHint("Cerca Gioco...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(getApplicationContext(), SearchFragment.class);
-                intent.putExtra("query", query);
-                //startActivity(intent);
                 MobileNavigationDirections.SearchAction action = MobileNavigationDirections.searchAction(query);
                 navController.navigate(action);
                 searchView.setQuery("", false);
@@ -135,9 +88,8 @@ public class MainActivity extends AppCompatActivity {
         });
         return super.onCreateOptionsMenu(menu);
     }
-  
-  public void createSignInIntent() {
-        Log.d(TAG , "Dentro: createSignInIntent()");
+
+    public void createSignInIntent() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
@@ -175,14 +127,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
-
                         if(user == null){
                             // lancio la activity che mi fa compilare la pagina di preset
-                            Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-
-                            Log.d(TAG , "chiamo:  startActivity(intent)");
-                            startActivity(intent);
+                            Intent signUpIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                            startActivity(signUpIntent);
                         }
+
+                        createFeed();
                     }
 
                     @Override
@@ -196,7 +147,19 @@ public class MainActivity extends AppCompatActivity {
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
                 // ...
+                finish();
             }
         }
+    }
+
+    private void createFeed(){
+        setContentView(R.layout.activity_main);
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
+                .build();
+        NavController navController = Navigation.findNavController(appCompatActivity, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(appCompatActivity, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
     }
 }
