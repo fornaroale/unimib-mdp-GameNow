@@ -196,9 +196,12 @@ public class ComingSoonFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void chooseButton(int buttonId){
-
+        lottieAnimationView.setVisibility(View.VISIBLE);
+        comingSoonViewModel.setOffset(0);
+        gamesLiveData.postValue(null);
         switch (buttonId){
             case R.id.button_ps4:
+
                 ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_tint));
 
                 //reset other btn colors to off
@@ -215,7 +218,6 @@ public class ComingSoonFragment extends Fragment {
                 bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
 
                 body = bodystart + bodyOffset + bodyEnd;
-                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -229,8 +231,6 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
 
-                comingSoonViewModel.setOffset(0);
-
 
                 bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {49}& first_release_date > "+ todayInSecs +";\n";
@@ -239,7 +239,6 @@ public class ComingSoonFragment extends Fragment {
 
                 body = bodystart + bodyOffset + bodyEnd;
 
-                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -252,8 +251,6 @@ public class ComingSoonFragment extends Fragment {
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
 
-                comingSoonViewModel.setOffset(0);
-
                 bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n";
                 bodyOffset = "offset 0;\n";
@@ -261,7 +258,6 @@ public class ComingSoonFragment extends Fragment {
 
                 body = bodystart + bodyOffset + bodyEnd;
 
-                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -274,8 +270,6 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
 
-                comingSoonViewModel.setOffset(0);
-
                 bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n";
                 bodyOffset = "offset 0;\n";
@@ -283,7 +277,6 @@ public class ComingSoonFragment extends Fragment {
 
                 body = bodystart + bodyOffset + bodyEnd;
 
-                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
                 break;
@@ -296,10 +289,8 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
 
-                comingSoonViewModel.setOffset(0);
 
                 resetBody();
-                gamesLiveData.postValue(null);
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
         }
