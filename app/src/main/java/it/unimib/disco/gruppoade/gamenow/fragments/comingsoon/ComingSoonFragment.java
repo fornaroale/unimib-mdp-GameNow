@@ -59,8 +59,6 @@ public class ComingSoonFragment extends Fragment {
 
     private int totalItemCount, lastVisibleItem, visibleItemCount, threshold = 1;
 
-    final Gson gson = new Gson();
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_comingsoon, container, false);
@@ -290,58 +288,13 @@ public class ComingSoonFragment extends Fragment {
                 gamesList = comingSoonViewModel.changeConsole(body);
                 incomingAdapter.setData(gamesList.getValue());
         }
-
     }
 
     private void resetBody(){
-
         bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                 "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n";
         bodyOffset = "offset 0;\n";
         bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
         body = bodystart + bodyOffset + bodyEnd;
-
     }
-
-    /*private void retrieveJson(String body){
-
-
-        Call<List<Game>> call = ApiClient.getInstance().getApi().getGames(body);
-        call.enqueue(new Callback<List<Game>>() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onResponse(Call<List<Game>> call, Response<List<Game>> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    mGames.clear();
-                    mGames = response.body();
-                    Log.d(TAG, "onResponse: Response Body = "+ gson.toJson(mGames));
-                    //initRecyclerView();
-                    lottieAnimationView.setVisibility(GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Game>> call, Throwable t) {
-                Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                Log.d(TAG, "onFailure: Error " + t.getLocalizedMessage());
-            }
-        });
-
-    }
-
-    private void initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init RecyclerView");
-
-        IncomingAdapter incomingAdapter = new IncomingAdapter(getActivity(), mGames, new IncomingAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Game game) {
-                ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
-                Navigation.findNavController(getView()).navigate(action);
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(incomingAdapter);
-
-    }*/
-
 }
