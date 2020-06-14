@@ -1,13 +1,12 @@
 package it.unimib.disco.gruppoade.gamenow.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,17 +18,20 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.activities.GameInfoActivity;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
-import it.unimib.disco.gruppoade.gamenow.models.Platform;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHolder>{
+    private static final int GAME_VIEW_TYPE = 0;
+    private static final int LOADING_VIEW_TYPE = 1;
+
+
+    public interface OnItemClickListener{
+        void onItemClick(Game game);
+    }
 
     private static final String TAG = "Adapter";
 
@@ -37,82 +39,60 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
 
     private Context mContext;
     private List<Game> mGames;
+    private OnItemClickListener onItemClickListener;
 
-    public IncomingAdapter(Context mContext, List<Game> mResults) {
+    public IncomingAdapter(Context mContext, List<Game> mResults, OnItemClickListener onItemClickListener) {
         this.mContext = mContext;
         this.mGames = mResults;
+        this.onItemClickListener = onItemClickListener;
     }
 
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_carditem, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        if(viewType == GAME_VIEW_TYPE)
+        {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_carditem, parent, false);
+            return new ViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loading_games, parent, false);
+            return new LoadingViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         final Game game = mGames.get(position);
-        final Intent intent = new Intent(mContext, GameInfoActivity.class);
-        if (game.getDate() != null) {
-            holder.itemTitle.setText(constructTitle(game.getName(), game.getDate()));
-        } else {
-            holder.itemTitle.setText(game.getName());
-        }
-
-        final String coverBig, url;
-        Log.d(TAG, "onBindViewHolder: Game = " + gson.toJson(game));
-
-        if(game.getCover() != null) {
-            coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
-            url = "https:" + coverBig;
-            Picasso.get()
-                    .load(url)
-                    .into(holder.imageView);
-
-        } else {
-            holder.imageView.setImageResource(R.drawable.cover_na);
-            url = "";
-        }
-
-        //Console Recycler
-        final List<Platform> mPlatforms;
-        mPlatforms = mGames.get(position).getPlatforms();
-        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,mContext);
-        RecyclerView recyclerView = holder.recyclerView;
-        recyclerView.setAdapter(consoleAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
-
-
-
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //extras
-                intent.putExtra("desc", game.getSummary());
-                intent.putExtra("title", game.getName());
-                intent.putExtra("imageUrl",url);
-                intent.putParcelableArrayListExtra("platforms", (ArrayList<? extends Parcelable>) game.getPlatforms());
-                intent.putParcelableArrayListExtra("videos", (ArrayList<? extends Parcelable>) game.getVideos());
-                intent.putExtra("storyline", game.getStoryline());
-                intent.putExtra("rating", game.getRating());
-                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                //start activity
-                mContext.startActivity(intent);
-            }
-        });
-
-
+        if(holder instanceof ViewHolder)
+            ((ViewHolder) holder).bind(game,this.onItemClickListener);
+        else if(holder instanceof LoadingViewHolder)
+            ((LoadingViewHolder) holder).loadingGame.setIndeterminate(true);
 
     }
 
     @Override
     public int getItemCount() {
-        return mGames.size();
+        if (mGames != null)
+            return mGames.size();
+        return 0;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mGames.get(position) == null)
+            return LOADING_VIEW_TYPE;
+        else
+            return GAME_VIEW_TYPE;
+    }
+
+    public void setData(List<Game> gameList){
+        if (gameList != null) {
+            this.mGames = gameList;
+            notifyDataSetChanged();
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -129,6 +109,55 @@ public class IncomingAdapter extends RecyclerView.Adapter<IncomingAdapter.ViewHo
             itemTitle = itemView.findViewById(R.id.incoming_title);
             cardView = itemView.findViewById(R.id.incoming_cardview);
             recyclerView = itemView.findViewById(R.id.card_recyclerview);
+        }
+
+        public void bind(final Game game, final OnItemClickListener onItemClickListener){
+
+            Log.d(TAG, "Incoming onBindViewHolder: Game = " + game.toString());
+            String gameString = gson.toJson(game.toString()).split(",")[0].replace("\"Game{", "");
+            Log.d(TAG, "Incoming bind: gameString " + gameString);
+
+            if (game.getDate() != null)
+                itemTitle.setText(constructTitle(game.getName(), game.getDate()));
+             else if(game.getName() == null)
+                itemTitle.setText("N/A");
+             else
+                itemTitle.setText(game.getName());
+
+            final String coverBig, url;
+
+            if(game.getCover() != null) {
+                coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
+                url = "https:" + coverBig;
+                Picasso.get()
+                        .load(url)
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.cover_na);
+                url = "";
+            }
+
+            //Console Recycler
+            ConsoleAdapter consoleAdapter = new ConsoleAdapter(game.getPlatforms(),mContext);
+            recyclerView.setAdapter(consoleAdapter);
+            recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(game);
+                }
+            });
+        }
+    }
+
+    public class LoadingViewHolder extends RecyclerView.ViewHolder{
+
+        ProgressBar loadingGame;
+
+        public LoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            loadingGame = itemView.findViewById(R.id.loading_game);
         }
     }
 

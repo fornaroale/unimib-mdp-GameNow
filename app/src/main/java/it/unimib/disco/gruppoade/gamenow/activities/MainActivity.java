@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateRemoteModel;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 
@@ -21,7 +22,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.firebase.ui.auth.AuthUI;
@@ -31,11 +31,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import it.unimib.disco.gruppoade.gamenow.MobileNavigationDirections;
 import it.unimib.disco.gruppoade.gamenow.R;
 
 import java.util.Arrays;
 import java.util.List;
 
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.SearchFragment;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
@@ -51,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
         // User identification
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         FragmentTransaction fragmentManager = getSupportFragmentManager().beginTransaction();
 
         appCompatActivity = this;
@@ -71,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                intent.putExtra("query", query);
-                startActivity(intent);
+                MobileNavigationDirections.SearchAction action = MobileNavigationDirections.searchAction(query);
+                navController.navigate(action);
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 item.collapseActionView();

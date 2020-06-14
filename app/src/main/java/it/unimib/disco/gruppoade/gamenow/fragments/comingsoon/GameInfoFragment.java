@@ -1,11 +1,21 @@
-package it.unimib.disco.gruppoade.gamenow.activities;
+package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
-import android.content.Intent;
-
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -32,85 +42,110 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.models.Platform;
-import it.unimib.disco.gruppoade.gamenow.models.Video;
+import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
 import it.unimib.disco.gruppoade.gamenow.adapters.ConsoleAdapter;
 import it.unimib.disco.gruppoade.gamenow.adapters.VideoAdapter;
+import it.unimib.disco.gruppoade.gamenow.models.Game;
+import it.unimib.disco.gruppoade.gamenow.models.Platform;
+import it.unimib.disco.gruppoade.gamenow.models.Video;
 
 
-public class GameInfoActivity extends AppCompatActivity {
+public class GameInfoFragment extends Fragment {
 
-    private static final String TAG = "GameInfoActivity";
+    private static final String TAG = "GameInfoFragment";
+    private String url;
+
+    private FirebaseTranslatorOptions options;
+    private FirebaseTranslator translator;
 
     private TextView gameDescription, gameTitle, gameStoryline;
     private TextView  gameDescriptionText, gameStorylineText, gameVideoText;
-    private ImageView gameCover;
+    private ImageView gameCover, gameScreen;
     private RecyclerView platformsRecycler;
     private RecyclerView videosRecycler;
     private View descDivider, storylineDivider, videoDivider;
     private RatingBar ratingBar;
     private ProgressBar descSpinner, storylineSpinner;
+    private Palette.Swatch vibrantSwatch, mutedSwatch;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
 
-
-    private String url;
-    private Gson gson = new Gson();
-
-    private FirebaseTranslatorOptions options;
-    private FirebaseTranslator translator;
+    public static GameInfoFragment newInstance(String param1, String param2) {
+        GameInfoFragment fragment = new GameInfoFragment();
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_game_info, container, false);
+    }
 
-        setContentView(R.layout.activity_game_info);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Game game = GameInfoFragmentArgs.fromBundle(getArguments()).getGame();
 
-        gameDescription = findViewById(R.id.gameinfo_desc);
-        gameDescriptionText = findViewById(R.id.gameinfo_desc_text);
-        descDivider = findViewById(R.id.gameinfo_desc_divider);
-        descSpinner = findViewById(R.id.gameinfo_desc_spinner);
+        gameDescription = view.findViewById(R.id.gameinfo_desc);
+        gameDescriptionText = view.findViewById(R.id.gameinfo_desc_text);
+        descDivider = view.findViewById(R.id.gameinfo_desc_divider);
+        descSpinner = view.findViewById(R.id.gameinfo_desc_spinner);
 
-        gameTitle = findViewById(R.id.gameinfo_title);
+        gameTitle = view.findViewById(R.id.gameinfo_title);
+        gameScreen = view.findViewById(R.id.gameinfo_screen);
 
-        ratingBar = findViewById(R.id.gameinfo_rating);
+        ratingBar = view.findViewById(R.id.gameinfo_rating);
 
-        storylineDivider = findViewById(R.id.gameinfo_storyline_divider);
-        gameStoryline = findViewById(R.id.gameinfo_storyline);
-        gameStorylineText = findViewById(R.id.gameinfo_storyline_text);
-        storylineSpinner = findViewById(R.id.gameinfo_storyline_spinner);
+        storylineDivider = view.findViewById(R.id.gameinfo_storyline_divider);
+        gameStoryline = view.findViewById(R.id.gameinfo_storyline);
+        gameStorylineText = view.findViewById(R.id.gameinfo_storyline_text);
+        storylineSpinner = view.findViewById(R.id.gameinfo_storyline_spinner);
 
-        gameVideoText = findViewById(R.id.gameinfo_gameplays);
-        videoDivider = findViewById(R.id.gameinfo_gameplays_divider);
+        gameVideoText = view.findViewById(R.id.gameinfo_gameplays);
+        videoDivider = view.findViewById(R.id.gameinfo_gameplays_divider);
 
-        gameCover = findViewById(R.id.gameinfo_cover);
-        platformsRecycler = findViewById(R.id.gameinfo_recyclerview);
-        videosRecycler = findViewById(R.id.gameplays_recyclerview);
+        gameCover = view.findViewById(R.id.gameinfo_cover);
+        platformsRecycler = view.findViewById(R.id.gameinfo_recyclerview);
+        videosRecycler = view.findViewById(R.id.gameplays_recyclerview);
 
-        final Intent intent = getIntent();
+        if( game.getSummary() != null) {
+            final String desc = game.getSummary();
+            translate(desc, gameDescriptionText,descSpinner);
 
-        if(intent.getDoubleExtra("rating", 0) == 0){
+        } else {
+            gameDescription.setVisibility(View.GONE);
+            descDivider.setVisibility(View.GONE);
+            gameDescriptionText.setVisibility(View.GONE);
+            descSpinner.setVisibility(View.GONE);
+        }
+        if(game.getRating() == 0){
             ratingBar.setVisibility(View.GONE);
         } else {
-            ratingBar.setRating(setRating(intent.getDoubleExtra("rating", 0)));
+            ratingBar.setRating(setRating(game.getRating()));
         }
 
-        gameTitle.setText(intent.getStringExtra("title"));
-        final String storyline = intent.getStringExtra("storyline");
+        gameTitle.setText(game.getName());
+        String storyline = game.getStoryline();
         Log.d(TAG, "onCreate: Storyline = " + storyline);
 
 
-        mPlatforms = intent.getParcelableArrayListExtra("platforms");
-        mVideos = intent.getParcelableArrayListExtra("videos");
+        mPlatforms = game.getPlatforms();
+        mVideos = game.getVideos();
 
         if (mVideos == null){
             gameVideoText.setVisibility(View.GONE);
             videoDivider.setVisibility(View.GONE);
         }
-        Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
+        //Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
+        String coverBig, url;
 
-        url = intent.getStringExtra("imageUrl");
+        if(game.getCover() != null){
+             coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
+             url = "https:" + coverBig;}
+        else
+            url = "";
         Log.d(TAG, "onCreate: URl + " + url);
         if (!url.isEmpty()) {
             Picasso.get()
@@ -121,6 +156,20 @@ public class GameInfoActivity extends AppCompatActivity {
             gameCover.setImageResource(R.drawable.cover_na);
 
         }
+
+        Bitmap bitmap = ((BitmapDrawable) gameCover.getDrawable()).getBitmap();
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(@Nullable Palette palette) {
+                vibrantSwatch = palette.getVibrantSwatch();
+                mutedSwatch = palette.getMutedSwatch();
+                if(vibrantSwatch != null)
+                    gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
+                else
+                    gameScreen.setBackgroundColor(mutedSwatch.getRgb());
+
+            }
+        });
 
         initPlatformsRecyclerView();
         if(mVideos == null){
@@ -177,26 +226,26 @@ public class GameInfoActivity extends AppCompatActivity {
 
     private void initPlatformsRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
-        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,this);
+        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,getActivity());
         platformsRecycler.setAdapter(consoleAdapter);
         if(mPlatforms.size() > 4)
-            platformsRecycler.setLayoutManager(new GridLayoutManager(this, 4));
+            platformsRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         else
-            platformsRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+            platformsRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
 
     }
 
     private void initVideosRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
-        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle());
+        VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle(),getActivity());
         videosRecycler.setAdapter(videoAdapter);
-        videosRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+        videosRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
 
     }
 
     private float setRating(double totRating){
         double rating = Math.floor(totRating * 5) / 100;
-        double significance = 0.5;
+        double significance = 0.1;
         return (float) ((float)((int)(rating/significance) * significance) + significance);
     }
 
@@ -220,8 +269,3 @@ public class GameInfoActivity extends AppCompatActivity {
     }
 
 }
-
-
-
-
-
