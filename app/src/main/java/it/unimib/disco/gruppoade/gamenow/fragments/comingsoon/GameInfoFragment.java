@@ -88,6 +88,14 @@ public class GameInfoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Game game = GameInfoFragmentArgs.fromBundle(getArguments()).getGame();
 
+        // Crea un traduttore English-Italiano
+        options = new FirebaseTranslatorOptions.Builder()
+                .setSourceLanguage(FirebaseTranslateLanguage.EN)
+                .setTargetLanguage(FirebaseTranslateLanguage.IT)
+                .build();
+        translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
+        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
+
         gameDescription = view.findViewById(R.id.gameinfo_desc);
         gameDescriptionText = view.findViewById(R.id.gameinfo_desc_text);
         descDivider = view.findViewById(R.id.gameinfo_desc_divider);
@@ -178,23 +186,14 @@ public class GameInfoFragment extends Fragment {
         } else
             initVideosRecyclerView();
 
-        // Crea un traduttore English-Italiano
-        options = new FirebaseTranslatorOptions.Builder()
-                .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                .setTargetLanguage(FirebaseTranslateLanguage.IT)
-                .build();
-        translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
-
         // Traduzione
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
-                .build();
         translator.downloadModelIfNeeded(conditions)
                 .addOnSuccessListener(
                         new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void v) {
-                                if( intent.getStringExtra("desc") != null) {
-                                    final String desc = intent.getStringExtra("desc");
+                                if( game.getSummary() != null) {
+                                    final String desc = game.getSummary();
                                     translate(desc, gameDescriptionText,descSpinner);
 
                                 } else {

@@ -182,9 +182,6 @@ public class ComingSoonFragment extends Fragment {
                 chooseButton(switchBtn.getId());
             }
         });
-
-
-
     }
 
     private List<Game> getGameList(String body){
@@ -224,10 +221,10 @@ public class ComingSoonFragment extends Fragment {
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
 
                 comingSoonViewModel.setOffset(0);
 
@@ -247,10 +244,10 @@ public class ComingSoonFragment extends Fragment {
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
 
                 comingSoonViewModel.setOffset(0);
 
@@ -269,10 +266,10 @@ public class ComingSoonFragment extends Fragment {
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
 
                 comingSoonViewModel.setOffset(0);
 
@@ -291,10 +288,10 @@ public class ComingSoonFragment extends Fragment {
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.bg_off_tint));
+                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
 
                 comingSoonViewModel.setOffset(0);
 

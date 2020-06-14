@@ -13,19 +13,16 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 
 import it.unimib.disco.gruppoade.gamenow.MobileNavigationDirections;
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -33,15 +30,12 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import java.util.Arrays;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.SearchFragment;
-import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
-import it.unimib.disco.gruppoade.gamenow.models.User;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "MainActivity";
     private AppCompatActivity appCompatActivity;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,11 +126,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
-                .build();
-        NavController navController = Navigation.findNavController(appCompatActivity, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(appCompatActivity, navController, appBarConfiguration);
+//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
+//                .build();
+        navController = Navigation.findNavController(appCompatActivity, R.id.nav_host_fragment);
+//        NavigationUI.setupActionBarWithNavController(appCompatActivity, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        invalidateOptionsMenu();
     }
 }
