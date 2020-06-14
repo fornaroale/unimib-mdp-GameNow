@@ -18,7 +18,7 @@
         <Button
             android:id="@+id/button_all"
             android:layout_gravity="center_vertical"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:layout_width="0dp"
             android:layout_weight=".20"
             android:layout_height="50dp"
