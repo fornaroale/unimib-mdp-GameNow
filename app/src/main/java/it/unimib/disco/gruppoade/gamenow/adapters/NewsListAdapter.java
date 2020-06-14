@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -31,16 +30,18 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
-public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedModelViewHolder> {
+public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.FeedModelViewHolder> {
 
     private final FragmentActivity mContext;
-    private List<PieceOfNews> mRssFeedModels;
+    private List<PieceOfNews> mNewsFeedModels;
     private User user;
+    private boolean forSavedNews;
 
-    public RssListAdapter(Context mContext, List<PieceOfNews> rssFeedModels, User user) {
+    public NewsListAdapter(Context mContext, List<PieceOfNews> newsFeedModels, User user, boolean forSavedNews) {
         this.mContext = (FragmentActivity) mContext;
-        this.mRssFeedModels = rssFeedModels;
+        this.mNewsFeedModels = newsFeedModels;
         this.user = user;
+        this.forSavedNews = forSavedNews;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedMode
 
     @Override
     public void onBindViewHolder(final FeedModelViewHolder holder, int position) {
-        PieceOfNews rssFeedModel = mRssFeedModels.get(position);
+        PieceOfNews rssFeedModel = mNewsFeedModels.get(position);
 
         // Immagine
         String imgUrl = rssFeedModel.getImage();
@@ -92,22 +93,26 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedMode
                 builder.setToolbarColor(view.getResources().getColor(R.color.colorPrimary));
                 builder.setShowTitle(true);
                 CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(view.getContext(), Uri.parse(mRssFeedModels.get(holder.getAdapterPosition()).getLink()));
+                customTabsIntent.launchUrl(view.getContext(), Uri.parse(mNewsFeedModels.get(holder.getAdapterPosition()).getLink()));
             }
         });
 
         // ToggleButton bookmark
         final ToggleButton favButton = holder.rssFeedView.findViewById(R.id.saveNewsImg);
-        if(user.checkSavedPieceOfNews(rssFeedModel)) {
-            favButton.setChecked(true);
+        if(!forSavedNews) {
+            if (user.checkSavedPieceOfNews(rssFeedModel)) {
+                favButton.setChecked(true);
+            } else {
+                favButton.setChecked(false);
+            }
         } else {
-            favButton.setChecked(false);
+            favButton.setChecked(true);
         }
         favButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(favButton.isPressed()) {
-                    final PieceOfNews ponClicked = mRssFeedModels.get(holder.getAdapterPosition());
+                    final PieceOfNews ponClicked = mNewsFeedModels.get(holder.getAdapterPosition());
                     if (isChecked) {
                         if(user.savePieceOfNews(ponClicked)) {
                             Snackbar.make(buttonView, R.string.fav_news_added, Snackbar.LENGTH_LONG)
@@ -117,6 +122,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedMode
                                             user.removeSavedPieceOfNews(ponClicked);
                                         }
                                     })
+                                    .setAnchorView(R.id.nav_view)
                                     .show();
                         }
                     } else {
@@ -128,6 +134,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedMode
                                             user.savePieceOfNews(ponClicked);
                                         }
                                     })
+                                    .setAnchorView(R.id.nav_view)
                                     .show();
                         }
                     }
@@ -142,34 +149,40 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedMode
             final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.layout_chip_tag, chipGroup, false);
             chip.setText(newsTag);
             chipGroup.addView(chip);
-            setNewsTagsIcon(chip, holder);
-            chip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final String chipTagText = chip.getText().toString();
-                    if (user.getTags().contains(chipTagText)) {
-                        user.removeTag(chipTagText);
-                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
-                        Snackbar.make(view, R.string.fav_tag_removed, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.action_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        user.addTag(chipTagText);
-                                    }})
-                                .show();
-                    } else {
-                        user.addTag(chipTagText);
-                        chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
-                        Snackbar.make(view, R.string.fav_tag_added, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.action_undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        user.removeTag(chipTagText);
-                                    }})
-                                .show();
+            if(!forSavedNews) {
+                setNewsTagsIcon(chip, holder);
+                chip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String chipTagText = chip.getText().toString();
+                        if (user.getTags().contains(chipTagText)) {
+                            user.removeTag(chipTagText);
+                            chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart));
+                            Snackbar.make(view, R.string.fav_tag_removed, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.action_undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            user.addTag(chipTagText);
+                                        }
+                                    })
+                                    .setAnchorView(R.id.nav_view)
+                                    .show();
+                        } else {
+                            user.addTag(chipTagText);
+                            chip.setChipIcon(ContextCompat.getDrawable(view.getContext(), R.drawable.heart_pressed));
+                            Snackbar.make(view, R.string.fav_tag_added, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.action_undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            user.removeTag(chipTagText);
+                                        }
+                                    })
+                                    .setAnchorView(R.id.nav_view)
+                                    .show();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -183,7 +196,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.FeedMode
 
     @Override
     public int getItemCount() {
-        return mRssFeedModels.size();
+        return mNewsFeedModels.size();
     }
 
     public static class FeedModelViewHolder extends RecyclerView.ViewHolder {
