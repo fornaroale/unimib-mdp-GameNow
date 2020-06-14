@@ -53,7 +53,6 @@ import it.unimib.disco.gruppoade.gamenow.models.Video;
 public class GameInfoFragment extends Fragment {
 
     private static final String TAG = "GameInfoFragment";
-    private String url;
 
     private FirebaseTranslatorOptions options;
     private FirebaseTranslator translator;
@@ -71,10 +70,6 @@ public class GameInfoFragment extends Fragment {
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
 
-    public static GameInfoFragment newInstance(String param1, String param2) {
-        GameInfoFragment fragment = new GameInfoFragment();
-        return fragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
