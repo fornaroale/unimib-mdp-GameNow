@@ -7,10 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
-import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
-import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
-import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
 
 import android.util.Log;
 
@@ -51,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         // User identification
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        FragmentTransaction fragmentManager = getSupportFragmentManager().beginTransaction();
 
         appCompatActivity = this;
         if (user == null) {
@@ -122,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "usernameDb: " + usernameDb);
 
                 createFeed();
-
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
@@ -134,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createFeed(){
+        FbDatabase.setUserReference();
+
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
