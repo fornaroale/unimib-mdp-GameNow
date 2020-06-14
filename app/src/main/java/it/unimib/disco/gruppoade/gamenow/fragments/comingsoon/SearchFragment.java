@@ -39,7 +39,7 @@ public class SearchFragment extends Fragment {
     private LottieAnimationView lottieAnimationView;
     private RecyclerView recyclerView;
     private String body;
-    private ComingSoonViewModel comingSoonViewModel;
+    private SearchViewModel searchViewModel;
     private Observer<List<Game>> observer;
     private LiveData<List<Game>> gamesList;
     private IncomingAdapter incomingAdapter;
@@ -62,7 +62,7 @@ public class SearchFragment extends Fragment {
         String query = SearchFragmentArgs.fromBundle(getArguments()).getQuery();
         recyclerView = view.findViewById(R.id.search_recyclerview);
         lottieAnimationView = view.findViewById(R.id.search_animation_view);
-        comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
+        searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
 
         Log.d(TAG, "onCreate: " + query);
         body = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
@@ -109,14 +109,14 @@ public class SearchFragment extends Fragment {
                 }
             }
         };
-        gamesList = comingSoonViewModel.getMoreGames(body);
         gamesList.observe(getViewLifecycleOwner(), observer);
     }
 
     private List<Game> getGameList(String body){
-        LiveData<List<Game>> gameList = comingSoonViewModel.getGames(body);
-        if (gameList != null)
-            return gameList.getValue();
+        searchViewModel.resetGames();
+        gamesList = searchViewModel.getGames(body);
+        if (gamesList != null)
+            return gamesList.getValue();
         return null;
     }
 }

@@ -173,9 +173,8 @@ public class GameInfoFragment extends Fragment {
                 mutedSwatch = palette.getMutedSwatch();
                 if(vibrantSwatch != null)
                     gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
-                else
+                else if (mutedSwatch != null)
                     gameScreen.setBackgroundColor(mutedSwatch.getRgb());
-
             }
         });
 
