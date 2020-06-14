@@ -54,6 +54,7 @@
     <string name="profile_platforms">Piattaforme di interesse</string>
     <string name="profile_logout">Esci</string>
     <string name="profile_delete">Elimina account</string>
+    <string name="profile_submit">Conferma</string>
 
     <!-- saved news tab -->
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>

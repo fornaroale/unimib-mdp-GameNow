@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
+import it.unimib.disco.gruppoade.gamenow.adapters.RssListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
@@ -57,7 +57,7 @@ public class DiscoverFragment extends Fragment {
     private SwipeRefreshLayout mSwipeLayout;
     private List<PieceOfNews> mFeedModelList;
     private DiscoverViewModel discoverViewModel;
-    private NewsListAdapter adapter;
+    private RssListAdapter adapter;
     private User user;
 
     private ValueEventListener postListenerFirstUserData = new ValueEventListener() {
@@ -70,7 +70,7 @@ public class DiscoverFragment extends Fragment {
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new NewsListAdapter(getActivity(), mFeedModelList, user, false);
+            adapter = new RssListAdapter(getActivity(), mFeedModelList, user);
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());

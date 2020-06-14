@@ -26,10 +26,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class FirebaseHandler extends Application {
 
-    private AppCompatActivity signActivity;
-    private static final int RC_SIGN_IN = 123;
-    private static final String TAG = "FirebaseHandler";
-
     @Override
     public void onCreate() {
         super.onCreate();
