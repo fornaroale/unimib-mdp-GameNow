@@ -5,6 +5,14 @@
     <string name="title_discover">Discover</string>
     <string name="title_comingsoon">Coming Soon</string>
     <string name="title_profile">Profile</string>
+    <string name="news_loading">Attendere, caricamento notizie in corso...</string>
+
+    <!-- activity SignUp -->
+    <string name="signup_welcome">Benvenuto in GameNow,</string>
+    <string name="signup_piattaforme">Seleziona le piattaforme che sono di tuo interesse:</string>
+    <string name="signup_foto_profilo">Opzionale: Seleziona dal tuo dispositivo una foto per personalizzare il tuo profilo:</string>
+    <string name="signup_btn_sel_foto">Seleziona Immagine</string>
+    <string name="username">username not found</string>
 
     <!-- coming soon fragment-->
     <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
@@ -27,11 +35,8 @@
     <string name="title_activity_login">Sign in</string>
     <string name="action_undo">Annulla</string>
 
-    <!-- profile fragment -->
-    <string name="txt_usernameTitle">USERNAME</string>
-    <string name="txt_emailTitle">EMAIL</string>
-    <string name="txt_platformTitle">PLATFORM</string>
-    <string name="txt_piattaforme_di_interesseTitle">Piattaforme di interesse</string>
+    <!-- feed fragment -->
+    <string name="no_data_available_feed">Non sono disponibili news per le piattaforme che segui. Prova a dare un\'occhio alla sezione Discover!</string>
 
     <!-- discover fragment -->
     <string name="news_img_description">Immagine della notizia</string>
@@ -39,13 +44,21 @@
     <string name="fav_tag_added">Tag aggiunto ai preferiti</string>
     <string name="fav_news_removed">News rimossa dalle salvate</string>
     <string name="fav_news_added">News salvata</string>
-    <string name="no_data_available">Hai selezionato tutti i tag disponibili, oppure non sono disponibili informazioni per i tag che non segui. Ti invitiamo ad utilizzare il Feed.</string>
+    <string name="no_data_available_discover">Stai seguendo tutte le piattaforme disponibili, oppure non sono disponibili news per quelle che non segui. Ti invitiamo ad utilizzare la sezione Feed.</string>
+
+    <!-- profile settings tab -->
+    <string name="profile_username">Nome</string>
+    <string name="profile_username_not_found">Nome utente non disponibile</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_email_not_found">Email non disponibile</string>
+    <string name="profile_platforms">Piattaforme di interesse</string>
+    <string name="profile_logout">Esci</string>
+    <string name="profile_delete">Elimina account</string>
 
     <!-- saved news tab -->
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
     <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
     <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
-    <string name="username">username not found</string>
     <string name="btn_switch">switch</string>
     <string name="btn_pc">pc</string>
     <string name="btn_xbox">xbox</string>

@@ -40,5 +40,5 @@ public final class FbDatabase {
         return database;
     }
 
-    public static FirebaseUser getUser() {return FirebaseAuth.getInstance().getCurrentUser();}
+    public static FirebaseUser getUserAuth() {return FirebaseAuth.getInstance().getCurrentUser();}
 }
