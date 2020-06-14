@@ -50,36 +50,62 @@ public class User {
         return email;
     }
 
-    public void savePieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
-        if(!locallySavedNews.contains(pon)) {
-            locallySavedNews.add(pon);
+    public boolean savePieceOfNews(PieceOfNews pon){
+        if(!checkSavedPieceOfNews(pon)) {
             Gson gson = new Gson();
             String jsonPieceOfNews = gson.toJson(pon);
-            List<String> userDbNews = getNews();
+            List<String> userDbNews = news;
             userDbNews.add(jsonPieceOfNews);
             FbDatabase.FbDatabase().getUserReference().child("news").setValue(userDbNews);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public void removeSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews pon){
-        if(locallySavedNews.contains(pon)) {
-            locallySavedNews.remove(pon);
-            List<String> newsToUpload = new ArrayList<>();
+    public boolean removeSavedPieceOfNews(PieceOfNews pon){
+        if(checkSavedPieceOfNews(pon)) {
             Gson gson = new Gson();
-            for (PieceOfNews oldPon : locallySavedNews) {
-                newsToUpload.add(gson.toJson(oldPon));
+
+            // Siccome i tag locali potrebbero differire da quelli remoti,
+            // li rendo uguali (così che l'eliminazione possa avvenire
+            // senza errori)
+            for(int i = 0; i < news.size(); i++) {
+                // Per evitare uno spreco computazionale, eseguo comparazione news
+                // solo se i primi 50 caratteri sono uguali
+                if (news.get(i).substring(0, 49).equals(gson.toJson(pon).substring(0, 49))) {
+                    // Se i primi 50 caratteri sono uguali, confronto il GUID
+                    PieceOfNews cloudPonObj = gson.fromJson(news.get(i), PieceOfNews.class);
+                    if (cloudPonObj.equals(pon)) {
+                        news.remove(i);  // Se il GUID coincide, rimuovo la news
+                    }
+                }
             }
-            FbDatabase.FbDatabase().getUserReference().child("news").setValue(newsToUpload);
+
+            FbDatabase.FbDatabase().getUserReference().child("news").setValue(news);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public boolean checkSavedPieceOfNews(List<PieceOfNews> locallySavedNews, PieceOfNews PON){
-        Boolean savedNews = false;
-        for(PieceOfNews pon : locallySavedNews){
-            if(pon.equals(PON))
-                savedNews = true;
+    public boolean checkSavedPieceOfNews(PieceOfNews localPon){
+        Gson gson = new Gson();
+        String ponToString = gson.toJson(localPon);
+
+        for(String cloudPon : news){
+            // Per evitare uno spreco computazionale, eseguo comparazione news
+            // solo se i primi 50 caratteri sono uguali
+            if(cloudPon.substring(0,49).equals(ponToString.substring(0,49))) {
+                // Se i primi 50 caratteri sono uguali, confronto il GUID
+                PieceOfNews cloudPonObj = gson.fromJson(cloudPon, PieceOfNews.class);
+                if(cloudPonObj.equals(localPon)) {
+                    return true;
+                }
+            }
         }
-        return savedNews;
+
+        return false;
     }
 
     public void addTag(String tag) {
