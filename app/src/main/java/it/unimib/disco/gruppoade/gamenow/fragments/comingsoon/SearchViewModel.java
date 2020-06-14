@@ -10,7 +10,7 @@ import java.util.List;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import it.unimib.disco.gruppoade.gamenow.repositories.GameRepository;
 
-public class ComingSoonViewModel extends ViewModel {
+public class SearchViewModel extends ViewModel {
 
     private static final String TAG = "ComingSoonViewModel";
 
@@ -33,11 +33,6 @@ public class ComingSoonViewModel extends ViewModel {
     }
 
     public LiveData<List<Game>> getMoreGames(String body) {
-        GameRepository.getInstance().getGames(mGames, body);
-        return mGames;
-    }
-
-    public LiveData<List<Game>> changeConsole(String body) {
         GameRepository.getInstance().getGames(mGames, body);
         return mGames;
     }
