@@ -21,20 +21,38 @@
         android:id="@+id/navigation_comingsoon"
         android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.ComingSoonFragment"
         android:label="@string/title_comingsoon"
-        tools:layout="@layout/fragment_comingsoon" />
+        tools:layout="@layout/fragment_comingsoon" >
+        <action
+            android:id="@+id/displayGameInfo"
+            app:destination="@id/gameInfoFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="it.unimib.disco.gruppoade.gamenow.fragments.profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" >
-        <action
-            android:id="@+id/action_show_mod_profile"
-            app:destination="@id/modifyProfileFragment" />
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/gameInfoFragment"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.GameInfoFragment"
+        tools:layout="@layout/fragment_game_info" >
+        <argument
+            android:name="game"
+            app:argType="it.unimib.disco.gruppoade.gamenow.models.Game" />
     </fragment>
     <fragment
-        android:id="@+id/modifyProfileFragment"
-        android:name="it.unimib.disco.gruppoade.gamenow.fragments.profile.ModifyProfileFragment"
-        android:label="fragment_modify_profile"
-        tools:layout="@layout/fragment_modify_profile" />
+        android:id="@+id/navigation_search"
+        android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="query"
+            app:argType="string" />
+        <action
+            android:id="@+id/searchDisplayGameInfo"
+            app:destination="@id/gameInfoFragment" />
+    </fragment>
+    <action
+        android:id="@+id/searchAction"
+        app:destination="@id/navigation_search" />
 </navigation>
