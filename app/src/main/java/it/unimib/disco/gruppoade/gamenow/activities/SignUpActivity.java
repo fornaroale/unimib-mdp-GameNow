@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -46,6 +47,9 @@ public class SignUpActivity extends AppCompatActivity {
     // user
     User theUser;
 
+    // variabile che controlla se almeno una checkbox è stata premuta
+    private int numCKset;
+
     //a Uri object to store file path
     private Uri filePath;
     private ImageView profile_photo;
@@ -59,6 +63,9 @@ public class SignUpActivity extends AppCompatActivity {
     // activity obj
     private LinearLayout container_cb;
 
+    // button
+    private Button submit_button;
+    private Button photo_choose_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +74,17 @@ public class SignUpActivity extends AppCompatActivity {
 
         tagList = readTagsCsv();
         tagSelected = new ArrayList<>();
+        numCKset = 0;
+
 
         // actyivity obj
-        Button submit_button = findViewById(R.id.submit);
-        Button photo_choose_button = findViewById(R.id.btn_photo);
+        submit_button = findViewById(R.id.submit);
+        photo_choose_button = findViewById(R.id.btn_photo);
         profile_photo = findViewById(R.id.img_profilepicture);
+
+        // setto il bottone come non premibile
+        submit_button.setEnabled(false);
+
 
         Log.d(TAG, "TAG LETTI DA CSV: " + readTagsCsv().toString());
 
@@ -88,9 +101,13 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(cb.isChecked()){
                         tagSelected.add((String) cb.getText());
+                        numCKset++;
+                        activateDeactivateButton();
                     }
                     else{
                         tagSelected.remove((String) cb.getText());
+                        numCKset--;
+                        activateDeactivateButton();
                     }
                 }
             });
@@ -159,7 +176,10 @@ public class SignUpActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+
+
     }
+
 
     //method to show file chooser
     private void showFileChooser() {
@@ -191,6 +211,13 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    private void activateDeactivateButton(){
+        if(numCKset>0)
+            submit_button.setEnabled(true);
+        else
+            submit_button.setEnabled(false);
+    }
+
     private List<String> readTagsCsv() {
         List<String> tags = new ArrayList<>();
         InputStream is = getResources().openRawResource(R.raw.providers);
@@ -208,5 +235,14 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         return tags;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
+
+        //return super.onKeyDown(keyCode, event);
+
+
     }
 }
