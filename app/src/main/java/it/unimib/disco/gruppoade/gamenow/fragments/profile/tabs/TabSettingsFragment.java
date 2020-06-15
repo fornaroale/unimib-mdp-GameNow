@@ -95,7 +95,7 @@ public class TabSettingsFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_tab_settings_backup, container, false);
+        return inflater.inflate(R.layout.fragment_tab_settings, container, false);
     }
 
     @Override
