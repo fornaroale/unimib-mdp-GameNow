@@ -95,7 +95,7 @@ public class TabSettingsFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_tab_settings, container, false);
+        return inflater.inflate(R.layout.fragment_tab_settings_backup, container, false);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class TabSettingsFragment extends Fragment {
         usernameET = view.findViewById(R.id.Username);
 
         userDeleted = false;
-       // usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.drawableRight, 0);
+        // usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.drawableRight, 0);
 
 
 
@@ -154,7 +154,7 @@ public class TabSettingsFragment extends Fragment {
         profilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Log.d(TAG, "Foto profilo cliccata");
+                Log.d(TAG, "Foto profilo cliccata");
                 showFileChooser();
             }
         });
@@ -349,11 +349,11 @@ public class TabSettingsFragment extends Fragment {
 
 
                 // Creo la snackbar
-                Snackbar mySnackbar = Snackbar.make(chipGroup, "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
+                Snackbar mySnackbar = Snackbar.make(getView(), "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
                 mySnackbar.setAnchorView(R.id.nav_view);
 
                 // associo la funzione al tasto UNDO
-                mySnackbar.setAction("Undo", new View.OnClickListener() {
+                mySnackbar.setAction(R.string.action_undo, new View.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onClick(View v) {
@@ -368,12 +368,8 @@ public class TabSettingsFragment extends Fragment {
                         // aggiungo l'elemento ad user
                         sortedAdd(tmpString, tags);
 
-                        // salvo l'user su db
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
                         // salvo user su DB
                         FbDatabase.getUserReference().setValue(theUser);
-
                     }
                 });
                 // mostro la snackbar
@@ -381,7 +377,7 @@ public class TabSettingsFragment extends Fragment {
 
                 Log.d(TAG, "Inizio aggiornamento");
 
-               // myRef = database.getReference(usernameDb);
+                // myRef = database.getReference(usernameDb);
                 Log.d(TAG, "Tag theUser: " + theUser.getTags());
                 Log.d(TAG, "New theUser: " + theUser.toString());
 
@@ -499,13 +495,17 @@ public class TabSettingsFragment extends Fragment {
                             // Rimuovo il chack
                             usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
+                            Snackbar sbUsernameChange = null;
                             if(!usernameET.getText().toString().isEmpty()) {
                                 updateUsername(usernameET.getText());
+                                sbUsernameChange = Snackbar.make(getView(), "Nome modificato", Snackbar.LENGTH_LONG);
                                 theUser.setUsername(usernameET.getText().toString());
-                            }
-                            else
+                            } else {
                                 usernameET.setText(theUser.getUsername());
-
+                                sbUsernameChange = Snackbar.make(getView(), "Errore: nome vuoto!", Snackbar.LENGTH_LONG);
+                            }
+                            sbUsernameChange.setAnchorView(R.id.nav_view);
+                            sbUsernameChange.show();
                             return true;
                         }
                 }
