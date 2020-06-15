@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
+import android.util.Log;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.gson.Gson;
@@ -16,11 +18,17 @@ public class User {
     private String email;
     private List<String> tags;
     private List<String> news;
+    private List<String> games;
+    private Gson gson;
+
+    private static final String TAG = "User";
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
         tags = new ArrayList<>();
         news = new ArrayList<>();
+        games = new ArrayList<>();
+        gson = new Gson();
     }
 
     public User(String username, String email) {
@@ -28,6 +36,8 @@ public class User {
         this.email = email;
         tags = new ArrayList<>();
         news = new ArrayList<>();
+        games = new ArrayList<>();
+        gson = new Gson();
     }
 
     @PropertyName("tags")
@@ -38,6 +48,11 @@ public class User {
     @PropertyName("news")
     public List<String> getNews() {
         return news;
+    }
+
+    @PropertyName("games")
+    public List<String> getGames() {
+        return games;
     }
 
     @PropertyName("username")
@@ -52,7 +67,6 @@ public class User {
 
     public boolean savePieceOfNews(PieceOfNews pon){
         if(!checkSavedPieceOfNews(pon)) {
-            Gson gson = new Gson();
             String jsonPieceOfNews = gson.toJson(pon);
             List<String> userDbNews = news;
             userDbNews.add(jsonPieceOfNews);
@@ -65,8 +79,6 @@ public class User {
 
     public boolean removeSavedPieceOfNews(PieceOfNews pon){
         if(checkSavedPieceOfNews(pon)) {
-            Gson gson = new Gson();
-
             // Siccome i tag locali potrebbero differire da quelli remoti,
             // li rendo uguali (così che l'eliminazione possa avvenire
             // senza errori)
@@ -89,8 +101,9 @@ public class User {
         }
     }
 
+
+
     public boolean checkSavedPieceOfNews(PieceOfNews localPon){
-        Gson gson = new Gson();
         String ponToString = gson.toJson(localPon);
 
         for(String cloudPon : news){
@@ -102,6 +115,58 @@ public class User {
                 if(cloudPonObj.equals(localPon)) {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+
+    public boolean saveGame(Game game){
+        if(!checkSavedGame(game)) {
+            String jsonGame = gson.toJson(game);
+            List<String> userDbGames = games;
+            userDbGames.add(jsonGame);
+            FbDatabase.FbDatabase().getUserReference().child("games").setValue(userDbGames);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeGame(Game game){
+        if(checkSavedGame(game)) {
+
+            for(int i = 0; i < games.size(); i++) {
+                // Faccio il check per vedere se l'ID dei giochi è uguale
+                String dbID = games.get(i).split("\"id\":", 4)[2].split(",")[0];
+                String gameID = gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
+                Log.d(TAG, "removeGame: dbID" + dbID);
+                Log.d(TAG, "removeGame: gameId " + gameID);
+                if (dbID.equals(gameID)) {
+                    // Se i due ID sono uguali lo rimuovo dal db
+                    games.remove(i);
+                }
+            }
+
+            FbDatabase.FbDatabase().getUserReference().child("games").setValue(games);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public boolean checkSavedGame(Game localGame){
+        String gameToString = gson.toJson(localGame);
+
+        for(String sGame : games) {
+            // Faccio il check per vedere se l'ID dei giochi è uguale
+            String dbID = sGame.split("\"id\":", 4)[2].split(",")[0];
+            String gameID = gson.toJson(localGame).split("\"id\":", 4)[2].split(",")[0];
+            if (dbID.equals(gameID)) {
+                // Se i due ID sono uguali è già nel db
+               return true;
             }
         }
 

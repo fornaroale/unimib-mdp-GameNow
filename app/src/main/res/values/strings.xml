@@ -23,6 +23,8 @@
     <string name="gameinfo_placeholder_storyline">Storyline</string>
     <string name="gameinfo_placeholder_gameplays">Videos</string>
     <string name="cerca_gioco">Cerca Gioco</string>
+    <string name="gioco_aggiunto">Gioco Salvato</string>
+    <string name="gioco_rimosso">Gioco Rimosso dalla lista</string>
     <string name="nessun_gioco">Nessun gioco trovato...</string>
 
 
