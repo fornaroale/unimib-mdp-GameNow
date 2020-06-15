@@ -498,8 +498,10 @@ public class TabSettingsFragment extends Fragment {
                             // Rimuovo il chack
                             usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-                            if(!usernameET.getText().toString().isEmpty())
+                            if(!usernameET.getText().toString().isEmpty()) {
                                 updateUsername(usernameET.getText());
+                                theUser.setUsername(usernameET.getText().toString());
+                            }
                             else
                                 usernameET.setText(theUser.getUsername());
 
