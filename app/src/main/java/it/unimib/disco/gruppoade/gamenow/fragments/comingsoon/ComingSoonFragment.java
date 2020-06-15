@@ -23,6 +23,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -31,9 +34,11 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.Constants;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,8 +61,13 @@ public class ComingSoonFragment extends Fragment {
     private LiveData<List<Game>> gamesList;
     private MutableLiveData<List<Game>> gamesLiveData;
     private IncomingAdapter incomingAdapter;
+    private User user;
 
     private int totalItemCount, lastVisibleItem, visibleItemCount, threshold = 1;
+
+    private ValueEventListener postListenerFirstUserData;
+
+    private ValueEventListener postListenerUserData;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,6 +81,96 @@ public class ComingSoonFragment extends Fragment {
         comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
         resetBody();
 
+        postListenerFirstUserData = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                incomingAdapter = new IncomingAdapter(getActivity(), getGameList(body), new IncomingAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Game game) {
+                        ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
+                        Navigation.findNavController(view).navigate(action);
+                    }
+                }, user);
+
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setAdapter(incomingAdapter);
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
+                        totalItemCount = layoutManager.getItemCount();
+                        lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                        visibleItemCount = layoutManager.getChildCount();
+                        boolean conditions = totalItemCount == visibleItemCount ||(totalItemCount <= (lastVisibleItem + threshold) && dy > 0 && !comingSoonViewModel.isLoading());
+
+
+                        if (conditions) {
+                            List<Game> gameList = new ArrayList<>();
+                            boolean conditions2 = gamesLiveData.getValue() != null &&
+                                    gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
+                            if (conditions2) {
+                                List<Game> currentList = gamesLiveData.getValue();
+                                currentList.add(null);
+                                gameList.addAll(currentList);
+                                gamesLiveData.postValue(gameList);
+                                int currentOffset = comingSoonViewModel.getOffset();
+                                comingSoonViewModel.setOffset(currentOffset + Constants.PAGE_SIZE);
+                                bodyOffset = "offset " + comingSoonViewModel.getOffset() + ";\n";
+                                body = bodystart + bodyOffset + bodyEnd;
+                                Log.d(TAG, "onScrolled: Body " + body);
+                                comingSoonViewModel.getMoreGames(body);
+                                comingSoonViewModel.setLoading(true);
+                            }
+                        }
+                    }
+                });
+
+
+                observer = new Observer<List<Game>>() {
+                    @Override
+                    public void onChanged(List<Game> games) {
+                        Log.d(TAG, "initRecyclerView: Init RecyclerView");
+                        incomingAdapter.setData(games);
+                        lottieAnimationView.setVisibility(GONE);
+                        if(comingSoonViewModel.isLoading()) {
+                            comingSoonViewModel.setLoading(false);
+                            comingSoonViewModel.setCurrentResults(games.size());
+                        }
+                    }
+                };
+
+
+                gamesList = comingSoonViewModel.getGames(body);
+                gamesList.observe(getViewLifecycleOwner(), observer);
+                gamesLiveData = comingSoonViewModel.getmGamesLiveData();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        };
+
+        postListenerUserData = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                incomingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        };
+
+
+
+        // Recupero dati database
+        FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
+        FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
         allBtn = view.findViewById(R.id.button_all);
         ps4Btn = view.findViewById(R.id.button_ps4);
         xboxBtn = view.findViewById(R.id.button_xbox);
@@ -80,65 +180,6 @@ public class ComingSoonFragment extends Fragment {
         lottieAnimationView = view.findViewById(R.id.animation_view);
 
 
-        incomingAdapter = new IncomingAdapter(getActivity(), getGameList(body), new IncomingAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Game game) {
-                ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
-                Navigation.findNavController(view).navigate(action);
-            }
-        });
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(incomingAdapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-
-                totalItemCount = layoutManager.getItemCount();
-                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                visibleItemCount = layoutManager.getChildCount();
-                boolean conditions = totalItemCount == visibleItemCount ||(totalItemCount <= (lastVisibleItem + threshold) && dy > 0 && !comingSoonViewModel.isLoading());
-
-
-                if (conditions) {
-                    List<Game> gameList = new ArrayList<>();
-                    boolean conditions2 = gamesLiveData.getValue() != null &&
-                            gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
-                    if (conditions2) {
-                        List<Game> currentList = gamesLiveData.getValue();
-                        currentList.add(null);
-                        gameList.addAll(currentList);
-                        gamesLiveData.postValue(gameList);
-                        int currentOffset = comingSoonViewModel.getOffset();
-                        comingSoonViewModel.setOffset(currentOffset + Constants.PAGE_SIZE);
-                        bodyOffset = "offset " + comingSoonViewModel.getOffset() + ";\n";
-                        body = bodystart + bodyOffset + bodyEnd;
-                        Log.d(TAG, "onScrolled: Body " + body);
-                        comingSoonViewModel.getMoreGames(body);
-                        comingSoonViewModel.setLoading(true);
-                    }
-                }
-            }
-        });
-
-
-        observer = new Observer<List<Game>>() {
-            @Override
-            public void onChanged(List<Game> games) {
-                Log.d(TAG, "initRecyclerView: Init RecyclerView");
-                incomingAdapter.setData(games);
-                lottieAnimationView.setVisibility(GONE);
-                if(comingSoonViewModel.isLoading()) {
-                    comingSoonViewModel.setLoading(false);
-                    comingSoonViewModel.setCurrentResults(games.size());
-                }
-            }
-        };
-
-
-        gamesList = comingSoonViewModel.getGames(body);
-        gamesList.observe(getViewLifecycleOwner(), observer);
-        gamesLiveData = comingSoonViewModel.getmGamesLiveData();
 
         //Buttons Listeners
         ps4Btn.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +221,8 @@ public class ComingSoonFragment extends Fragment {
                 chooseButton(switchBtn.getId());
             }
         });
+
+
     }
 
     private List<Game> getGameList(String body){

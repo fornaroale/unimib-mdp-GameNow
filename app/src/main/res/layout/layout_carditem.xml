@@ -19,12 +19,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/incoming_image"
-                android:layout_width="120dp"
-                android:layout_height="160dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/incoming_image"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img"/>
+
+                <ToggleButton
+                    android:id="@+id/incoming_save_game"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@null"
+                    android:drawableTop="@drawable/ic_toggle_favnews"/>
+
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/incoming_text_container"
