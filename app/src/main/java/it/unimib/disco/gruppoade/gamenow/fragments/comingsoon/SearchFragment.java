@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -82,15 +83,13 @@ public class SearchFragment extends Fragment {
             @Override
             public void onChanged(List<Game> games) {
                 Log.d(TAG, "initRecyclerView: Init RecyclerView");
+                TextView giocoNA = view.findViewById(R.id.coordinator);
                 if (games.isEmpty()){
-                    CoordinatorLayout coordinatorLayout = view.findViewById(R.id.coordinator);
-                    Snackbar snackbar =  Snackbar.make( coordinatorLayout, "Nessun gioco trovato...", Snackbar.LENGTH_LONG);
-                    View view = snackbar.getView();
-                    CoordinatorLayout.LayoutParams params=(CoordinatorLayout.LayoutParams)view.getLayoutParams();
-                    params.gravity = Gravity.TOP;
-                    view.setLayoutParams(params);
-                    snackbar.show();
-                } if(games != null) {
+                    giocoNA.setVisibility(View.VISIBLE);
+                    giocoNA.setText(R.string.nessun_gioco);
+                } else if(games != null) {
+                    giocoNA.setVisibility(GONE);
+                    giocoNA.setText("");
                 Collections.sort(games, new Comparator<Game>() {
                     @Override
                     public int compare(Game o1, Game o2) {
@@ -104,9 +103,9 @@ public class SearchFragment extends Fragment {
                     }
 
                 });
-                    incomingAdapter.setData(games);
-                    lottieAnimationView.setVisibility(GONE);
                 }
+                incomingAdapter.setData(games);
+                lottieAnimationView.setVisibility(GONE);
             }
         };
         gamesList.observe(getViewLifecycleOwner(), observer);
