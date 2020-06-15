@@ -16,6 +16,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
 
 import java.util.List;
 
@@ -86,12 +87,15 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
             super(playerView);
             youTubePlayerView = playerView;
             tracker = new YouTubePlayerTracker();
+            PlayerUiController pc = youTubePlayerView.getPlayerUiController();
+            pc.showFullscreenButton(false);
             youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
                 @Override
                 public void onReady(@NonNull YouTubePlayer initializedYouTubePlayer) {
                     youTubePlayer = initializedYouTubePlayer;
                     youTubePlayer.addListener(tracker);
                     youTubePlayer.cueVideo(currentVideoId, 0);
+                    pc.showFullscreenButton(true);
                 }
             });
         }

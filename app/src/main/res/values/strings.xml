@@ -23,6 +23,9 @@
     <string name="gameinfo_placeholder_storyline">Storyline</string>
     <string name="gameinfo_placeholder_gameplays">Videos</string>
     <string name="cerca_gioco">Cerca Gioco</string>
+    <string name="nessun_gioco">Nessun gioco trovato...</string>
+
+
     <string name="title_activity_sign_in">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
