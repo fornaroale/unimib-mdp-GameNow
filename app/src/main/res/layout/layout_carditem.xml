@@ -34,8 +34,10 @@
                     android:id="@+id/incoming_save_game"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
                     android:background="@null"
+                    android:textOff=""
+                    android:textOn=""
                     android:drawableTop="@drawable/ic_toggle_favnews"/>
 
             </FrameLayout>
