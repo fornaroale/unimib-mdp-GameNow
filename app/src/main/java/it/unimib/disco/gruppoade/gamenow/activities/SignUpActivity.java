@@ -3,6 +3,7 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,6 +33,8 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
+import it.unimib.disco.gruppoade.gamenow.databinding.ActivityMainBinding;
+import it.unimib.disco.gruppoade.gamenow.databinding.ActivitySignupBinding;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -40,6 +43,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     private static final String TAG = "SignUpActivity";
     private static final int RC_SIGN_IN = 123;
+
+    private static final String FOTO = "foto";
 
     //a constant to track the file chooser intent
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -67,10 +72,14 @@ public class SignUpActivity extends AppCompatActivity {
     private Button submit_button;
     private Button photo_choose_button;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_signup);
+
+
 
         tagList = readTagsCsv();
         tagSelected = new ArrayList<>();
@@ -91,11 +100,16 @@ public class SignUpActivity extends AppCompatActivity {
         // container checkbox
         container_cb = findViewById(R.id.container_cb);
 
+        // id associata alla checkbox
+        int id = 0;
 
         // creazione dinamica cjeckbox
         for(String tag : tagList){
+
             final CheckBox cb = new CheckBox(getApplicationContext());
             cb.setText(tag);
+            cb.setId(id);
+            id++;
             cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -240,9 +254,6 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return false;
-
-        //return super.onKeyDown(keyCode, event);
-
-
     }
+
 }
