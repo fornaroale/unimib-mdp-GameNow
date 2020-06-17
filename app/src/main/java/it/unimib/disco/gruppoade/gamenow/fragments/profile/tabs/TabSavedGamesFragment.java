@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unimib.disco.gruppoade.gamenow.NavNestedGraphDirections;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
