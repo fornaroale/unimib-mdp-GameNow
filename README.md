@@ -15,3 +15,11 @@ Edoardo Tarnoczy - e.tarnoczy@campus.unimib.it
 
 ## Descrizione
 GameNow è un’applicazione Android, sviluppata per un progetto universitario, pensata per tenere aggiornati gli appassionati di videogiochi riguardo titoli e piattaforme disponibili sul mercato videoludico.
+
+## Librerie esterne
+* GSon [https://github.com/google/gson]
+* JSoup [https://github.com/jhy/jsoup]
+* ThreeTen backport [https://github.com/ThreeTen/threetenbp/]
+* Chrome Custom Tabs [https://github.com/GoogleChrome/custom-tabs-client]
+* Retrofit [https://github.com/square/retrofit]
+* Youtube Player Soffritti [https://github.com/PierfrancescoSoffritti/android-youtube-player]
