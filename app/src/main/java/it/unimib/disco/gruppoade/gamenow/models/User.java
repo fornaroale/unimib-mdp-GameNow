@@ -19,7 +19,7 @@ public class User {
     private List<String> tags;
     private List<String> news;
     private List<String> games;
-    private Gson gson;
+    private Gson gson = new Gson();
 
     private static final String TAG = "User";
 
@@ -28,7 +28,6 @@ public class User {
         tags = new ArrayList<>();
         news = new ArrayList<>();
         games = new ArrayList<>();
-        gson = new Gson();
     }
 
     public User(String username, String email) {
@@ -37,7 +36,6 @@ public class User {
         tags = new ArrayList<>();
         news = new ArrayList<>();
         games = new ArrayList<>();
-        gson = new Gson();
     }
 
     @PropertyName("tags")
@@ -121,6 +119,8 @@ public class User {
         return false;
     }
 
+    private String dbID;
+    private String gameID;
 
     public boolean saveGame(Game game){
         if(!checkSavedGame(game)) {
@@ -139,13 +139,10 @@ public class User {
 
             for(int i = 0; i < games.size(); i++) {
                 // Faccio il check per vedere se l'ID dei giochi è uguale
-                String dbID = games.get(i).split("\"id\":", 4)[2].split(",")[0];
-                String gameID = gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
-                Log.d(TAG, "removeGame: dbID" + dbID);
-                Log.d(TAG, "removeGame: gameId " + gameID);
-                if (dbID.equals(gameID)) {
+                if (checkID(game, games.get(i))) {
                     // Se i due ID sono uguali lo rimuovo dal db
                     games.remove(i);
+                    Log.d(TAG, "removeGame: games after " + games);
                 }
             }
 
@@ -158,13 +155,9 @@ public class User {
 
 
     public boolean checkSavedGame(Game localGame){
-        String gameToString = gson.toJson(localGame);
-
         for(String sGame : games) {
             // Faccio il check per vedere se l'ID dei giochi è uguale
-            String dbID = sGame.split("\"id\":", 4)[2].split(",")[0];
-            String gameID = gson.toJson(localGame).split("\"id\":", 4)[2].split(",")[0];
-            if (dbID.equals(gameID)) {
+            if (checkID(localGame, sGame)) {
                 // Se i due ID sono uguali è già nel db
                return true;
             }
@@ -189,6 +182,33 @@ public class User {
                 ", email='" + email + '\'' +
                 ", tags=" + tags +
                 '}';
+    }
+
+    private boolean checkID(Game game, String dbGame){
+
+        if (game.getCover() == null && game.getDate() == null){
+            Log.d(TAG, "extractID: Enter if 1");
+            gameID = gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];
+            dbID = dbGame.split("\"id\":", 2)[1].split(",")[0];
+            return gameID.equals(dbID);
+            //return gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];
+        } if (game.getDate() == null){
+            Log.d(TAG, "extractID: Enter if 2");
+            gameID = gson.toJson(game).split("\"id\":", 3)[2].split(",")[0];
+            dbID = dbGame.split("\"id\":", 3)[2].split(",")[0];
+            return gameID.equals(dbID);
+            //return gson.toJson(game).split("\"id\":", 3)[2].split(",")[0];
+        } if(game.getCover() == null){
+            Log.d(TAG, "extractID: Enter if 3");
+            gameID = gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];
+            dbID = dbGame.split("\"id\":", 2)[1].split(",")[0];
+        } else {
+            Log.d(TAG, "extractID: Enter else");
+            gameID = gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
+            dbID = dbGame.split("\"id\":", 4)[2].split(",")[0];
+            //return gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
+        }
+        return gameID.equals(dbID);
     }
 
     public void removeTag(String tmpString) {

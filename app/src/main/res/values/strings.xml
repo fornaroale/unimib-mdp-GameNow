@@ -20,12 +20,13 @@
     <string name="console_name_placeholder">switch</string>
     <string name="gameinfo_placeholder_title">Title</string>
     <string name="gameinfo_placeholder_description">Descrizione</string>
-    <string name="gameinfo_placeholder_storyline">Storyline</string>
+    <string name="gameinfo_placeholder_storyline">Storia</string>
     <string name="gameinfo_placeholder_gameplays">Videos</string>
     <string name="cerca_gioco">Cerca Gioco</string>
     <string name="gioco_aggiunto">Gioco Salvato</string>
     <string name="gioco_rimosso">Gioco Rimosso dalla lista</string>
     <string name="nessun_gioco">Nessun gioco trovato...</string>
+    <string name="nessun_gioco_salvato">Non hai salvato nessun gioco. Puoi salvare i giochi dalla sezione comingsoon o tramite la ricerca</string>
 
 
     <string name="title_activity_sign_in">Sign in</string>

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -86,7 +87,11 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void onItemClick(Game game) {
                         SearchFragmentDirections.SearchDisplayGameInfo action = SearchFragmentDirections.searchDisplayGameInfo(game);
-                        Navigation.findNavController(view).navigate(action);
+                        NavController navController = Navigation.findNavController(view);
+                        Log.d(TAG, "onItemClick: Nav controller " + navController.getGraph());
+                        Log.d(TAG, "onItemClick: Nav controller " + navController.getCurrentDestination());
+                        navController.navigate(action);
+                        Log.d(TAG, "onItemClick: Nav controller " + navController.getCurrentDestination());
                     }
                 }, user);
 
