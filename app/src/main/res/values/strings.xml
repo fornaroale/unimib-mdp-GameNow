@@ -1,10 +1,9 @@
 <resources>
     <!-- generali -->
-    <string name="app_name">GameNow</string>
-    <string name="title_feed">Feed</string>
-    <string name="title_discover">Discover</string>
-    <string name="title_comingsoon">Coming Soon</string>
-    <string name="title_profile">Profile</string>
+    <string name="app_name" translatable="false">GameNow</string>
+    <string name="title_feed" translatable="false">Feed</string>
+    <string name="title_discover" translatable="false">Discover</string>
+    <string name="title_profile">Profilo</string>
     <string name="news_loading">Attendere, caricamento notizie in corso...</string>
 
     <!-- activity SignUp -->
@@ -12,21 +11,19 @@
     <string name="signup_piattaforme">Seleziona le piattaforme che sono di tuo interesse:</string>
     <string name="signup_foto_profilo">Opzionale: Seleziona dal tuo dispositivo una foto per personalizzare il tuo profilo:</string>
     <string name="signup_btn_sel_foto">Seleziona Immagine</string>
-    <string name="username">username not found</string>
 
     <!-- coming soon fragment-->
-    <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
+    <string name="incoming_card_placeholder_title" translatable="false">Titolo - gg/mm/aaaa</string>
     <string name="incoming_card_available_for">Disponibile per</string>
-    <string name="console_name_placeholder">switch</string>
-    <string name="gameinfo_placeholder_title">Title</string>
+    <string name="console_name_placeholder" translatable="false">switch</string>
+    <string name="gameinfo_placeholder_title">Titolo</string>
     <string name="gameinfo_placeholder_description">Descrizione</string>
     <string name="gameinfo_placeholder_storyline">Storia</string>
-    <string name="gameinfo_placeholder_gameplays">Videos</string>
+    <string name="gameinfo_placeholder_gameplays">Video</string>
     <string name="cerca_gioco">Cerca Gioco</string>
-    <string name="gioco_aggiunto">Gioco Salvato</string>
-    <string name="gioco_rimosso">Gioco Rimosso dalla lista</string>
+    <string name="gioco_aggiunto">Gioco salvato</string>
+    <string name="gioco_rimosso">Gioco rimosso dalla lista</string>
     <string name="nessun_gioco">Nessun gioco trovato...</string>
-    <string name="nessun_gioco_salvato">Non hai salvato nessun gioco. Puoi salvare i giochi dalla sezione comingsoon o tramite la ricerca</string>
 
 
     <string name="title_activity_sign_in">Sign in</string>
@@ -66,11 +63,17 @@
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
     <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
     <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
-    <string name="btn_switch">switch</string>
-    <string name="btn_pc">pc</string>
-    <string name="btn_xbox">xbox</string>
-    <string name="btn_ps4">PS4</string>
-    <string name="btn_all">all</string>
+    <string name="btn_switch" translatable="false">switch</string>
+    <string name="btn_pc" translatable="false">pc</string>
+    <string name="btn_xbox" translatable="false">xbox</string>
+    <string name="btn_ps4" translatable="false">PS4</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_comingsoon">In Uscita</string>
+    <string name="username">Username insesistente</string>
+    <string name="nessun_gioco_salvato">Non hai salvato nessun gioco. Puoi salvare i giochi dalla sezione \"In Uscita\" o tramite la ricerca.</string>
+    <string name="btn_all">tutto</string>
+    <string name="tab_news_title" translatable="false">News</string>
+    <string name="tab_games_title">Giochi</string>
+    <string name="tab_user_title">Utente</string>
 </resources>
