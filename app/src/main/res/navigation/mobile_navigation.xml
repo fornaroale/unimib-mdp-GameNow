@@ -31,7 +31,11 @@
         android:id="@+id/navigation_profile"
         android:name="it.unimib.disco.gruppoade.gamenow.fragments.profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_gameInfoFragment"
+            app:destination="@id/gameInfoFragment" />
+    </fragment>
     <fragment
         android:id="@+id/gameInfoFragment"
         android:name="it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.GameInfoFragment"
@@ -55,4 +59,21 @@
     <action
         android:id="@+id/searchAction"
         app:destination="@id/navigation_search" />
+
+    <navigation
+        android:id="@+id/nav_nested_graph"
+        app:startDestination="@id/tabSavedGamesFragment">
+        <action
+            android:id="@+id/action_nav_tabs_to_nav_send"
+            app:destination="@id/gameInfoFragment"/>
+        <fragment
+            android:id="@+id/tabSavedGamesFragment"
+            android:name="it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs.TabSavedGamesFragment"
+            android:label="fragment_tab_saved_games"
+            tools:layout="@layout/fragment_tab_saved_games" >
+            <action
+                android:id="@+id/action_nav_tabs_to_nav_send"
+                app:destination="@id/gameInfoFragment"/>
+        </fragment>
+    </navigation>
 </navigation>

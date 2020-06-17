@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -121,11 +122,10 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void bind(final Game game, final OnItemClickListener onItemClickListener) {
 
             Log.d(TAG, "Incoming onBindViewHolder: Game = " + game.toString());
-            String gameString = gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
+            String[] gameString = gson.toJson(game).split("\"id\":", 3);
             String g = gson.toJson(game);
             Log.d(TAG, "Incoming bind: Game = " + g);
-            Log.d(TAG, "Incoming bind: gameString " + gameString);
-
+            Log.d(TAG, "Incoming bind: gameString " + Arrays.toString(gameString));
             if (game.getDate() != null)
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
             else if (game.getName() == null)

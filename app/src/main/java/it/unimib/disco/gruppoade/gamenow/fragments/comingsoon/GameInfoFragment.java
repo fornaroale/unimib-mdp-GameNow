@@ -172,8 +172,8 @@ public class GameInfoFragment extends Fragment {
                     gameScreen.setBackgroundColor(mutedSwatch.getRgb());
             }
         });
-
-        initPlatformsRecyclerView();
+        if(mPlatforms!= null)
+            initPlatformsRecyclerView();
         if(mVideos == null){
             gameVideoText.setVisibility(View.GONE);
             videoDivider.setVisibility(View.GONE);
