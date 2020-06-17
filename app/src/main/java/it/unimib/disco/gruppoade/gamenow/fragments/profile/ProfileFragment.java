@@ -44,7 +44,7 @@ public class ProfileFragment extends Fragment {
         setTabLayout();
         setRetainInstance(true);
         
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
 
         return root;
     }
@@ -62,9 +62,9 @@ public class ProfileFragment extends Fragment {
         tabLayout.getTabAt(2).setText("Utente");
     }
     
-    @Override
+    /*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-    }
+    }*/
 }
