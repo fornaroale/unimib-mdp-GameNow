@@ -43,8 +43,6 @@ public class ProfileFragment extends Fragment {
         setPagerAdapter();
         setTabLayout();
         setRetainInstance(true);
-        
-        //setHasOptionsMenu(true);
 
         return root;
     }
@@ -61,10 +59,5 @@ public class ProfileFragment extends Fragment {
         tabLayout.getTabAt(1).setText(R.string.tab_games_title);
         tabLayout.getTabAt(2).setText(R.string.tab_user_title);
     }
-    
-    /*@Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-    }*/
+
 }
