@@ -18,27 +18,25 @@ public final class ProvidersRepository {
 
     private static ProvidersRepository instance = null;
     private static ArrayList<NewsProvider> providers;
-    private static User user;
-    private static boolean usingFeed;
     private static Resources resources;
 
-    private ProvidersRepository(Resources res, User user, boolean usingFeed) {
+    private ProvidersRepository(Resources res) {
         providers = new ArrayList<>();
-        this.user=user;
-        this.usingFeed=usingFeed;
         this.resources = res;
     }
 
-    public static ProvidersRepository getInstance(Resources res, User user, boolean usingFeed) {
+    public static ProvidersRepository getInstance(Resources res) {
         if(instance==null)
             synchronized(ProvidersRepository.class) {
                 if( instance == null )
-                    instance = new ProvidersRepository(res, user, usingFeed);
+                    instance = new ProvidersRepository(res);
             }
         return instance;
     }
 
-    public static List<NewsProvider> loadProviders(){
+    public static List<NewsProvider> loadProviders(User user, boolean usingFeed){
+        Log.d("UTENTE", "CSV " + Integer.toHexString(System.identityHashCode(user)) + " - " + user);
+
         providers = new ArrayList<>();
         InputStream is = resources.openRawResource(R.raw.providers);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -54,9 +52,7 @@ public final class ProvidersRepository {
                                 providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
                             }
                         } else {
-                            if (!user.getTags().contains(tokens[0])) {
-                                providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
-                            }
+                            providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
                         }
                     }
                 }
