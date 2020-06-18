@@ -3,7 +3,7 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -77,12 +77,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_signup);
 
-
-
         tagList = readTagsCsv();
         tagSelected = new ArrayList<>();
         numCKset = 0;
-
 
         // actyivity obj
         submit_button = findViewById(R.id.submit);
@@ -92,103 +89,11 @@ public class SignUpActivity extends AppCompatActivity {
         // setto il bottone come non premibile
         submit_button.setEnabled(false);
 
-
-        Log.d(TAG, "TAG LETTI DA CSV: " + readTagsCsv().toString());
-
         // container checkbox
         container_cb = findViewById(R.id.container_cb);
 
-        // id associata alla checkbox
-        int id = 0;
-
-        // creazione dinamica cjeckbox
-        for(String tag : tagList){
-
-            final CheckBox cb = new CheckBox(getApplicationContext());
-            cb.setText(tag);
-            cb.setId(id);
-            id++;
-            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(cb.isChecked()){
-                        tagSelected.add((String) cb.getText());
-                        numCKset++;
-                        activateDeactivateButton();
-                    }
-                    else{
-                        tagSelected.remove((String) cb.getText());
-                        numCKset--;
-                        activateDeactivateButton();
-                    }
-                }
-            });
-            container_cb.addView(cb);
-        }
-
-
-        Log.d(TAG, "Activity partita");
-
-        // quando premo il pulsante per scelgiere la foto, lancio showFileChooser()
-        photo_choose_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "In the click button choose photo");
-                showFileChooser();
-            }
-        });
-
-
-        // quando premo il pulsante per inviare i dati, effettuo le operazioni di salvataggio
-        submit_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "In the click button submit");
-
-                        if(filePath != null){
-                            // reference to firestore
-                            // Create a storage reference
-                            FirebaseStorage storage = FirebaseStorage.getInstance();
-                            // build th ename file with the Iid
-                            StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
-
-                            // upload file on firestore
-                            UploadTask uploadTask = imagesRef.putFile(filePath);
-
-                            // Register observers to listen for when the download is done or if it fails
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Log.d(TAG, "Upload FALLITO!!");
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Log.d(TAG, "Upload effettuato con SUCCESSO");
-                                }
-                            });
-                        }
-
-
-
-                        // creo User
-                        theUser = new User(FbDatabase.getUserAuth().getDisplayName(), FbDatabase.getUserAuth().getEmail());
-
-                        // setto i tag
-                        for(String tag : tagSelected){
-                            theUser.addTagNoDbUpdate(tag);
-                        }
-
-                        // salvo user su DB
-                        FbDatabase.getUserReference().setValue(theUser);
-
-                        // chiudo l'activity
-//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                        startActivity(intent);
-                        finish();
-                    }
-                });
-
+        // inizializzo
+        setUp();
 
     }
 
@@ -216,7 +121,7 @@ public class SignUpActivity extends AppCompatActivity {
                         .load(filePath)
                         .fit()
                         .centerCrop()
-                        .into((ImageView) profile_photo);
+                        .into(profile_photo);
 
                 profile_photo.setVisibility(View.VISIBLE);
             }
@@ -247,6 +152,103 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         return tags;
+    }
+
+    private void creaCheckbox(){
+        // id associata alla checkbox
+        int id = 0;
+
+        // creazione dinamica cjeckbox
+        for(String tag : tagList){
+
+            final CheckBox cb = new CheckBox(getApplicationContext());
+            cb.setText(tag);
+            cb.setId(id);
+            id++;
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(cb.isChecked()){
+                        tagSelected.add((String) cb.getText());
+                        numCKset++;
+                        activateDeactivateButton();
+                    }
+                    else{
+                        tagSelected.remove( cb.getText());
+                        numCKset--;
+                        activateDeactivateButton();
+                    }
+                }
+            });
+            container_cb.addView(cb);
+        }
+    }
+
+    private void setUp(){
+
+        // creazione dinamica checkbox
+        creaCheckbox();
+
+        // quando premo il pulsante per scelgiere la foto, lancio showFileChooser()
+        photo_choose_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "In the click button choose photo");
+                showFileChooser();
+            }
+        });
+
+
+        // quando premo il pulsante per inviare i dati, effettuo le operazioni di salvataggio
+        submit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "In the click button submit");
+
+                if(filePath != null){
+                    // reference to firestore
+                    // Create a storage reference
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    // build th ename file with the Iid
+                    StorageReference imagesRef = storage.getReference().child("images").child(FbDatabase.getUserAuth().getUid());
+
+                    // upload file on firestore
+                    UploadTask uploadTask = imagesRef.putFile(filePath);
+
+                    // Register observers to listen for when the download is done or if it fails
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.d(TAG, "Upload FALLITO!!");
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d(TAG, "Upload effettuato con SUCCESSO");
+                        }
+                    });
+                }
+
+
+
+                // creo User
+                theUser = new User(FbDatabase.getUserAuth().getDisplayName(), FbDatabase.getUserAuth().getEmail());
+
+                // setto i tag
+                for(String tag : tagSelected){
+                    theUser.addTagNoDbUpdate(tag);
+                }
+
+                // salvo user su DB
+                FbDatabase.getUserReference().setValue(theUser);
+
+                // chiudo l'activity
+//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                        startActivity(intent);
+                finish();
+            }
+        });
+
     }
 
     @Override
