@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
@@ -43,7 +45,7 @@ public class RssDownloader implements Runnable {
 
     @Override
     public void run() {
-        List<NewsProvider> providers = ProvidersRepository.getInstance(resources, user, usingFeed).loadProviders();
+        List<NewsProvider> providers = ProvidersRepository.getInstance(resources).loadProviders(user, usingFeed);
 
         // Array temporaneo per news
         ArrayList<PieceOfNews> newsFromProviders = new ArrayList<>();
@@ -57,7 +59,6 @@ public class RssDownloader implements Runnable {
 
                     // Eseguo il parsing XML -> oggetti PieceOfNews
                     parseFeed(inputStream, provider, newsFromProviders);
-                    news.postValue(newsFromProviders);
                 } catch (IOException e) {
                     Log.e(TAG, "Error [IO EXCEPTION] ", e);
                 } catch (XmlPullParserException e) {
@@ -65,6 +66,13 @@ public class RssDownloader implements Runnable {
                 }
             }
         }
+
+        // Ordino notizie in base alla data di pubblicazione
+        Collections.sort(newsFromProviders);
+        Collections.reverse(newsFromProviders);
+
+        // Aggiorno l'oggetto LiveData news
+        news.postValue(newsFromProviders);
     }
 
     private void parseFeed(InputStream inputStream, NewsProvider provider, ArrayList<PieceOfNews> newsFromProviders)

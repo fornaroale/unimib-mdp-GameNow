@@ -35,7 +35,7 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
-public class SignUpActivity extends AppCompatActivity {
+public class UserInitializationActivity extends AppCompatActivity {
 
 
 

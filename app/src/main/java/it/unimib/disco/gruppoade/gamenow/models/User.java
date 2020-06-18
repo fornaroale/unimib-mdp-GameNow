@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.models;
 
+import android.util.Log;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.gson.Gson;
