@@ -70,7 +70,12 @@ public class DiscoverFragment extends Fragment {
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setHasFixedSize(true);
-            adapter = new NewsListAdapter(getActivity(), mFeedModelList, user, false);
+            adapter = new NewsListAdapter(getActivity(), mFeedModelList, user, false, new NewsListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(PieceOfNews pieceOfNews) {
+
+                }
+            });
             mRecyclerView.setAdapter(adapter);
 
             new ProcessInBackground().execute(readProvidersCsv());

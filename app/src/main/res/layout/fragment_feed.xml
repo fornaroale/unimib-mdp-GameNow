@@ -29,7 +29,6 @@
                 android:gravity="center"
                 android:text="@string/news_loading"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:visibility="visible"
                 android:padding="15dp"/>
 
         </RelativeLayout>
