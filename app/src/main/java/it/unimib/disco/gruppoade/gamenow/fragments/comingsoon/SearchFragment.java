@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -51,6 +53,7 @@ public class SearchFragment extends Fragment {
     private LiveData<List<Game>> gamesList;
     private IncomingAdapter incomingAdapter;
     private User user;
+    private ActionBar actionBar;
     private ValueEventListener postListenerFirstUserData;
 
     private ValueEventListener postListenerUserData;
@@ -63,6 +66,8 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -74,6 +79,7 @@ public class SearchFragment extends Fragment {
         recyclerView = view.findViewById(R.id.search_recyclerview);
         lottieAnimationView = view.findViewById(R.id.search_animation_view);
         searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
+
 
 
         postListenerFirstUserData = new ValueEventListener() {
@@ -161,5 +167,12 @@ public class SearchFragment extends Fragment {
         if (gamesList != null)
             return gamesList.getValue();
         return null;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        actionBar.setDisplayShowTitleEnabled(true);
     }
 }

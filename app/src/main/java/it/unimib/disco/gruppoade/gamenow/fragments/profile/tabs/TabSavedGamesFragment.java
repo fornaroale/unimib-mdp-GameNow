@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +8,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavHost;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +39,7 @@ public class TabSavedGamesFragment extends Fragment {
     private TextView mEmptyTV;
     private IncomingAdapter adapter;
     private List<Game> locallySavedGames;
+    private ActionBar actionBar;
 
     //Firebase
     private User user;
@@ -51,6 +51,8 @@ public class TabSavedGamesFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -150,5 +152,11 @@ public class TabSavedGamesFragment extends Fragment {
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        actionBar.setDisplayShowTitleEnabled(true);
     }
 }
