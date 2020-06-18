@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -70,11 +71,14 @@ public class GameInfoFragment extends Fragment {
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
+    private ActionBar actionBar;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game_info, container, false);
     }
@@ -83,6 +87,7 @@ public class GameInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Game game = GameInfoFragmentArgs.fromBundle(getArguments()).getGame();
+
 
         // Crea un traduttore English-Italiano
 

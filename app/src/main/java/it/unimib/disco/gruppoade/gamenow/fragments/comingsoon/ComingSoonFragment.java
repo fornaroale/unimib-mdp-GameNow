@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -26,7 +27,6 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,13 +35,9 @@ import java.util.List;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
-import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.Constants;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import it.unimib.disco.gruppoade.gamenow.models.User;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static android.view.View.GONE;
 
@@ -62,6 +58,7 @@ public class ComingSoonFragment extends Fragment {
     private MutableLiveData<List<Game>> gamesLiveData;
     private IncomingAdapter incomingAdapter;
     private User user;
+    private boolean pc, ps4, xbox, nSwitch, all;
 
     private int totalItemCount, lastVisibleItem, visibleItemCount, threshold = 1;
 
@@ -127,7 +124,6 @@ public class ComingSoonFragment extends Fragment {
                     }
                 });
 
-
                 observer = new Observer<List<Game>>() {
                     @Override
                     public void onChanged(List<Game> games) {
@@ -185,17 +181,13 @@ public class ComingSoonFragment extends Fragment {
         ps4Btn.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
-            public void onClick(View v) {
-                chooseButton(ps4Btn.getId());
-            }
+            public void onClick(View v) { chooseButton(ps4Btn.getId()); }
         });
 
         allBtn.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
-            public void onClick(View v) {
-                chooseButton(allBtn.getId());
-            }
+            public void onClick(View v) { chooseButton(allBtn.getId()); }
         });
 
         xboxBtn.setOnClickListener(new View.OnClickListener() {
@@ -225,6 +217,22 @@ public class ComingSoonFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(ps4)
+            chooseButton(ps4Btn.getId());
+        if(xbox)
+            chooseButton(xboxBtn.getId());
+        if(pc)
+            chooseButton(pcBtn.getId());
+        if(nSwitch)
+            chooseButton(switchBtn.getId());
+        if(all)
+            chooseButton(allBtn.getId());
+    }
+
     private List<Game> getGameList(String body){
         LiveData<List<Game>> gameList = comingSoonViewModel.getGames(body);
         if (gameList != null)
@@ -239,6 +247,12 @@ public class ComingSoonFragment extends Fragment {
         gamesLiveData.postValue(null);
         switch (buttonId){
             case R.id.button_ps4:
+                ps4 = true;
+                all = false;
+                xbox = false;
+                nSwitch = false;
+                pc = false;
+
                 ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
@@ -260,6 +274,11 @@ public class ComingSoonFragment extends Fragment {
                 break;
 
             case R.id.button_xbox:
+                ps4 = false;
+                all = false;
+                xbox = true;
+                nSwitch = false;
+                pc = false;
                 xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
@@ -280,6 +299,12 @@ public class ComingSoonFragment extends Fragment {
                 incomingAdapter.setData(gamesList.getValue());
                 break;
             case R.id.button_pc:
+                ps4 = false;
+                all = false;
+                xbox = false;
+                nSwitch = false;
+                pc = true;
+
                 pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
@@ -299,6 +324,12 @@ public class ComingSoonFragment extends Fragment {
                 incomingAdapter.setData(gamesList.getValue());
                 break;
             case R.id.button_switch:
+                ps4 = false;
+                all = false;
+                xbox = false;
+                nSwitch = true;
+                pc = false;
+
                 switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
@@ -318,6 +349,12 @@ public class ComingSoonFragment extends Fragment {
                 incomingAdapter.setData(gamesList.getValue());
                 break;
             default:
+                ps4 = false;
+                xbox = false;
+                nSwitch = false;
+                pc = false;
+                all = true;
+
                 allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
