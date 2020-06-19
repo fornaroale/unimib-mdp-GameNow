@@ -11,6 +11,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,6 +108,8 @@ public class TabSettingsFragment extends Fragment {
         deleteaccount = view.findViewById(R.id.cv_deleteaccount);
         cv_infoaccount = view.findViewById(R.id.cv_infoaccount);
         usernameET = view.findViewById(R.id.Username);
+
+        setHasOptionsMenu(true);
 
         userDeleted = false;
         // usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.drawableRight, 0);
@@ -535,5 +539,11 @@ public class TabSettingsFragment extends Fragment {
         // set the name in the database
         FbDatabase.getUserReference().child("username").setValue(newUSername.toString());
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
     }
 }

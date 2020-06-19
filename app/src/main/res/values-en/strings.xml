@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_comingsoon">Coming Soon</string>
+    <string name="title_profile">Profile</string>
+    <string name="username">Username not found</string>
+    <string name="incoming_card_available_for">Available for</string>
+    <string name="gameinfo_placeholder_title">Title</string>
+    <string name="gameinfo_placeholder_description">Description</string>
+    <string name="gameinfo_placeholder_storyline">Storyline</string>
+    <string name="gameinfo_placeholder_gameplays">Videos</string>
+    <string name="cerca_gioco">Search Game</string>
+    <string name="gioco_aggiunto">Game saved</string>
+    <string name="gioco_rimosso">Game deleted from list</string>
+    <string name="nessun_gioco">No game found...</string>
+    <string name="nessun_gioco_salvato">You haven\'t saved any game yet. You can save a game from the \"Coming Soon\" section or by searching it.</string>
+    <string name="btn_all">all</string>
+    <string name="tab_user_title">User</string>
+    <string name="tab_games_title">Games</string>
+</resources>
