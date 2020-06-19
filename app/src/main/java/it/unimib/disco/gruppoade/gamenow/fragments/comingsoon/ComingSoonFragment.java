@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -179,19 +178,16 @@ public class ComingSoonFragment extends Fragment {
 
         //Buttons Listeners
         ps4Btn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) { chooseButton(ps4Btn.getId()); }
         });
 
         allBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) { chooseButton(allBtn.getId()); }
         });
 
         xboxBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi( api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 chooseButton(xboxBtn.getId());
@@ -199,7 +195,6 @@ public class ComingSoonFragment extends Fragment {
         });
 
         pcBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 chooseButton(pcBtn.getId());
@@ -207,7 +202,6 @@ public class ComingSoonFragment extends Fragment {
         });
 
         switchBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 chooseButton(switchBtn.getId());
@@ -217,7 +211,6 @@ public class ComingSoonFragment extends Fragment {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onResume() {
         super.onResume();
