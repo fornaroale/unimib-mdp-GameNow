@@ -219,4 +219,8 @@ public class User {
     public void removeTagNoDbUpdate(String tmpString) {
         tags.remove(tmpString.toUpperCase());
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
