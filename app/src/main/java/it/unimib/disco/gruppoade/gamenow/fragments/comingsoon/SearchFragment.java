@@ -53,7 +53,6 @@ public class SearchFragment extends Fragment {
     private LiveData<List<Game>> gamesList;
     private IncomingAdapter incomingAdapter;
     private User user;
-    private ActionBar actionBar;
     private ValueEventListener postListenerFirstUserData;
 
     private ValueEventListener postListenerUserData;
@@ -66,8 +65,6 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
@@ -169,10 +166,4 @@ public class SearchFragment extends Fragment {
         return null;
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        actionBar.setDisplayShowTitleEnabled(true);
-    }
 }
