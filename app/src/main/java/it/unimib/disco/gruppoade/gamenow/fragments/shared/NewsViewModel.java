@@ -26,7 +26,6 @@ public class NewsViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<PieceOfNews>> getNews() {
         if (news == null) {
-            Log.d(TAG, "NewsViewModel --> SENDING NEW DATA TO OBSERVER!!!");
             news = new MutableLiveData<>();
             NewsRepository.getInstance(getApplication().getResources()).getNews(news);
         }

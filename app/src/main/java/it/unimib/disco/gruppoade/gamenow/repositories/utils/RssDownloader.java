@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,8 +35,6 @@ public class RssDownloader implements Runnable {
     public RssDownloader(Resources res, MutableLiveData<ArrayList<PieceOfNews>> news){
         this.resources = res;
         this.news = news;
-
-        Log.d("NewsRepository", "UPD NEWSREPO --> RICHIESTO AGGIORNAMENTO NEWS " + news);
     }
 
     @Override

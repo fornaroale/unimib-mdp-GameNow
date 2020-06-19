@@ -8,10 +8,12 @@ import com.google.firebase.database.FirebaseDatabase;
 public final class FbDatabase {
     private static FirebaseDatabase database;
     private static DatabaseReference userReference;
+    private static boolean userDeleting;
 
     private static FbDatabase db_instance;
 
     private FbDatabase() {
+        userDeleting = false;
         database = FirebaseDatabase.getInstance();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             setUserReference();
@@ -41,4 +43,16 @@ public final class FbDatabase {
     }
 
     public static FirebaseUser getUserAuth() {return FirebaseAuth.getInstance().getCurrentUser();}
+
+    public static void setUserDeletingTrue(){
+        userDeleting = true;
+    }
+
+    public static void setUserDeletingFalse(){
+        userDeleting = false;
+    }
+
+    public static boolean getUserDeleting(){
+        return userDeleting;
+    }
 }

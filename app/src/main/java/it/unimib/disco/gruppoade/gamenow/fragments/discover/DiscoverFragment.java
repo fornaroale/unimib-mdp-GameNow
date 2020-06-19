@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.discover;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,31 +83,25 @@ public class DiscoverFragment extends Fragment {
 
         // Observer su oggetto LiveData (collezione news)
         final Observer<ArrayList<PieceOfNews>> observer = changedNewsList -> {
+            newsList.clear();
+            newsList.addAll(changedNewsList);
+            selectNews(newsList);
 
-                Log.d(TAG, "OBSERVER DISCOVER --> CHANGED DATA!!!");
-                Log.d(TAG, "OBSERVER USER --> " + user);
+            if (newsList.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setText(R.string.no_data_available_discover);
+                mEmptyTV.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
+            }
 
-                newsList.clear();
-                newsList.addAll(changedNewsList);
-                selectNews(newsList);
-
-                if (newsList.isEmpty()) {
-                    mRecyclerView.setVisibility(View.GONE);
-                    mEmptyTV.setText(R.string.no_data_available_discover);
-                    mEmptyTV.setVisibility(View.VISIBLE);
-                } else {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    mEmptyTV.setVisibility(View.GONE);
-                }
-
-                adapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
-
+            adapter.notifyDataSetChanged();
+            mSwipeRefreshLayout.setRefreshing(false);
         };
 
         LiveData<ArrayList<PieceOfNews>> liveData = viewModel.getNews();
         liveData.observe(getViewLifecycleOwner(), observer);
-        Log.d(TAG, "UPD DISCOVER OBSERVING LIVEDATA --> " + liveData);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
