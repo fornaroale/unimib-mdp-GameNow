@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -31,8 +32,20 @@ public class FullScreenActivity extends AppCompatActivity {
             public void onReady(@NonNull YouTubePlayer initializedYouTubePlayer) {
                 youTubePlayer = initializedYouTubePlayer;
                 youTubePlayer.cueVideo(videoId, currentSecond);
-                youTubePlayerView.enterFullScreen();
                 youTubePlayer.play();
+            }
+        });
+        youTubePlayerView.addFullScreenListener(new YouTubePlayerFullScreenListener() {
+            @Override
+            public void onYouTubePlayerEnterFullScreen() {
+                youTubePlayerView.enterFullScreen();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+
+            @Override
+            public void onYouTubePlayerExitFullScreen() {
+                youTubePlayerView.exitFullScreen();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         });
     }

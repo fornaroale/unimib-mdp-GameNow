@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private AppCompatActivity appCompatActivity;
     private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,13 +128,38 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
-//                .build();
         navController = Navigation.findNavController(appCompatActivity, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(appCompatActivity, navController, appBarConfiguration);
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_feed, R.id.navigation_discover, R.id.navigation_comingsoon, R.id.navigation_profile)
+                .build();
+        NavigationUI.setupActionBarWithNavController(appCompatActivity, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
 }

@@ -18,11 +18,16 @@ public class User {
     private String email;
     private List<String> tags;
     private List<String> news;
+    private List<String> games;
+    private Gson gson = new Gson();
+
+    private static final String TAG = "User";
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
         tags = new ArrayList<>();
         news = new ArrayList<>();
+        games = new ArrayList<>();
     }
 
     public User(String username, String email) {
@@ -30,6 +35,7 @@ public class User {
         this.email = email;
         tags = new ArrayList<>();
         news = new ArrayList<>();
+        games = new ArrayList<>();
     }
 
     @PropertyName("tags")
@@ -40,6 +46,11 @@ public class User {
     @PropertyName("news")
     public List<String> getNews() {
         return news;
+    }
+
+    @PropertyName("games")
+    public List<String> getGames() {
+        return games;
     }
 
     @PropertyName("username")
@@ -54,7 +65,6 @@ public class User {
 
     public boolean savePieceOfNews(PieceOfNews pon){
         if(!checkSavedPieceOfNews(pon)) {
-            Gson gson = new Gson();
             String jsonPieceOfNews = gson.toJson(pon);
             List<String> userDbNews = news;
             userDbNews.add(jsonPieceOfNews);
@@ -67,8 +77,6 @@ public class User {
 
     public boolean removeSavedPieceOfNews(PieceOfNews pon){
         if(checkSavedPieceOfNews(pon)) {
-            Gson gson = new Gson();
-
             // Siccome i tag locali potrebbero differire da quelli remoti,
             // li rendo uguali (così che l'eliminazione possa avvenire
             // senza errori)
@@ -91,8 +99,9 @@ public class User {
         }
     }
 
+
+
     public boolean checkSavedPieceOfNews(PieceOfNews localPon){
-        Gson gson = new Gson();
         String ponToString = gson.toJson(localPon);
 
         for(String cloudPon : news){
@@ -104,6 +113,53 @@ public class User {
                 if(cloudPonObj.equals(localPon)) {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    private String dbID;
+    private String gameID;
+
+    public boolean saveGame(Game game){
+        if(!checkSavedGame(game)) {
+            String jsonGame = gson.toJson(game);
+            List<String> userDbGames = games;
+            userDbGames.add(jsonGame);
+            FbDatabase.FbDatabase().getUserReference().child("games").setValue(userDbGames);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeGame(Game game){
+        if(checkSavedGame(game)) {
+
+            for(int i = 0; i < games.size(); i++) {
+                // Faccio il check per vedere se l'ID dei giochi è uguale
+                if (checkID(game, games.get(i))) {
+                    // Se i due ID sono uguali lo rimuovo dal db
+                    games.remove(i);
+                    Log.d(TAG, "removeGame: games after " + games);
+                }
+            }
+
+            FbDatabase.FbDatabase().getUserReference().child("games").setValue(games);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public boolean checkSavedGame(Game localGame){
+        for(String sGame : games) {
+            // Faccio il check per vedere se l'ID dei giochi è uguale
+            if (checkID(localGame, sGame)) {
+                // Se i due ID sono uguali è già nel db
+               return true;
             }
         }
 
@@ -126,6 +182,33 @@ public class User {
                 ", email='" + email + '\'' +
                 ", tags=" + tags +
                 '}';
+    }
+
+    private boolean checkID(Game game, String dbGame){
+
+        if (game.getCover() == null && game.getDate() == null){
+            Log.d(TAG, "extractID: Enter if 1");
+            gameID = gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];
+            dbID = dbGame.split("\"id\":", 2)[1].split(",")[0];
+            return gameID.equals(dbID);
+            //return gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];
+        } if (game.getDate() == null){
+            Log.d(TAG, "extractID: Enter if 2");
+            gameID = gson.toJson(game).split("\"id\":", 3)[2].split(",")[0];
+            dbID = dbGame.split("\"id\":", 3)[2].split(",")[0];
+            return gameID.equals(dbID);
+            //return gson.toJson(game).split("\"id\":", 3)[2].split(",")[0];
+        } if(game.getCover() == null){
+            Log.d(TAG, "extractID: Enter if 3");
+            gameID = gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];
+            dbID = dbGame.split("\"id\":", 2)[1].split(",")[0];
+        } else {
+            Log.d(TAG, "extractID: Enter else");
+            gameID = gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
+            dbID = dbGame.split("\"id\":", 4)[2].split(",")[0];
+            //return gson.toJson(game).split("\"id\":", 4)[2].split(",")[0];
+        }
+        return gameID.equals(dbID);
     }
 
     public void removeTag(String tmpString) {

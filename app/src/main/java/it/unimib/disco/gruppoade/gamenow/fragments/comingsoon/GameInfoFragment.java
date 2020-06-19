@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -40,6 +41,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
@@ -69,11 +71,14 @@ public class GameInfoFragment extends Fragment {
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
+    private ActionBar actionBar;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game_info, container, false);
     }
@@ -83,13 +88,11 @@ public class GameInfoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Game game = GameInfoFragmentArgs.fromBundle(getArguments()).getGame();
 
+
         // Crea un traduttore English-Italiano
-        options = new FirebaseTranslatorOptions.Builder()
-                .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                .setTargetLanguage(FirebaseTranslateLanguage.IT)
-                .build();
-        translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
+
+
+        Log.d(TAG, "onViewCreated: Language " + Locale.getDefault().getLanguage());
 
         gameDescription = view.findViewById(R.id.gameinfo_desc);
         gameDescriptionText = view.findViewById(R.id.gameinfo_desc_text);
@@ -113,15 +116,35 @@ public class GameInfoFragment extends Fragment {
         platformsRecycler = view.findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = view.findViewById(R.id.gameplays_recyclerview);
 
+
+        if(Locale.getDefault().getLanguage().equals("it"))
+            buildIT(game);
+        else
+            buildEN(game);
+
+    }
+
+    private void buildEN(Game game){
+        descSpinner.setVisibility(View.GONE);
+        storylineSpinner.setVisibility(View.GONE);
         if( game.getSummary() != null) {
-            final String desc = game.getSummary();
-            translate(desc, gameDescriptionText,descSpinner);
+            gameDescriptionText.setText(game.getSummary());
 
         } else {
             gameDescription.setVisibility(View.GONE);
             descDivider.setVisibility(View.GONE);
             gameDescriptionText.setVisibility(View.GONE);
             descSpinner.setVisibility(View.GONE);
+        }
+
+        if( game.getStoryline() != null) {
+            gameStorylineText.setText(game.getStoryline());
+
+        } else {
+            storylineDivider.setVisibility(View.GONE);
+            gameStoryline.setVisibility(View.GONE);
+            gameStorylineText.setVisibility(View.GONE);
+            storylineSpinner.setVisibility(View.GONE);
         }
         if(game.getRating() == 0){
             ratingBar.setVisibility(View.GONE);
@@ -145,8 +168,8 @@ public class GameInfoFragment extends Fragment {
         String coverBig, url;
 
         if(game.getCover() != null){
-             coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
-             url = "https:" + coverBig;}
+            coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
+            url = "https:" + coverBig;}
         else
             url = "";
         Log.d(TAG, "onCreate: URl + " + url);
@@ -172,8 +195,88 @@ public class GameInfoFragment extends Fragment {
                     gameScreen.setBackgroundColor(mutedSwatch.getRgb());
             }
         });
+        if(mPlatforms!= null)
+            initPlatformsRecyclerView();
+        if(mVideos == null){
+            gameVideoText.setVisibility(View.GONE);
+            videoDivider.setVisibility(View.GONE);
+        } else
+            initVideosRecyclerView();
+    }
 
-        initPlatformsRecyclerView();
+    private void buildIT(Game game){
+
+        if( game.getSummary() == null) {
+            gameDescription.setVisibility(View.GONE);
+            descDivider.setVisibility(View.GONE);
+            gameDescriptionText.setVisibility(View.GONE);
+            descSpinner.setVisibility(View.GONE);
+        }
+
+        if( game.getStoryline() == null) {
+            storylineDivider.setVisibility(View.GONE);
+            gameStoryline.setVisibility(View.GONE);
+            gameStorylineText.setVisibility(View.GONE);
+            storylineSpinner.setVisibility(View.GONE);
+        }
+
+        options = new FirebaseTranslatorOptions.Builder()
+                .setSourceLanguage(FirebaseTranslateLanguage.EN)
+                .setTargetLanguage(FirebaseTranslateLanguage.IT)
+                .build();
+        translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
+        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
+        if(game.getRating() == 0){
+            ratingBar.setVisibility(View.GONE);
+        } else {
+            ratingBar.setRating(setRating(game.getRating()));
+        }
+
+        gameTitle.setText(game.getName());
+        String storyline = game.getStoryline();
+        Log.d(TAG, "onCreate: Storyline = " + storyline);
+
+
+        mPlatforms = game.getPlatforms();
+        mVideos = game.getVideos();
+
+        if (mVideos == null){
+            gameVideoText.setVisibility(View.GONE);
+            videoDivider.setVisibility(View.GONE);
+        }
+        //Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
+        String coverBig, url;
+
+        if(game.getCover() != null){
+            coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
+            url = "https:" + coverBig;}
+        else
+            url = "";
+        Log.d(TAG, "onCreate: URl + " + url);
+        if (!url.isEmpty()) {
+            Picasso.get()
+                    .load(url)
+                    .placeholder(R.drawable.img)
+                    .into(gameCover);
+        } else {
+            gameCover.setImageResource(R.drawable.cover_na);
+
+        }
+
+        Bitmap bitmap = ((BitmapDrawable) gameCover.getDrawable()).getBitmap();
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(@Nullable Palette palette) {
+                vibrantSwatch = palette.getVibrantSwatch();
+                mutedSwatch = palette.getMutedSwatch();
+                if(vibrantSwatch != null)
+                    gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
+                else if (mutedSwatch != null)
+                    gameScreen.setBackgroundColor(mutedSwatch.getRgb());
+            }
+        });
+        if(mPlatforms!= null)
+            initPlatformsRecyclerView();
         if(mVideos == null){
             gameVideoText.setVisibility(View.GONE);
             videoDivider.setVisibility(View.GONE);
@@ -215,6 +318,7 @@ public class GameInfoFragment extends Fragment {
                                 //Snackbar.make(, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();
                             }
                         });
+
     }
 
     private void initPlatformsRecyclerView() {
