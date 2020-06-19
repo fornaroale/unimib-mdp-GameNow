@@ -33,9 +33,12 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
+import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
+import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
+import it.unimib.disco.gruppoade.gamenow.repositories.ProvidersRepository;
 
-public class SignUpActivity extends AppCompatActivity {
+public class UserInitializationActivity extends AppCompatActivity {
 
 
 
@@ -182,9 +185,6 @@ public class SignUpActivity extends AppCompatActivity {
                         // salvo user su DB
                         FbDatabase.getUserReference().setValue(theUser);
 
-                        // chiudo l'activity
-//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                        startActivity(intent);
                         finish();
                     }
                 });
@@ -231,22 +231,17 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private List<String> readTagsCsv() {
-        List<String> tags = new ArrayList<>();
-        InputStream is = getResources().openRawResource(R.raw.providers);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-        String line = "";
+        ProvidersRepository.getInstance(getResources());
+        List<NewsProvider> providers = ProvidersRepository.loadProviders();
+        List<String> providersTags = new ArrayList<>();
 
-        try {
-            while ((line = reader.readLine()) != null) {
-                String[] tokens = line.split("@@@");
-                if(!tags.contains(tokens[0]))
-                    tags.add(tokens[0]);
-            }
-        } catch (IOException e) {
-            Log.e("CSV ERROR LOG ----->>> ", "Error: " + e);
+        for(NewsProvider provider : providers){
+            String providerPlatform = provider.getPlatform();
+            if(!providersTags.contains(providerPlatform))
+                providersTags.add(providerPlatform);
         }
 
-        return tags;
+        return providersTags;
     }
 
     @Override
