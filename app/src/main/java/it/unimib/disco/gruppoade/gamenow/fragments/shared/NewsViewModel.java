@@ -1,6 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.shared;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -8,34 +9,32 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 import it.unimib.disco.gruppoade.gamenow.repositories.NewsRepository;
 
-public class DiscoverFeedViewModel extends AndroidViewModel {
+public class NewsViewModel extends AndroidViewModel {
 
+    private static final String TAG = "NewsViewModel";
     private MutableLiveData<ArrayList<PieceOfNews>> news;
-    private boolean usingFeed;
-    private static final String TAG = "DiscoverFeedViewModel";
 
-    public DiscoverFeedViewModel(@NonNull Application application) {
+    public NewsViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public LiveData<ArrayList<PieceOfNews>> getNews(User user) {
+    public LiveData<ArrayList<PieceOfNews>> getNews() {
         if (news == null) {
+            Log.d(TAG, "NewsViewModel --> SENDING NEW DATA TO OBSERVER!!!");
             news = new MutableLiveData<>();
+            NewsRepository.getInstance(getApplication().getResources()).getNews(news);
         }
-        NewsRepository.getInstance(getApplication().getResources()).getNews(news, user, usingFeed);
+
         return news;
     }
 
-    public void cleanNews(){
-        news = null;
-    }
-
-    public void setFeedUse(boolean usingFeed){
-        this.usingFeed=usingFeed;
+    public void refreshNews(){
+        NewsRepository.getInstance(getApplication().getResources()).getNews(news);
     }
 }

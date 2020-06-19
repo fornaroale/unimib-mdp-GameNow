@@ -23,8 +23,8 @@ public class NewsRepository {
         return instance;
     }
 
-    public void getNews(MutableLiveData<ArrayList<PieceOfNews>> news, User user, boolean usingFeed){
-        RssDownloader runnable = new RssDownloader(resources, news, user, usingFeed);
+    public void getNews(MutableLiveData<ArrayList<PieceOfNews>> news){
+        RssDownloader runnable = new RssDownloader(resources, news);
         new Thread(runnable).start();
     }
 }

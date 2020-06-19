@@ -29,22 +29,20 @@ import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
-import it.unimib.disco.gruppoade.gamenow.fragments.shared.DiscoverFeedViewModel;
+import it.unimib.disco.gruppoade.gamenow.fragments.shared.NewsViewModel;
 
 public class FeedFragment extends Fragment {
 
     private static final String TAG = "FeedFragment";
 
     private List<PieceOfNews> newsList;
-    private DiscoverFeedViewModel sharedFeedViewModel;
+    private NewsViewModel viewModel;
     private User user;
-    private LiveData<ArrayList<PieceOfNews>> liveData;
     private NewsListAdapter adapter;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmptyTV;
     private boolean feedInitializedSentinel;
-    private boolean requestedUpdate;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,10 +54,8 @@ public class FeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         feedInitializedSentinel = false;
-        requestedUpdate = false;
 
-        sharedFeedViewModel = new ViewModelProvider(getActivity()).get(DiscoverFeedViewModel.class);
-        sharedFeedViewModel.setFeedUse(true);
+        viewModel = new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
 
         mSwipeRefreshLayout = getView().findViewById(R.id.feed_swipe_refresh);
         mSwipeRefreshLayout.setRefreshing(true);
@@ -71,23 +67,11 @@ public class FeedFragment extends Fragment {
         user = null;
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
 
-        if(user!=null) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            initializeFeed();
-            feedInitializedSentinel = true;
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        requestedUpdate = true;
-    }
-
-    @Override
-    public void onPause() {
-        sharedFeedViewModel.cleanNews();
-        super.onPause();
+//        if(user!=null) {
+//            mSwipeRefreshLayout.setRefreshing(true);
+//            initializeFeed();
+//            feedInitializedSentinel = true;
+//        }
     }
 
     public void initializeFeed(){
@@ -95,48 +79,72 @@ public class FeedFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        adapter = new NewsListAdapter(getActivity(), newsList, user, false);
+        adapter = new NewsListAdapter(getActivity(), newsList, user, (byte) 1);
         mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
         // Observer su oggetto LiveData (collezione news)
         final Observer<ArrayList<PieceOfNews>> observer = new Observer<ArrayList<PieceOfNews>>() {
             @Override
             public void onChanged(ArrayList<PieceOfNews> changedNewsList) {
-                if(requestedUpdate) {
-                    Log.d(TAG, "UTENTE --> CHANGED DATA!!!");
+                Log.d(TAG, "UPD OBSERVER FEED --> CHANGED DATA!!!" + changedNewsList);
 
-                    newsList.clear();
-                    newsList.addAll(changedNewsList);
+                newsList.clear();
+                newsList.addAll(changedNewsList);
+                selectNews(newsList);
 
-                    if (newsList.isEmpty()) {
-                        mRecyclerView.setVisibility(View.GONE);
-                        mEmptyTV.setText(R.string.no_data_available_feed);
-                        mEmptyTV.setVisibility(View.VISIBLE);
-                    } else {
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                        mEmptyTV.setVisibility(View.GONE);
-                    }
-
-                    adapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
-
-                    requestedUpdate = false;
+                if (newsList.isEmpty()) {
+                    mRecyclerView.setVisibility(View.GONE);
+                    mEmptyTV.setText(R.string.no_data_available_feed);
+                    mEmptyTV.setVisibility(View.VISIBLE);
+                } else {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mEmptyTV.setVisibility(View.GONE);
                 }
+
+                adapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         };
 
-        liveData = sharedFeedViewModel.getNews(user);
+        LiveData<ArrayList<PieceOfNews>> liveData = viewModel.getNews();
         liveData.observe(getViewLifecycleOwner(), observer);
+        Log.d(TAG, "UPD FEED OBSERVING LIVEDATA --> " + liveData);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestedUpdate = true;
                 mSwipeRefreshLayout.setRefreshing(true);
-                sharedFeedViewModel.getNews(user);
+                viewModel.refreshNews();
             }
         });
+    }
+
+    private void selectNews(List<PieceOfNews> newsRaw){
+        if(user.getTags() != null) {
+            List<String> userTags = user.getTags();
+
+            for (int i = 0; i < newsRaw.size(); i++) {
+//            Log.d(TAG, "SELECT Controllo news pos. " + i + " - Articolo: " + newsRaw.get(i).getTitle());
+                boolean keepArticle = false;
+                String platformsToKeep = "";
+
+                for (String platform : newsRaw.get(i).getProvider().getPlatform().split(",")) {
+                    if (userTags.contains(platform)) {
+                        keepArticle = true;
+                        //platformsToKeep = platformsToKeep.concat(platform + ",");
+                    }
+                }
+
+                if (!keepArticle) {
+//                Log.d(TAG, "SELECT Rimuovo news pos. " + i + " - Articolo: " + newsRaw.get(i).getTitle());
+                    newsRaw.remove(i);
+                    i--;
+                } else {
+                    //platformsToKeep = platformsToKeep.substring(0, platformsToKeep.length() - 1);
+                    //newsRaw.get(i).getProvider().setPlatform(platformsToKeep);
+                }
+            }
+        }
     }
 
     private ValueEventListener postListenerUserData = new ValueEventListener() {

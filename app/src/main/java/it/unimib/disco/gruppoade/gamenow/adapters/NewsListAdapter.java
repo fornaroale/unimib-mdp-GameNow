@@ -6,7 +6,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -31,19 +30,19 @@ import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
 
-public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.FeedModelViewHolder> {
+public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsModelViewHolder> {
 
     private final FragmentActivity mContext;
     private LayoutInflater layoutInflater;
     private List<PieceOfNews> newsList;
     private User user;
-    private boolean forSavedNews;
+    private byte fragmentType;
 
     @NotNull
     @Override
-    public FeedModelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NewsModelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = this.layoutInflater.inflate(R.layout.layout_singlenews_card, parent, false);
-        return new FeedModelViewHolder(itemView);
+        return new NewsModelViewHolder(itemView);
     }
 
     @Override
@@ -53,34 +52,26 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.FeedMo
         return 0;
     }
 
-    public NewsListAdapter(Context mContext, List<PieceOfNews> newsFeedModels, User user, boolean forSavedNews) {
+    public NewsListAdapter(Context mContext, List<PieceOfNews> newsFeedModels, User user, byte fragmentType) {
         this.mContext = (FragmentActivity) mContext;
         this.layoutInflater = LayoutInflater.from(mContext);
         this.newsList = newsFeedModels;
         this.user = user;
-        this.forSavedNews = forSavedNews;
+        this.fragmentType = fragmentType;
     }
 
     @Override
-    public void onBindViewHolder(FeedModelViewHolder holder, int position) {
+    public void onBindViewHolder(NewsModelViewHolder holder, int position) {
         holder.bind(newsList.get(position));
     }
 
-    private void setNewsTagsIcon(Chip chip, View holder) {
-        if (user.getTags().contains(chip.getText().toString())) {
-            chip.setChipIcon(ContextCompat.getDrawable(holder.getContext(), R.drawable.heart_pressed));
-        } else {
-            chip.setChipIcon(ContextCompat.getDrawable(holder.getContext(), R.drawable.heart));
-        }
-    }
-
-    public class FeedModelViewHolder extends RecyclerView.ViewHolder {
+    public class NewsModelViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitolo, tvProvider, tvDescrizione, tvData;
         private ImageView ivNewsImage;
         private ToggleButton tbFav;
         private ChipGroup cgNewsTags;
 
-        public FeedModelViewHolder(View view) {
+        public NewsModelViewHolder(View view) {
             super(view);
 
             tvTitolo = (TextView) view.findViewById(R.id.newsTitle);
@@ -135,7 +126,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.FeedMo
             tvData.setText(dtf.format(osDateTime));
 
             // ToggleButton bookmark
-            if(!forSavedNews) {
+            if(fragmentType!=3) {
                 if (user.checkSavedPieceOfNews(pieceOfNews)) {
                     tbFav.setChecked(true);
                 } else {
@@ -181,7 +172,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.FeedMo
                 final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.layout_chip_tag, cgNewsTags, false);
                 chip.setText(newsTag);
                 cgNewsTags.addView(chip);
-                if(!forSavedNews) {
+                if(fragmentType!=3) {
                     setNewsTagsIcon(chip, itemView);
                     chip.setOnClickListener(view -> {
                         final String chipTagText = chip.getText().toString();
@@ -203,6 +194,16 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.FeedMo
                     });
                 }
             }
+        }
+    }
+
+    private void setNewsTagsIcon(Chip chip, View holder) {
+        if (user.getTags().contains(chip.getText().toString())) {
+            chip.setChipIcon(ContextCompat.getDrawable(holder.getContext(), R.drawable.heart_pressed));
+        } else {
+            chip.setChipIcon(ContextCompat.getDrawable(holder.getContext(), R.drawable.heart));
+            if(fragmentType==1)
+                chip.setVisibility(View.GONE);
         }
     }
 }

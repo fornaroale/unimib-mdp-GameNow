@@ -29,42 +29,38 @@ import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
-import it.unimib.disco.gruppoade.gamenow.fragments.shared.DiscoverFeedViewModel;
+import it.unimib.disco.gruppoade.gamenow.fragments.shared.NewsViewModel;
 
 public class DiscoverFragment extends Fragment {
 
-    private static final String TAG = "FeedFragment";
+    private static final String TAG = "DiscoverFragment";
 
     private List<PieceOfNews> newsList;
-    private DiscoverFeedViewModel sharedFeedViewModel;
+    private NewsViewModel viewModel;
     private User user;
-    private LiveData<ArrayList<PieceOfNews>> liveData;
     private NewsListAdapter adapter;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmptyTV;
-    private boolean feedInitializedSentinel;
-    private boolean requestedUpdate;
+    private boolean discoverInitializedSentinel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_feed, container, false);
+        return inflater.inflate(R.layout.fragment_discover, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        feedInitializedSentinel = false;
-        requestedUpdate = false;
+        discoverInitializedSentinel = false;
 
-        sharedFeedViewModel = new ViewModelProvider(getActivity()).get(DiscoverFeedViewModel.class);
-        sharedFeedViewModel.setFeedUse(false);
+        viewModel = new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
 
-        mSwipeRefreshLayout = getView().findViewById(R.id.feed_swipe_refresh);
+        mSwipeRefreshLayout = getView().findViewById(R.id.discover_swipe_refresh);
         mSwipeRefreshLayout.setRefreshing(true);
-        mEmptyTV = getView().findViewById(R.id.feed_empty_view);
-        mRecyclerView = getView().findViewById(R.id.feed_recycler_view);
+        mEmptyTV = getView().findViewById(R.id.discover_empty_view);
+        mRecyclerView = getView().findViewById(R.id.discover_recycler_view);
         mEmptyTV.setText(R.string.news_loading);
 
         // Recupero dati database
@@ -73,43 +69,32 @@ public class DiscoverFragment extends Fragment {
 
         if(user!=null) {
             mSwipeRefreshLayout.setRefreshing(true);
-            initializeFeed();
-            feedInitializedSentinel = true;
+            initializeDiscover();
+            discoverInitializedSentinel = true;
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        requestedUpdate = true;
-    }
-
-    @Override
-    public void onPause() {
-        sharedFeedViewModel.cleanNews();
-        super.onPause();
-    }
-
-    public void initializeFeed(){
+    public void initializeDiscover(){
         newsList = new ArrayList<>();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        adapter = new NewsListAdapter(getActivity(), newsList, user, false);
+        adapter = new NewsListAdapter(getActivity(), newsList, user, (byte) 2);
         mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
         // Observer su oggetto LiveData (collezione news)
         final Observer<ArrayList<PieceOfNews>> observer = changedNewsList -> {
-            if(requestedUpdate) {
-                Log.d(TAG, "UTENTE --> CHANGED DATA!!!");
+
+                Log.d(TAG, "OBSERVER DISCOVER --> CHANGED DATA!!!");
+                Log.d(TAG, "OBSERVER USER --> " + user);
 
                 newsList.clear();
                 newsList.addAll(changedNewsList);
+                selectNews(newsList);
 
                 if (newsList.isEmpty()) {
                     mRecyclerView.setVisibility(View.GONE);
-                    mEmptyTV.setText(R.string.no_data_available_feed);
+                    mEmptyTV.setText(R.string.no_data_available_discover);
                     mEmptyTV.setVisibility(View.VISIBLE);
                 } else {
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -119,28 +104,53 @@ public class DiscoverFragment extends Fragment {
                 adapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
 
-                requestedUpdate = false;
-            }
         };
 
-        liveData = sharedFeedViewModel.getNews(user);
+        LiveData<ArrayList<PieceOfNews>> liveData = viewModel.getNews();
         liveData.observe(getViewLifecycleOwner(), observer);
+        Log.d(TAG, "UPD DISCOVER OBSERVING LIVEDATA --> " + liveData);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            requestedUpdate = true;
             mSwipeRefreshLayout.setRefreshing(true);
-            sharedFeedViewModel.getNews(user);
+            viewModel.refreshNews();
         });
+    }
+
+    private void selectNews(List<PieceOfNews> newsRaw){
+        if(user.getTags() != null) {
+            List<String> userTags = user.getTags();
+
+            for (int i = 0; i < newsRaw.size(); i++) {
+                boolean delArticle = true;
+
+                String[] articlePlatforms = newsRaw.get(i).getProvider().getPlatform().split(",");
+                for (String platform : articlePlatforms) {
+                    if (!userTags.contains(platform)) {
+                        delArticle = false;
+                    } else {
+                        if(articlePlatforms.length==1){
+                            delArticle = true;
+                        }
+                    }
+
+                }
+
+                if (delArticle) {
+                    newsRaw.remove(i);
+                    i--;
+                }
+            }
+        }
     }
 
     private ValueEventListener postListenerUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            if(!feedInitializedSentinel) {
+            if(!discoverInitializedSentinel) {
                 mSwipeRefreshLayout.setRefreshing(true);
-                initializeFeed();
-                feedInitializedSentinel = true;
+                initializeDiscover();
+                discoverInitializedSentinel = true;
             }
             adapter.notifyDataSetChanged();
         }

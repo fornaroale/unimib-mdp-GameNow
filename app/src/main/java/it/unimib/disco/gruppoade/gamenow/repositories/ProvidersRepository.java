@@ -34,9 +34,7 @@ public final class ProvidersRepository {
         return instance;
     }
 
-    public static List<NewsProvider> loadProviders(User user, boolean usingFeed){
-        Log.d("UTENTE", "CSV " + Integer.toHexString(System.identityHashCode(user)) + " - " + user);
-
+    public static List<NewsProvider> loadProviders(){
         providers = new ArrayList<>();
         InputStream is = resources.openRawResource(R.raw.providers);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -46,15 +44,7 @@ public final class ProvidersRepository {
             while ((line = reader.readLine()) != null) {
                 if(!line.isEmpty()) {
                     String[] tokens = line.split("@@@");
-                    if (user.getTags() != null) {
-                        if(usingFeed){
-                            if (user.getTags().contains(tokens[0])) {
-                                providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
-                            }
-                        } else {
-                            providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
-                        }
-                    }
+                    providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
                 }
             }
         } catch (IOException e) {
