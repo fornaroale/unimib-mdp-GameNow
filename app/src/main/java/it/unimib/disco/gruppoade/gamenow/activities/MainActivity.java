@@ -145,21 +145,4 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-    }
 }

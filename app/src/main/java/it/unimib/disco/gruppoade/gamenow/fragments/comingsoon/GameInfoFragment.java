@@ -71,14 +71,11 @@ public class GameInfoFragment extends Fragment {
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
-    private ActionBar actionBar;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game_info, container, false);
     }
