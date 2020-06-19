@@ -176,6 +176,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                                     user.removeGame(clickedGame);
                                                 }
                                             })
+                                            .setAnchorView(R.id.nav_view)
                                             .show();
                                 }
                             } else {
@@ -187,6 +188,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                                     user.saveGame(clickedGame);
                                                 }
                                             })
+                                            .setAnchorView(R.id.nav_view)
                                             .show();
                                 }
                             }
