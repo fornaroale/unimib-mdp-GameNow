@@ -39,7 +39,8 @@ public class RssDownloader implements Runnable {
 
     @Override
     public void run() {
-        List<NewsProvider> providers = ProvidersRepository.getInstance(resources).loadProviders();
+        ProvidersRepository.getInstance(resources);
+        List<NewsProvider> providers = ProvidersRepository.loadProviders();
 
         // Array temporaneo per news
         ArrayList<PieceOfNews> newsFromProviders = new ArrayList<>();
@@ -112,6 +113,8 @@ public class RssDownloader implements Runnable {
                 } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
                     insideItem = false;
                     if (title != null && link != null && description != null && pubDate != null) {
+                        Log.d("PARSER PRE!", "Prima della checkNewsPresence su news con guid: " + guid);
+                        Log.d("PARSER PRE!", guid + " --- " + newsFromProviders);
                         if (!checkNewsPresence(guid, provider.getPlatform(), newsFromProviders)) {
                             String imgUrl = extractImageUrl(description);
                             String contentImgUrl = null;
@@ -136,6 +139,22 @@ public class RssDownloader implements Runnable {
         }
     }
 
+//    public boolean checkNewsPresence(String guid, String platform, ArrayList<PieceOfNews> alreadyPresentNews){
+//        boolean added = false;
+//        for(PieceOfNews article : alreadyPresentNews){
+//            String articleGuid = article.getGuid();
+//            if(guid.equalsIgnoreCase(articleGuid)){
+//                String articleTags = article.getProvider().getPlatform();
+//                if(!articleTags.contains(platform)){
+//                    article.getProvider().addPlatform(platform);
+//                    added = true;
+//                }
+//            }
+//        }
+//
+//        return added;
+//    }
+
     public boolean checkNewsPresence(String guid, String platform, ArrayList<PieceOfNews> newsToCheck) {
         // Controlla che non vi sia già una news uguale ma con tag diversi,
         // in tal caso aggiunge a quella
@@ -143,9 +162,14 @@ public class RssDownloader implements Runnable {
             if (pieceOfNews.getGuid().equals(guid)) {
                 // Se è già presente, aggiungo il tag (ammesso che questo non vi sia già)
                 String tmpPlatform = pieceOfNews.getProvider().getPlatform();
-                if (!tmpPlatform.contains(platform))
+                Log.d("PARSER", "Trovata news equivalente con guid: " + pieceOfNews.getGuid() +"-*-*-**-**-"+ tmpPlatform);
+                Log.d("PARSER", "Tag presenti: " + pieceOfNews.getProvider().getPlatform() + "------" + pieceOfNews.getTitle() + "------" + pieceOfNews.getGuid());
+                Log.d("PARSER", "Tag da aggiungere: " + platform + "------" + pieceOfNews.getTitle() + "------" + pieceOfNews.getGuid());
+
+                if (!tmpPlatform.toLowerCase().contains(platform.toLowerCase())) {
                     pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
-                return true;
+                    return true;
+                }
             }
         }
         return false;
