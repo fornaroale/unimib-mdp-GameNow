@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,8 +14,6 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -240,11 +240,12 @@ public class ComingSoonFragment extends Fragment {
         return null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void chooseButton(int buttonId){
         lottieAnimationView.setVisibility(View.VISIBLE);
         comingSoonViewModel.setOffset(0);
         gamesLiveData.postValue(null);
+        PorterDuffColorFilter accentFilter = new PorterDuffColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
+        PorterDuffColorFilter offFilter = new PorterDuffColorFilter(getResources().getColor(R.color.buttonBackground), PorterDuff.Mode.MULTIPLY);
         switch (buttonId){
             case R.id.button_ps4:
                 ps4 = true;
@@ -253,13 +254,15 @@ public class ComingSoonFragment extends Fragment {
                 nSwitch = false;
                 pc = false;
 
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+
+                ps4Btn.getBackground().setColorFilter(accentFilter);
+                //ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
 
                 //reset other btn colors to off
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                allBtn.setBackgroundColor(0xFFE1E2E1);
+                xboxBtn.getBackground().setColorFilter(offFilter);
+                pcBtn.getBackground().setColorFilter(offFilter);
+                switchBtn.getBackground().setColorFilter(offFilter);
 
                 comingSoonViewModel.setOffset(0);
 
@@ -279,13 +282,13 @@ public class ComingSoonFragment extends Fragment {
                 xbox = true;
                 nSwitch = false;
                 pc = false;
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+                xboxBtn.getBackground().setColorFilter(accentFilter);
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                ps4Btn.getBackground().setColorFilter(offFilter);
+                allBtn.setBackgroundColor(0xFFE1E2E1);
+                pcBtn.getBackground().setColorFilter(offFilter);
+                switchBtn.getBackground().setColorFilter(offFilter);
 
 
                 bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
@@ -305,13 +308,13 @@ public class ComingSoonFragment extends Fragment {
                 nSwitch = false;
                 pc = true;
 
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+                pcBtn.getBackground().setColorFilter(accentFilter);
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                ps4Btn.getBackground().setColorFilter(offFilter);
+                xboxBtn.getBackground().setColorFilter(offFilter);
+                allBtn.setBackgroundColor(0xFFE1E2E1);
+                switchBtn.getBackground().setColorFilter(offFilter);
 
                 bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {6}& first_release_date > "+ todayInSecs +";\n";
@@ -330,13 +333,13 @@ public class ComingSoonFragment extends Fragment {
                 nSwitch = true;
                 pc = false;
 
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+                switchBtn.getBackground().setColorFilter(accentFilter);
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                ps4Btn.getBackground().setColorFilter(offFilter);
+                xboxBtn.getBackground().setColorFilter(offFilter);
+                pcBtn.getBackground().setColorFilter(offFilter);
+                allBtn.setBackgroundColor(0xFFE1E2E1);
 
                 bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                         "where category = 0 & platforms= {130}& first_release_date > "+ todayInSecs +";\n";
@@ -355,13 +358,13 @@ public class ComingSoonFragment extends Fragment {
                 pc = false;
                 all = true;
 
-                allBtn.setBackgroundTintList(getResources().getColorStateList(R.color.colorAccent));
+                allBtn.setBackgroundColor(0xFFFFBD45);
 
                 //reset other btn colors to off
-                ps4Btn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                xboxBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                pcBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
-                switchBtn.setBackgroundTintList(getResources().getColorStateList(R.color.buttonBackground));
+                ps4Btn.getBackground().setColorFilter(offFilter);
+                xboxBtn.getBackground().setColorFilter(offFilter);
+                pcBtn.getBackground().setColorFilter(offFilter);
+                switchBtn.getBackground().setColorFilter(offFilter);
 
 
                 resetBody();
@@ -369,6 +372,8 @@ public class ComingSoonFragment extends Fragment {
                 incomingAdapter.setData(gamesList.getValue());
         }
     }
+
+
 
     private void resetBody(){
         bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
