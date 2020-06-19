@@ -1,8 +1,6 @@
 <resources>
     <!-- generali -->
     <string name="app_name" translatable="false">GameNow</string>
-    <string name="title_feed" translatable="false">Feed</string>
-    <string name="title_discover" translatable="false">Discover</string>
     <string name="title_profile">Profilo</string>
     <string name="news_loading">Attendere, caricamento notizie in corso...</string>
 
@@ -13,7 +11,7 @@
     <string name="signup_btn_sel_foto">Seleziona Immagine</string>
 
     <!-- coming soon fragment-->
-    <string name="incoming_card_placeholder_title" translatable="false">Titolo - gg/mm/aaaa</string>
+    <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
     <string name="incoming_card_available_for">Disponibile per</string>
     <string name="console_name_placeholder" translatable="false">switch</string>
     <string name="gameinfo_placeholder_title">Titolo</string>
@@ -26,16 +24,15 @@
     <string name="nessun_gioco">Nessun gioco trovato...</string>
 
 
-    <string name="title_activity_sign_in">Sign in</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email" translatable="false">Email</string>
+    <string name="prompt_password" translatable="false">Password</string>
+    <string name="action_sign_in">Accedi o registrati</string>
+    <string name="action_sign_in_short">Accedi</string>
+    <string name="welcome">Welcome!</string>
+    <string name="invalid_username">Username non valido</string>
+    <string name="invalid_password">La Password deve essere lunga almeno 6 caratteri</string>
+    <string name="login_failed">Login non eseguito</string>
+    <string name="title_activity_login" translatable="false">Login</string>
     <string name="action_undo">Annulla</string>
 
     <!-- feed fragment -->
@@ -52,7 +49,7 @@
     <!-- profile settings tab -->
     <string name="profile_username">Nome</string>
     <string name="profile_username_not_found">Nome utente non disponibile</string>
-    <string name="profile_email">Email</string>
+    <string name="profile_email" translatable="false">Email</string>
     <string name="profile_email_not_found">Email non disponibile</string>
     <string name="profile_platforms">Piattaforme di interesse</string>
     <string name="profile_logout">Esci</string>
@@ -63,17 +60,20 @@
     <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
     <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
     <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
-    <string name="btn_switch" translatable="false">switch</string>
-    <string name="btn_pc" translatable="false">pc</string>
-    <string name="btn_xbox" translatable="false">xbox</string>
+    <string name="btn_switch" translatable="false">Switch</string>
+    <string name="btn_pc" translatable="false">PC</string>
+    <string name="btn_xbox" translatable="false">Xbox</string>
     <string name="btn_ps4" translatable="false">PS4</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Ciao fragment blank</string>
     <string name="title_comingsoon">In Uscita</string>
     <string name="username">Username insesistente</string>
     <string name="nessun_gioco_salvato">Non hai salvato nessun gioco. Puoi salvare i giochi dalla sezione \"In Uscita\" o tramite la ricerca.</string>
-    <string name="btn_all">tutto</string>
-    <string name="tab_news_title" translatable="false">News</string>
+    <string name="btn_all">Tutto</string>
+    <string name="tab_news_title">Notizie</string>
     <string name="tab_games_title">Giochi</string>
     <string name="tab_user_title">Utente</string>
+    <string name="title_activity_sign_in" translatable="false">Login</string>
+    <string name="title_discover">Scopri</string>
+    <string name="title_feed">Notizie</string>
 </resources>
