@@ -34,8 +34,6 @@ import it.unimib.disco.gruppoade.gamenow.fragments.shared.NewsViewModel;
 
 public class FeedFragment extends Fragment {
 
-    private static final String TAG = "FeedFragment";
-
     private List<PieceOfNews> newsList;
     private NewsViewModel viewModel;
     private User user;
@@ -66,6 +64,8 @@ public class FeedFragment extends Fragment {
 
         // Recupero dati database
         user = null;
+
+        // Collego un listener all'utente
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
     }
 
@@ -78,36 +78,30 @@ public class FeedFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
 
         // Observer su oggetto LiveData (collezione news)
-        final Observer<ArrayList<PieceOfNews>> observer = new Observer<ArrayList<PieceOfNews>>() {
-            @Override
-            public void onChanged(ArrayList<PieceOfNews> changedNewsList) {
-                newsList.clear();
-                newsList.addAll(changedNewsList);
-                selectNews(newsList);
+        final Observer<ArrayList<PieceOfNews>> observer = changedNewsList -> {
+            newsList.clear();
+            newsList.addAll(changedNewsList);
+            selectNews(newsList);
 
-                if (newsList.isEmpty()) {
-                    mRecyclerView.setVisibility(View.GONE);
-                    mEmptyTV.setText(R.string.no_data_available_feed);
-                    mEmptyTV.setVisibility(View.VISIBLE);
-                } else {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    mEmptyTV.setVisibility(View.GONE);
-                }
-
-                adapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
+            if (newsList.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setText(R.string.no_data_available_feed);
+                mEmptyTV.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
             }
+
+            adapter.notifyDataSetChanged();
+            mSwipeRefreshLayout.setRefreshing(false);
         };
 
         LiveData<ArrayList<PieceOfNews>> liveData = viewModel.getNews();
         liveData.observe(getViewLifecycleOwner(), observer);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                viewModel.refreshNews();
-            }
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            viewModel.refreshNews();
         });
     }
 

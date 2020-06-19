@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         appCompatActivity = this;
+        FbDatabase.setUserDeletingFalse();
         if (user == null) {
             createSignInIntent();
         } else {
-            FbDatabase.setUserDeletingFalse();
             createFeed();
         }
     }
