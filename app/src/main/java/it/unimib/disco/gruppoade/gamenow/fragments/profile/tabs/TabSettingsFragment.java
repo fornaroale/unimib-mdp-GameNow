@@ -132,6 +132,9 @@ public class TabSettingsFragment extends Fragment {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+
+                                FbDatabase.setUserDeletingTrue();
+
                                 Log.d(TAG, "DELETE -> Cancello utente.");
                                 deleteAccount();
 
