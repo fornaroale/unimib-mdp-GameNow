@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
@@ -44,7 +45,13 @@ public final class ProvidersRepository {
             while ((line = reader.readLine()) != null) {
                 if(!line.isEmpty()) {
                     String[] tokens = line.split("@@@");
-                    providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
+                    if(Locale.getDefault().getLanguage().equals("it")){
+                        if(tokens[4].equals("IT"))
+                            providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
+                    } else {
+                        if(tokens[4].equals("EN"))
+                            providers.add(new NewsProvider(tokens[0], tokens[1], tokens[2], tokens[3]));
+                    }
                 }
             }
         } catch (IOException e) {

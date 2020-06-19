@@ -46,4 +46,15 @@ public class NewsProvider {
     public void setPlatform(String platform) {
         this.platform = platform;
     }
+
+    public void addPlatform(String platform){
+        this.platform = this.platform.concat(","+platform);
+    }
+
+    @Override
+    public String toString() {
+        return "NewsProvider{" +
+                "platform='" + platform + '\'' +
+                '}';
+    }
 }
