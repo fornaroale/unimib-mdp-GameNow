@@ -47,7 +47,7 @@ public class TabSavedNewsFragment extends Fragment {
                 locallySavedNews.add(gson.fromJson(jsonPON, PieceOfNews.class));
             }
 
-            adapter = new NewsListAdapter(getActivity(), locallySavedNews, user, true);
+            adapter = new NewsListAdapter(getActivity(), locallySavedNews, user, (byte) 3);
 
             // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
             if (locallySavedNews.isEmpty()) {

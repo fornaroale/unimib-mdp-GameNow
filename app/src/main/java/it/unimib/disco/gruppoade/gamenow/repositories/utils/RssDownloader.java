@@ -26,26 +26,23 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
-import it.unimib.disco.gruppoade.gamenow.models.User;
 import it.unimib.disco.gruppoade.gamenow.repositories.ProvidersRepository;
 
 public class RssDownloader implements Runnable {
     private Resources resources;
     private MutableLiveData<ArrayList<PieceOfNews>> news;
     private final static String TAG = "RssDownloaderRunnable";
-    private boolean usingFeed;
-    private User user;
 
-    public RssDownloader(Resources res, MutableLiveData<ArrayList<PieceOfNews>> news, User user, boolean usingFeed){
+    public RssDownloader(Resources res, MutableLiveData<ArrayList<PieceOfNews>> news){
         this.resources = res;
         this.news = news;
-        this.user = user;
-        this.usingFeed = usingFeed;
+
+        Log.d("NewsRepository", "UPD NEWSREPO --> RICHIESTO AGGIORNAMENTO NEWS " + news);
     }
 
     @Override
     public void run() {
-        List<NewsProvider> providers = ProvidersRepository.getInstance(resources).loadProviders(user, usingFeed);
+        List<NewsProvider> providers = ProvidersRepository.getInstance(resources).loadProviders();
 
         // Array temporaneo per news
         ArrayList<PieceOfNews> newsFromProviders = new ArrayList<>();
