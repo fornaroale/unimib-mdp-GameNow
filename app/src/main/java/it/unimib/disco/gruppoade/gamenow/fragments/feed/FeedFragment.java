@@ -1,7 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.feed;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
+import it.unimib.disco.gruppoade.gamenow.activities.UserInitializationActivity;
 import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
 import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
@@ -66,12 +67,6 @@ public class FeedFragment extends Fragment {
         // Recupero dati database
         user = null;
         FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
-
-//        if(user!=null) {
-//            mSwipeRefreshLayout.setRefreshing(true);
-//            initializeFeed();
-//            feedInitializedSentinel = true;
-//        }
     }
 
     public void initializeFeed(){
@@ -86,8 +81,6 @@ public class FeedFragment extends Fragment {
         final Observer<ArrayList<PieceOfNews>> observer = new Observer<ArrayList<PieceOfNews>>() {
             @Override
             public void onChanged(ArrayList<PieceOfNews> changedNewsList) {
-                Log.d(TAG, "UPD OBSERVER FEED --> CHANGED DATA!!!" + changedNewsList);
-
                 newsList.clear();
                 newsList.addAll(changedNewsList);
                 selectNews(newsList);
@@ -108,7 +101,6 @@ public class FeedFragment extends Fragment {
 
         LiveData<ArrayList<PieceOfNews>> liveData = viewModel.getNews();
         liveData.observe(getViewLifecycleOwner(), observer);
-        Log.d(TAG, "UPD FEED OBSERVING LIVEDATA --> " + liveData);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -124,24 +116,18 @@ public class FeedFragment extends Fragment {
             List<String> userTags = user.getTags();
 
             for (int i = 0; i < newsRaw.size(); i++) {
-//            Log.d(TAG, "SELECT Controllo news pos. " + i + " - Articolo: " + newsRaw.get(i).getTitle());
                 boolean keepArticle = false;
-                String platformsToKeep = "";
 
-                for (String platform : newsRaw.get(i).getProvider().getPlatform().split(",")) {
+                String[] articlePlatforms = newsRaw.get(i).getProvider().getPlatform().split(",");
+                for (String platform : articlePlatforms) {
                     if (userTags.contains(platform)) {
                         keepArticle = true;
-                        //platformsToKeep = platformsToKeep.concat(platform + ",");
                     }
                 }
 
                 if (!keepArticle) {
-//                Log.d(TAG, "SELECT Rimuovo news pos. " + i + " - Articolo: " + newsRaw.get(i).getTitle());
                     newsRaw.remove(i);
                     i--;
-                } else {
-                    //platformsToKeep = platformsToKeep.substring(0, platformsToKeep.length() - 1);
-                    //newsRaw.get(i).getProvider().setPlatform(platformsToKeep);
                 }
             }
         }
@@ -151,12 +137,16 @@ public class FeedFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            if(!feedInitializedSentinel) {
+            if(!feedInitializedSentinel && user!=null) {
                 mSwipeRefreshLayout.setRefreshing(true);
                 initializeFeed();
                 feedInitializedSentinel = true;
+            } else if (user==null && !FbDatabase.getUserDeleting()) {
+                Intent userInitializationIntent = new Intent(getActivity(), UserInitializationActivity.class);
+                startActivity(userInitializationIntent);
             }
-            adapter.notifyDataSetChanged();
+            if(adapter!=null)
+                adapter.notifyDataSetChanged();
         }
 
         @Override

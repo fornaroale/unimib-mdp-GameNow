@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         if (user == null) {
             createSignInIntent();
         } else {
+            FbDatabase.setUserDeletingFalse();
             createFeed();
         }
     }
