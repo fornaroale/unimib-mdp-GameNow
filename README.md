@@ -3,20 +3,21 @@
 <img align="center" src="../master/app/src/main/res/drawable-v24/app_logo.png" width="50%">
 </p>
 
-*Corso di Programmazione di Dispositivi Mobili<br/>
-Cod. 1920-3-E3101Q135<br/>
+*Course of Development of mobile applications (1920-3-E3101Q135)<br/>
+University of Milano - Bicocca<br/>
 A.A. 2019/20*
 
 <p align="right">
+<i>Development team:</i><br/>
 Alessandro Fornaro - a.fornaro1@campus.unimib.it<br/>
 Daniele Perego - d.perego23@campus.unimib.it<br/>
 Edoardo Tarnoczy - e.tarnoczy@campus.unimib.it
 </p>
 
-## Descrizione
-GameNow è un’applicazione Android, sviluppata per un progetto universitario, pensata per tenere aggiornati gli appassionati di videogiochi riguardo titoli e piattaforme disponibili sul mercato videoludico.
+## Description
+GameNow is an Android app, developed for a university project, designed to keep video game enthusiasts updated on titles and platforms available on the gaming market.
 
-## Librerie esterne
+## External libraries
 * GSon [https://github.com/google/gson]
 * JSoup [https://github.com/jhy/jsoup]
 * ThreeTen backport [https://github.com/ThreeTen/threetenbp/]
