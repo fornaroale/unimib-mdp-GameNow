@@ -40,12 +40,11 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static final String TAG = "Adapter";
 
-    final Gson gson = new Gson();
-
     private Context mContext;
     private List<Game> mGames;
     private OnItemClickListener onItemClickListener;
     private User user;
+
 
     public IncomingAdapter(Context mContext, List<Game> mResults, OnItemClickListener onItemClickListener, User user) {
         this.mContext = mContext;
@@ -53,7 +52,6 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.onItemClickListener = onItemClickListener;
         this.user = user;
     }
-
 
     @NonNull
     @Override
@@ -120,8 +118,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         public void bind(final Game game, final OnItemClickListener onItemClickListener) {
-            String[] gameString = gson.toJson(game).split("\"id\":", 3);
-            String g = gson.toJson(game);
+
             if (game.getDate() != null)
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
             else if (game.getName() == null)
@@ -143,7 +140,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
             //Console Recycler
-            ConsoleAdapter consoleAdapter = new ConsoleAdapter(game.getPlatforms(), mContext);
+            ConsoleAdapter consoleAdapter = new ConsoleAdapter(game.getPlatforms());
             recyclerView.setAdapter(consoleAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
 
