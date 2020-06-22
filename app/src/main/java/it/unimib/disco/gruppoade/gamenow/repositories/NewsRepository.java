@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
-import it.unimib.disco.gruppoade.gamenow.models.User;
 import it.unimib.disco.gruppoade.gamenow.repositories.utils.RssDownloader;
 
 public class NewsRepository {
@@ -13,7 +12,7 @@ public class NewsRepository {
     private static Resources resources;
 
     private NewsRepository(Resources resources) {
-        this.resources = resources;
+        NewsRepository.resources = resources;
     }
 
     public static synchronized NewsRepository getInstance(Resources resources) {

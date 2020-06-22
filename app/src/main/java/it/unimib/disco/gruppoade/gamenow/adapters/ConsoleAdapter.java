@@ -43,9 +43,6 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: Console Called.");
-        Log.d(TAG, "onBindViewHolder: Platforms = " + gson.toJson(mPlatforms));
-        Log.d(TAG, "onBindViewHolder: Abbreviation " + mPlatforms.get(position).getAbbreviation());
         holder.consoleAbb.setText(mPlatforms.get(position).getAbbreviation());
         if(mPlatforms.get(position).getAbbreviation() != null && mPlatforms.get(position).getAbbreviation().equals("XONE"))
             holder.consoleAbb.setText("XBOX");
