@@ -23,14 +23,10 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
 
 
     private List<Platform> mPlatforms;
-    private Context mContext;
-    private Gson gson = new Gson();
 
-
-    public ConsoleAdapter(List<Platform> mPlatforms, Context mContext) {
+    public ConsoleAdapter(List<Platform> mPlatforms) {
 
         this.mPlatforms = mPlatforms;
-        this.mContext = mContext;
     }
 
     @NonNull

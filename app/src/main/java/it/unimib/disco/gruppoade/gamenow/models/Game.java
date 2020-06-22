@@ -47,6 +47,7 @@ public class Game implements Parcelable {
     @Expose
     private List<Platform> platforms;
 
+
     protected Game(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
@@ -82,13 +83,6 @@ public class Game implements Parcelable {
         return platforms;
     }
 
-    public void setPlatforms(List<Platform> platforms) {
-        this.platforms = platforms;
-    }
-
-    public void setDate(Integer date) {
-        this.date = date;
-    }
 
     public Integer getDate() {
         return date;
@@ -114,41 +108,22 @@ public class Game implements Parcelable {
         return cover;
     }
 
-    public void setCover(Cover cover) {
-        this.cover = cover;
-    }
-
     public String getSummary() {
         return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
     }
 
     public String getStoryline() {
         return storyline;
     }
 
-    public void setStoryline(String storyline) {
-        this.storyline = storyline;
-    }
-
     public double getRating() {
         return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
     }
 
     public List<Video> getVideos() {
         return videos;
     }
 
-    public void setVideos(List<Video> videos) {
-        this.videos = videos;
-    }
 
     @Override
     public int describeContents() {

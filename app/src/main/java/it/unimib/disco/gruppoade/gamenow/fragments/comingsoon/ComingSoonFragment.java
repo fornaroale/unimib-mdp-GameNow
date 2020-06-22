@@ -4,6 +4,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -75,6 +77,7 @@ public class ComingSoonFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         comingSoonViewModel = new ViewModelProvider(requireActivity()).get(ComingSoonViewModel.class);
+
         resetBody();
 
         postListenerFirstUserData = new ValueEventListener() {
@@ -99,14 +102,18 @@ public class ComingSoonFragment extends Fragment {
                         totalItemCount = layoutManager.getItemCount();
                         lastVisibleItem = layoutManager.findLastVisibleItemPosition();
                         visibleItemCount = layoutManager.getChildCount();
-                        boolean conditions = totalItemCount == visibleItemCount ||(totalItemCount <= (lastVisibleItem + threshold) && dy > 0 && !comingSoonViewModel.isLoading());
-
+                        boolean conditions = totalItemCount == visibleItemCount ||
+                                (totalItemCount <= (lastVisibleItem + threshold)
+                                        && dy > 0
+                                        && !comingSoonViewModel.isLoading())
+                                        && comingSoonViewModel.getmGamesLiveData().getValue() != null;
 
                         if (conditions) {
                             List<Game> gameList = new ArrayList<>();
-                            boolean conditions2 = gamesLiveData.getValue() != null &&
-                                    gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
+                            boolean conditions2 = gamesLiveData.getValue() != null
+                                    && gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
                             if (conditions2) {
+                                comingSoonViewModel.setLoading(true);
                                 List<Game> currentList = gamesLiveData.getValue();
                                 currentList.add(null);
                                 gameList.addAll(currentList);
@@ -117,7 +124,7 @@ public class ComingSoonFragment extends Fragment {
                                 body = bodystart + bodyOffset + bodyEnd;
                                 Log.d(TAG, "onScrolled: Body " + body);
                                 comingSoonViewModel.getMoreGames(body);
-                                comingSoonViewModel.setLoading(true);
+
                             }
                         }
                     }
@@ -131,15 +138,14 @@ public class ComingSoonFragment extends Fragment {
                         lottieAnimationView.setVisibility(GONE);
                         if(comingSoonViewModel.isLoading()) {
                             comingSoonViewModel.setLoading(false);
-                            comingSoonViewModel.setCurrentResults(games.size());
                         }
                     }
                 };
 
-
                 gamesList = comingSoonViewModel.getGames(body);
                 gamesList.observe(getViewLifecycleOwner(), observer);
                 gamesLiveData = comingSoonViewModel.getmGamesLiveData();
+
             }
 
             @Override
@@ -367,7 +373,6 @@ public class ComingSoonFragment extends Fragment {
     }
 
 
-
     private void resetBody(){
         bodystart = "fields name,cover.url,platforms.abbreviation,first_release_date,summary,storyline,total_rating, videos.video_id;\n" +
                 "where category = 0 & platforms= (130,49,48,6) & first_release_date > "+ todayInSecs +";\n";
@@ -375,4 +380,6 @@ public class ComingSoonFragment extends Fragment {
         bodyEnd = "sort first_release_date asc;\nlimit " + Constants.PAGE_SIZE + ";\n";
         body = bodystart + bodyOffset + bodyEnd;
     }
+
+
 }

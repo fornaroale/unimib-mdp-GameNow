@@ -320,7 +320,7 @@ public class GameInfoFragment extends Fragment {
 
     private void initPlatformsRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
-        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms,getActivity());
+        ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms);
         platformsRecycler.setAdapter(consoleAdapter);
         if(mPlatforms.size() > 4)
             platformsRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 4));

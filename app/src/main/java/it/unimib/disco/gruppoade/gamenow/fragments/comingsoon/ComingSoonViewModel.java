@@ -16,7 +16,6 @@ public class ComingSoonViewModel extends ViewModel {
 
     private MutableLiveData<List<Game>> mGames;
     private int offset = 0;
-    private int currentResults;
     private boolean isLoading;
 
 
@@ -42,25 +41,12 @@ public class ComingSoonViewModel extends ViewModel {
         return mGames;
     }
 
-    public LiveData<List<Game>> resetGames() {
-        mGames = null;
-        return mGames;
-    }
-
     public int getOffset() {
         return offset;
     }
 
     public void setOffset(int offset) {
         this.offset = offset;
-    }
-
-    public int getCurrentResults() {
-        return currentResults;
-    }
-
-    public void setCurrentResults(int currentResults) {
-        this.currentResults = currentResults;
     }
 
     public boolean isLoading() {
@@ -71,16 +57,11 @@ public class ComingSoonViewModel extends ViewModel {
         isLoading = loading;
     }
 
-    public void setmGames(MutableLiveData<List<Game>> mGames) {
-        this.mGames = mGames;
-    }
-
     @Override
     public String toString() {
         return "ComingSoonViewModel{" +
                 "mGames=" + mGames +
                 ", offset=" + offset +
-                ", currentResults=" + currentResults +
                 ", isLoading=" + isLoading +
                 '}';
     }
