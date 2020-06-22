@@ -120,12 +120,8 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         public void bind(final Game game, final OnItemClickListener onItemClickListener) {
-
-            Log.d(TAG, "Incoming onBindViewHolder: Game = " + game.toString());
             String[] gameString = gson.toJson(game).split("\"id\":", 3);
             String g = gson.toJson(game);
-            Log.d(TAG, "Incoming bind: Game = " + g);
-            Log.d(TAG, "Incoming bind: gameString " + Arrays.toString(gameString));
             if (game.getDate() != null)
                 itemTitle.setText(constructTitle(game.getName(), game.getDate()));
             else if (game.getName() == null)

@@ -114,7 +114,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
 
             // Titolo
             tvTitolo.setText(pieceOfNews.getTitle());
-            Log.d(TAG, pieceOfNews.getTitle());
 
             // Provider della notizia
             tvProvider.setText(pieceOfNews.getProvider().getName());
@@ -160,7 +159,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
             });
 
             // News' tags chips
-            Log.d(TAG, pieceOfNews.getProvider().getPlatform());
             cgNewsTags.removeAllViews();
             for (String newsTag : pieceOfNews.getProvider().getPlatform().split(",")) {
                 final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.layout_chip_tag, cgNewsTags, false);
