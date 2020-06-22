@@ -107,11 +107,6 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d(TAG, "Nome utente: " + user.getDisplayName());
-
-                String usernameDb = user.getUid();
-                Log.d(TAG, "usernameDb: " + usernameDb);
-
                 createFeed();
             } else {
                 // Sign in failed. If response is null the user canceled the

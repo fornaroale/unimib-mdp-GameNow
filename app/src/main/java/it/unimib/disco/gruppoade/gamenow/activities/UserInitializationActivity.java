@@ -88,9 +88,6 @@ public class UserInitializationActivity extends AppCompatActivity {
         // setto il bottone come non premibile
         submit_button.setEnabled(false);
 
-
-        Log.d(TAG, "TAG LETTI DA CSV: " + readTagsCsv().toString());
-
         // container checkbox
         container_cb = findViewById(R.id.container_cb);
 
@@ -122,14 +119,10 @@ public class UserInitializationActivity extends AppCompatActivity {
             container_cb.addView(cb);
         }
 
-
-        Log.d(TAG, "Activity partita");
-
         // quando premo il pulsante per scelgiere la foto, lancio showFileChooser()
         photo_choose_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "In the click button choose photo");
                 showFileChooser();
             }
         });
@@ -139,8 +132,6 @@ public class UserInitializationActivity extends AppCompatActivity {
         submit_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(TAG, "In the click button submit");
-
                         if(filePath != null){
                             // reference to firestore
                             // Create a storage reference
@@ -155,12 +146,12 @@ public class UserInitializationActivity extends AppCompatActivity {
                             uploadTask.addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    Log.d(TAG, "Upload FALLITO!!");
+
                                 }
                             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Log.d(TAG, "Upload effettuato con SUCCESSO");
+
                                 }
                             });
                         }

@@ -17,7 +17,6 @@ import it.unimib.disco.gruppoade.gamenow.repositories.NewsRepository;
 
 public class NewsViewModel extends AndroidViewModel {
 
-    private static final String TAG = "NewsViewModel";
     private MutableLiveData<ArrayList<PieceOfNews>> news;
 
     public NewsViewModel(@NonNull Application application) {

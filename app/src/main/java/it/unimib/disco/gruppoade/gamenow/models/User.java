@@ -6,6 +6,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class User {
             String jsonPieceOfNews = gson.toJson(pon);
             List<String> userDbNews = news;
             userDbNews.add(jsonPieceOfNews);
-            FbDatabase.FbDatabase().getUserReference().child("news").setValue(userDbNews);
+            FbDatabase.getUserReference().child("news").setValue(userDbNews);
             return true;
         } else {
             return false;
@@ -92,7 +94,7 @@ public class User {
                 }
             }
 
-            FbDatabase.FbDatabase().getUserReference().child("news").setValue(news);
+            FbDatabase.getUserReference().child("news").setValue(news);
             return true;
         } else {
             return false;
@@ -127,7 +129,7 @@ public class User {
             String jsonGame = gson.toJson(game);
             List<String> userDbGames = games;
             userDbGames.add(jsonGame);
-            FbDatabase.FbDatabase().getUserReference().child("games").setValue(userDbGames);
+            FbDatabase.getUserReference().child("games").setValue(userDbGames);
             return true;
         } else {
             return false;
@@ -142,11 +144,10 @@ public class User {
                 if (checkID(game, games.get(i))) {
                     // Se i due ID sono uguali lo rimuovo dal db
                     games.remove(i);
-                    Log.d(TAG, "removeGame: games after " + games);
                 }
             }
 
-            FbDatabase.FbDatabase().getUserReference().child("games").setValue(games);
+            FbDatabase.getUserReference().child("games").setValue(games);
             return true;
         } else {
             return false;
@@ -168,13 +169,14 @@ public class User {
 
     public void addTag(String tag) {
         tags.add(tag.toUpperCase());
-        FbDatabase.FbDatabase().getUserReference().child("tags").setValue(getTags());
+        FbDatabase.getUserReference().child("tags").setValue(getTags());
     }
 
     public void addTagNoDbUpdate(String tag) {
         tags.add(tag.toUpperCase());
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "User{" +
@@ -213,7 +215,7 @@ public class User {
 
     public void removeTag(String tmpString) {
         tags.remove(tmpString.toUpperCase());
-        FbDatabase.FbDatabase().getUserReference().child("tags").setValue(getTags());
+        FbDatabase.getUserReference().child("tags").setValue(getTags());
     }
 
     public void removeTagNoDbUpdate(String tmpString) {
