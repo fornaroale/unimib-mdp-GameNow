@@ -5,7 +5,7 @@ import android.util.Log;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class NewsProvider {
+public class NewsProvider implements Cloneable {
     private final static String TAG = "NewsProvider Class";
     private String name;
     private URL homepageUrl;
@@ -31,6 +31,13 @@ public class NewsProvider {
         }
     }
 
+    public NewsProvider(NewsProvider copy) {
+        this.name = copy.getName();
+        this.homepageUrl = copy.getHomepageUrl();
+        this.rssUrl = copy.getRssUrl();
+        this.platform = copy.getPlatform();
+    }
+
     public String getName() {
         return name;
     }
@@ -43,12 +50,12 @@ public class NewsProvider {
         return platform;
     }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    public URL getHomepageUrl() {
+        return homepageUrl;
     }
 
-    public void addPlatform(String platform){
-        this.platform = this.platform.concat(","+platform);
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     @Override

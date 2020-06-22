@@ -71,10 +71,6 @@ public class RssDownloader implements Runnable {
             }
         }
 
-        for (String guid : newsFromProviders.keySet()){
-            Log.d("ANALISIBUG", newsFromProviders.get(guid).getTitle()+ "-" +newsFromProviders.get(guid).getProvider().getPlatform());
-        }
-
         // Convert to arraylist
         ArrayList<PieceOfNews> arrayListToPost = new ArrayList<>(newsFromProviders.values());
 
@@ -135,20 +131,13 @@ public class RssDownloader implements Runnable {
                         if (newsFromProviders.containsKey(guid)) {
                             String providertoAdd = provider.getPlatform();
 
-                            Log.d("ANALISIBUG", "Titolo notizia: " + title);
-
                             NewsProvider alreadyPresentArticleProvider = Objects.requireNonNull(newsFromProviders.get(guid)).getProvider();
                             String alreadyPresentPlatforms = alreadyPresentArticleProvider.getPlatform();
-                            Log.d("ANALISIBUG", "Tag prima di aggiungere: " + alreadyPresentArticleProvider.getPlatform());
 
-                            alreadyPresentPlatforms = alreadyPresentPlatforms + "," + providertoAdd;
-                            alreadyPresentArticleProvider.setPlatform(alreadyPresentPlatforms);
-
-                            Log.d("ANALISIBUG", "Tag dopo di aggiungere: " + alreadyPresentArticleProvider.getPlatform());
-
-                            newsFromProviders.put(guid, newsFromProviders.get(guid));
-
-                            Log.d("ANALISIBUG", "Tag dopo put: " + newsFromProviders.get(guid).getProvider().getPlatform());
+                            if(!alreadyPresentPlatforms.contains(providertoAdd)) {
+                                alreadyPresentPlatforms = alreadyPresentPlatforms + "," + providertoAdd;
+                                alreadyPresentArticleProvider.setPlatform(alreadyPresentPlatforms);
+                            }
                         } else {
                             String imgUrl = extractImageUrl(description);
                             String contentImgUrl = null;
@@ -156,10 +145,11 @@ public class RssDownloader implements Runnable {
                                 contentImgUrl = extractImageUrl(contentEncoded);
                             }
                             PieceOfNews item;
+
                             if (contentImgUrl != null) {
-                                item = new PieceOfNews(title, description, link, pubDate, contentImgUrl, guid, provider);
+                                item = new PieceOfNews(title, description, link, pubDate, contentImgUrl, guid, new NewsProvider(provider));
                             } else {
-                                item = new PieceOfNews(title, description, link, pubDate, imgUrl, guid, provider);
+                                item = new PieceOfNews(title, description, link, pubDate, imgUrl, guid, new NewsProvider(provider));
                             }
 
                             newsFromProviders.put(guid, item);

@@ -111,11 +111,6 @@ public class FeedFragment extends Fragment {
             List<String> userTags = user.getTags();
 
             for (int i = 0; i < newsRaw.size(); i++) {
-                if(newsRaw.get(i).getGuid().equals("https://www.eurogamer.it/article.php?article_id=2101956")) {
-                    Log.d("ANALISIBUG", "Ci sono!*");
-                    Log.d("ANALISIBUG", "Tags: " + newsRaw.get(i).getProvider().getPlatform());
-                }
-
                 boolean keepArticle = false;
 
                 String[] articlePlatforms = newsRaw.get(i).getProvider().getPlatform().split(",");
