@@ -2,6 +2,7 @@ package it.unimib.disco.gruppoade.gamenow.fragments.feed;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +57,10 @@ public class FeedFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
 
-        mSwipeRefreshLayout = getView().findViewById(R.id.feed_swipe_refresh);
+        mSwipeRefreshLayout = view.findViewById(R.id.feed_swipe_refresh);
         mSwipeRefreshLayout.setRefreshing(true);
-        mEmptyTV = getView().findViewById(R.id.feed_empty_view);
-        mRecyclerView = getView().findViewById(R.id.feed_recycler_view);
+        mEmptyTV = view.findViewById(R.id.feed_empty_view);
+        mRecyclerView = view.findViewById(R.id.feed_recycler_view);
         mEmptyTV.setText(R.string.news_loading);
 
         // Recupero dati database
@@ -110,12 +111,18 @@ public class FeedFragment extends Fragment {
             List<String> userTags = user.getTags();
 
             for (int i = 0; i < newsRaw.size(); i++) {
+                if(newsRaw.get(i).getGuid().equals("https://www.eurogamer.it/article.php?article_id=2101956")) {
+                    Log.d("ANALISIBUG", "Ci sono!*");
+                    Log.d("ANALISIBUG", "Tags: " + newsRaw.get(i).getProvider().getPlatform());
+                }
+
                 boolean keepArticle = false;
 
                 String[] articlePlatforms = newsRaw.get(i).getProvider().getPlatform().split(",");
                 for (String platform : articlePlatforms) {
                     if (userTags.contains(platform)) {
                         keepArticle = true;
+                        break;
                     }
                 }
 

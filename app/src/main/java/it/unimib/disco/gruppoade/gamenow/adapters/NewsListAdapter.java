@@ -38,10 +38,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
     private List<PieceOfNews> newsList;
     private User user;
     private byte fragmentType;
+    private final static String TAG = "NewsListAdapter";
 
     @NotNull
     @Override
-    public NewsModelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NewsModelViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         View itemView = this.layoutInflater.inflate(R.layout.layout_singlenews_card, parent, false);
         return new NewsModelViewHolder(itemView);
     }
@@ -113,6 +114,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
 
             // Titolo
             tvTitolo.setText(pieceOfNews.getTitle());
+            Log.d(TAG, pieceOfNews.getTitle());
 
             // Provider della notizia
             tvProvider.setText(pieceOfNews.getProvider().getName());
@@ -142,24 +144,14 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
                     if (isChecked) {
                         if(user.savePieceOfNews(ponClicked)) {
                             Snackbar.make(buttonView, R.string.fav_news_added, Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.action_undo, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            user.removeSavedPieceOfNews(ponClicked);
-                                        }
-                                    })
+                                    .setAction(R.string.action_undo, v -> user.removeSavedPieceOfNews(ponClicked))
                                     .setAnchorView(R.id.nav_view)
                                     .show();
                         }
                     } else {
                         if(user.removeSavedPieceOfNews(ponClicked)) {
                             Snackbar.make(buttonView, R.string.fav_news_removed, Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.action_undo, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            user.savePieceOfNews(ponClicked);
-                                        }
-                                    })
+                                    .setAction(R.string.action_undo, v -> user.savePieceOfNews(ponClicked))
                                     .setAnchorView(R.id.nav_view)
                                     .show();
                         }
@@ -168,6 +160,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
             });
 
             // News' tags chips
+            Log.d(TAG, pieceOfNews.getProvider().getPlatform());
             cgNewsTags.removeAllViews();
             for (String newsTag : pieceOfNews.getProvider().getPlatform().split(",")) {
                 final Chip chip = (Chip) LayoutInflater.from(mContext).inflate(R.layout.layout_chip_tag, cgNewsTags, false);
