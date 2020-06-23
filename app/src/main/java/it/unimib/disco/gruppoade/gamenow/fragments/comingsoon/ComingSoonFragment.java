@@ -2,9 +2,7 @@ package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +17,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -110,8 +107,7 @@ public class ComingSoonFragment extends Fragment {
 
                         if (conditions) {
                             List<Game> gameList = new ArrayList<>();
-                            boolean conditions2 = gamesLiveData.getValue() != null
-                                    && gamesLiveData.getValue().get(gamesLiveData.getValue().size() -1) != null;
+                            boolean conditions2 = gamesLiveData.getValue() != null;
                             if (conditions2) {
                                 comingSoonViewModel.setLoading(true);
                                 List<Game> currentList = gamesLiveData.getValue();
@@ -124,6 +120,7 @@ public class ComingSoonFragment extends Fragment {
                                 body = bodystart + bodyOffset + bodyEnd;
                                 Log.d(TAG, "onScrolled: Body " + body);
                                 comingSoonViewModel.getMoreGames(body);
+                                Constants.loadingSentinel = true;
 
                             }
                         }
@@ -136,7 +133,7 @@ public class ComingSoonFragment extends Fragment {
                         Log.d(TAG, "initRecyclerView: Init RecyclerView");
                         incomingAdapter.setData(games);
                         lottieAnimationView.setVisibility(GONE);
-                        if(comingSoonViewModel.isLoading()) {
+                        if(!Constants.loadingSentinel) {
                             comingSoonViewModel.setLoading(false);
                         }
                     }
