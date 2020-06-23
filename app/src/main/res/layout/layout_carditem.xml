@@ -9,7 +9,7 @@
         android:id="@+id/incoming_cardview"
         android:layout_width="match_parent"
         android:layout_height="160dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="4dp"
         app:strokeWidth="1dp"
         app:strokeColor="@color/blackStroke"
         app:cardElevation="0dp">
