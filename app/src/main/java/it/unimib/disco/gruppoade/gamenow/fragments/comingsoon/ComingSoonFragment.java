@@ -26,6 +26,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,14 +62,9 @@ public class ComingSoonFragment extends Fragment {
 
     private int totalItemCount, lastVisibleItem, visibleItemCount, threshold = 1;
 
-    private ValueEventListener postListenerFirstUserData;
-
-    private ValueEventListener postListenerUserData;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_comingsoon, container, false);
-        return root;
+        return inflater.inflate(R.layout.fragment_comingsoon, container, false);
     }
 
     @Override
@@ -77,7 +74,7 @@ public class ComingSoonFragment extends Fragment {
 
         resetBody();
 
-        postListenerFirstUserData = new ValueEventListener() {
+        ValueEventListener postListenerFirstUserData = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
@@ -133,7 +130,7 @@ public class ComingSoonFragment extends Fragment {
                         Log.d(TAG, "initRecyclerView: Init RecyclerView");
                         incomingAdapter.setData(games);
                         lottieAnimationView.setVisibility(GONE);
-                        if(!Constants.loadingSentinel) {
+                        if (!Constants.loadingSentinel) {
                             comingSoonViewModel.setLoading(false);
                         }
                     }
@@ -151,9 +148,9 @@ public class ComingSoonFragment extends Fragment {
             }
         };
 
-        postListenerUserData = new ValueEventListener() {
+        ValueEventListener postListenerUserData = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
                 incomingAdapter.notifyDataSetChanged();
             }

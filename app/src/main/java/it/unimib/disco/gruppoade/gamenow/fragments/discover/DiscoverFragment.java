@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.discover;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
@@ -57,7 +57,7 @@ public class DiscoverFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
 
-        mSwipeRefreshLayout = getView().findViewById(R.id.discover_swipe_refresh);
+        mSwipeRefreshLayout = requireView().findViewById(R.id.discover_swipe_refresh);
         mSwipeRefreshLayout.setRefreshing(true);
         mEmptyTV = getView().findViewById(R.id.discover_empty_view);
         mRecyclerView = getView().findViewById(R.id.discover_recycler_view);

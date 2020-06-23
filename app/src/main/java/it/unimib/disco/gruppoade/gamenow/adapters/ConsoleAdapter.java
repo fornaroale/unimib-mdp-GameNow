@@ -1,7 +1,5 @@
 package it.unimib.disco.gruppoade.gamenow.adapters;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -30,8 +26,7 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_console, parent, false);
-        ConsoleAdapter.ViewHolder holder = new ConsoleAdapter.ViewHolder(view);
-        return holder;
+        return new ConsoleAdapter.ViewHolder(view);
     }
 
     @Override

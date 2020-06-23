@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public final class FbDatabase {
     private static FirebaseDatabase database;
     private static DatabaseReference userReference;
@@ -34,7 +36,7 @@ public final class FbDatabase {
     }
 
     public static void setUserReference(){
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         userReference = database.getReference("users/" + uid);
     }
 

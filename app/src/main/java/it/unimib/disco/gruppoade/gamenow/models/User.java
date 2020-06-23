@@ -121,9 +121,6 @@ public class User {
         return false;
     }
 
-    private String dbID;
-    private String gameID;
-
     public boolean saveGame(Game game){
         if(!checkSavedGame(game)) {
             String jsonGame = gson.toJson(game);
@@ -188,6 +185,8 @@ public class User {
 
     private boolean checkID(Game game, String dbGame){
 
+        String gameID;
+        String dbID;
         if (game.getCover() == null && game.getDate() == null){
             Log.d(TAG, "extractID: Enter if 1");
             gameID = gson.toJson(game).split("\"id\":", 2)[1].split(",")[0];

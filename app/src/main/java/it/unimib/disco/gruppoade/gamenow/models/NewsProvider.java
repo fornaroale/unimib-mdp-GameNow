@@ -2,6 +2,8 @@ package it.unimib.disco.gruppoade.gamenow.models;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -58,6 +60,7 @@ public class NewsProvider implements Cloneable {
         this.platform = platform;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "NewsProvider{" +

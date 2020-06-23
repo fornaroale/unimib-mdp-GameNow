@@ -21,8 +21,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
@@ -43,16 +46,14 @@ public class TabSavedGamesFragment extends Fragment {
 
     //Firebase
     private User user;
-    private ValueEventListener postListenerFirstUserData;
-    private ValueEventListener postListenerUserData;
 
     public TabSavedGamesFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        Objects.requireNonNull(actionBar).setDisplayShowTitleEnabled(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -60,9 +61,7 @@ public class TabSavedGamesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        final View root = inflater.inflate(R.layout.fragment_tab_saved_games, container, false);
-
-        return root;
+        return inflater.inflate(R.layout.fragment_tab_saved_games, container, false);
     }
 
     @Override
@@ -74,9 +73,12 @@ public class TabSavedGamesFragment extends Fragment {
 
         locallySavedGames = new ArrayList<>();
 
-        postListenerFirstUserData = new ValueEventListener() {
+        // JSON to PieceOfNews Array
+        // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+        // Recupero il recyclerview dal layout xml e imposto l'adapter
+        ValueEventListener postListenerFirstUserData = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
 
                 // JSON to PieceOfNews Array
@@ -90,10 +92,10 @@ public class TabSavedGamesFragment extends Fragment {
                     @Override
                     public void onItemClick(Game game) {
                         ProfileFragmentDirections.ActionNavigationProfileToGameInfoFragment action = ProfileFragmentDirections.actionNavigationProfileToGameInfoFragment(game);
-                        NavController navController = NavHostFragment.findNavController(getParentFragment());
+                        NavController navController = NavHostFragment.findNavController(requireParentFragment());
                         navController.navigate(action);
                     }
-                } ,user);
+                }, user);
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
                 if (locallySavedGames.isEmpty()) {
@@ -117,12 +119,14 @@ public class TabSavedGamesFragment extends Fragment {
             }
         };
 
-        postListenerUserData = new ValueEventListener() {
+        // JSON to PieceOfNews Array
+        // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
+        ValueEventListener postListenerUserData = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
 
-                if(user!=null) {
+                if (user != null) {
                     // JSON to PieceOfNews Array
                     locallySavedGames.clear();
                     Gson gson = new Gson();

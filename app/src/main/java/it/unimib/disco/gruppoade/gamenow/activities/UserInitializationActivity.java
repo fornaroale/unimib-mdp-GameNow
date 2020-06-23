@@ -3,7 +3,6 @@ package it.unimib.disco.gruppoade.gamenow.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -53,18 +52,11 @@ public class UserInitializationActivity extends AppCompatActivity {
     private Uri filePath;
     private ImageView profile_photo;
 
-    // lista di tag
-    private List<String> tagList;
-
     // tag selezionati da utente
     private  List<String> tagSelected;
 
-    // activity obj
-    private LinearLayout container_cb;
-
     // button
     private Button submit_button;
-    private Button photo_choose_button;
 
 
     @Override
@@ -74,22 +66,23 @@ public class UserInitializationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_initialization);
 
 
-
-        tagList = readTagsCsv();
+        // lista di tag
+        List<String> tagList = readTagsCsv();
         tagSelected = new ArrayList<>();
         numCKset = 0;
 
 
         // actyivity obj
         submit_button = findViewById(R.id.submit);
-        photo_choose_button = findViewById(R.id.btn_photo);
+        Button photo_choose_button = findViewById(R.id.btn_photo);
         profile_photo = findViewById(R.id.img_profilepicture);
 
         // setto il bottone come non premibile
         submit_button.setEnabled(false);
 
         // container checkbox
-        container_cb = findViewById(R.id.container_cb);
+        // activity obj
+        LinearLayout container_cb = findViewById(R.id.container_cb);
 
         // id associata alla checkbox
         int id = 0;
@@ -110,7 +103,7 @@ public class UserInitializationActivity extends AppCompatActivity {
                         activateDeactivateButton();
                     }
                     else{
-                        tagSelected.remove((String) cb.getText());
+                        tagSelected.remove(cb.getText());
                         numCKset--;
                         activateDeactivateButton();
                     }
@@ -200,7 +193,7 @@ public class UserInitializationActivity extends AppCompatActivity {
                         .load(filePath)
                         .fit()
                         .centerCrop()
-                        .into((ImageView) profile_photo);
+                        .into(profile_photo);
 
                 profile_photo.setVisibility(View.VISIBLE);
             }

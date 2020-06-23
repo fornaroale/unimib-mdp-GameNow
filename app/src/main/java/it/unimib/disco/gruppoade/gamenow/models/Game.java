@@ -6,7 +6,8 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Comparator;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class Game implements Parcelable {
@@ -152,6 +153,7 @@ public class Game implements Parcelable {
         dest.writeTypedList(platforms);
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "Game{" +

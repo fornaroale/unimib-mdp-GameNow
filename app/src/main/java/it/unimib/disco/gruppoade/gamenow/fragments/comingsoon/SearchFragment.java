@@ -4,9 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -17,21 +14,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.IncomingAdapter;
@@ -53,9 +51,6 @@ public class SearchFragment extends Fragment {
     private LiveData<List<Game>> gamesList;
     private IncomingAdapter incomingAdapter;
     private User user;
-    private ValueEventListener postListenerFirstUserData;
-
-    private ValueEventListener postListenerUserData;
 
 
     public SearchFragment() {
@@ -72,14 +67,13 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String query = SearchFragmentArgs.fromBundle(getArguments()).getQuery();
+        String query = SearchFragmentArgs.fromBundle(requireArguments()).getQuery();
         recyclerView = view.findViewById(R.id.search_recyclerview);
         lottieAnimationView = view.findViewById(R.id.search_animation_view);
         searchViewModel = new ViewModelProvider(requireActivity()).get(SearchViewModel.class);
 
 
-
-        postListenerFirstUserData = new ValueEventListener() {
+        ValueEventListener postListenerFirstUserData = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
@@ -106,20 +100,20 @@ public class SearchFragment extends Fragment {
                     public void onChanged(List<Game> games) {
                         Log.d(TAG, "initRecyclerView: Init RecyclerView");
                         TextView giocoNA = view.findViewById(R.id.coordinator);
-                        if (games.isEmpty()){
+                        if (games.isEmpty()) {
                             giocoNA.setVisibility(View.VISIBLE);
                             giocoNA.setText(R.string.nessun_gioco);
-                        } else if(games != null) {
+                        } else  {
                             giocoNA.setVisibility(GONE);
                             giocoNA.setText("");
                             Collections.sort(games, new Comparator<Game>() {
                                 @Override
                                 public int compare(Game o1, Game o2) {
-                                    if(o1.getDate() != null && o2.getDate() != null)
+                                    if (o1.getDate() != null && o2.getDate() != null)
                                         return Long.valueOf(o2.getDate()).compareTo(Long.valueOf(o1.getDate()));
-                                    if(o1.getDate() == null && o2.getDate() == null)
+                                    if (o1.getDate() == null && o2.getDate() == null)
                                         return 0;
-                                    if(o1.getDate() == null)
+                                    if (o1.getDate() == null)
                                         return 1;
                                     return -1;
                                 }
@@ -140,9 +134,9 @@ public class SearchFragment extends Fragment {
             }
         };
 
-        postListenerUserData = new ValueEventListener() {
+        ValueEventListener postListenerUserData = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
                 incomingAdapter.notifyDataSetChanged();
             }

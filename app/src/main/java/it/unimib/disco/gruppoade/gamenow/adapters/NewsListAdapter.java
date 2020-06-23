@@ -3,7 +3,6 @@ package it.unimib.disco.gruppoade.gamenow.adapters;
 import android.content.Context;
 import android.net.Uri;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,13 +75,13 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsMo
         public NewsModelViewHolder(View view) {
             super(view);
 
-            tvTitolo = (TextView) view.findViewById(R.id.newsTitle);
-            tvProvider = (TextView) view.findViewById(R.id.newsProvider);
-            tvDescrizione = (TextView) view.findViewById(R.id.newsDesc);
-            tvData = (TextView) view.findViewById(R.id.newsPubDate);
-            ivNewsImage = (ImageView) view.findViewById(R.id.newsImage);
-            tbFav = (ToggleButton) view.findViewById(R.id.saveNewsImg);
-            cgNewsTags = (ChipGroup) view.findViewById(R.id.newsTagsChipGroup);
+            tvTitolo = view.findViewById(R.id.newsTitle);
+            tvProvider = view.findViewById(R.id.newsProvider);
+            tvDescrizione = view.findViewById(R.id.newsDesc);
+            tvData = view.findViewById(R.id.newsPubDate);
+            ivNewsImage = view.findViewById(R.id.newsImage);
+            tbFav = view.findViewById(R.id.saveNewsImg);
+            cgNewsTags = view.findViewById(R.id.newsTagsChipGroup);
         }
 
         public void bind(PieceOfNews pieceOfNews){

@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
@@ -40,7 +42,7 @@ public class GameRepository {
         Call<List<Game>> call = apiInterface.getGames(body);
         call.enqueue(new Callback<List<Game>>() {
             @Override
-            public void onResponse(Call<List<Game>> call, Response<List<Game>> response) {
+            public void onResponse(@NotNull Call<List<Game>> call, @NotNull Response<List<Game>> response) {
                 if(response.isSuccessful() && response.body() != null){
                     if(games.getValue() != null) {
                         List<Game> currentGameList = games.getValue();
@@ -54,7 +56,7 @@ public class GameRepository {
             }
 
             @Override
-            public void onFailure(Call<List<Game>> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<Game>> call, @NotNull Throwable t) {
                // Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 Log.d(TAG, "onFailure: Error " + t.getLocalizedMessage());
             }

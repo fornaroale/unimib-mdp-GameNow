@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.shared;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,10 +8,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
-import it.unimib.disco.gruppoade.gamenow.models.User;
 import it.unimib.disco.gruppoade.gamenow.repositories.NewsRepository;
 
 public class NewsViewModel extends AndroidViewModel {
