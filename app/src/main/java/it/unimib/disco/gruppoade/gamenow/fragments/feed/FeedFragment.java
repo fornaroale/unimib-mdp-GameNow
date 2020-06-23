@@ -141,8 +141,20 @@ public class FeedFragment extends Fragment {
                 Intent userInitializationIntent = new Intent(getActivity(), UserInitializationActivity.class);
                 startActivity(userInitializationIntent);
             }
-            if(adapter!=null)
+            if(adapter!=null) {
+                if(newsList!=null) {
+                    selectNews(newsList);
+                    if (newsList.isEmpty()) {
+                        mRecyclerView.setVisibility(View.GONE);
+                        mEmptyTV.setText(R.string.no_data_available_feed);
+                        mEmptyTV.setVisibility(View.VISIBLE);
+                    } else {
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        mEmptyTV.setVisibility(View.GONE);
+                    }
+                }
                 adapter.notifyDataSetChanged();
+            }
         }
 
         @Override
