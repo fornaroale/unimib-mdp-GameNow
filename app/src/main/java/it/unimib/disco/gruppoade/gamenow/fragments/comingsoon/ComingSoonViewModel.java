@@ -12,8 +12,6 @@ import it.unimib.disco.gruppoade.gamenow.repositories.GameRepository;
 
 public class ComingSoonViewModel extends ViewModel {
 
-    private static final String TAG = "ComingSoonViewModel";
-
     private MutableLiveData<List<Game>> mGames;
     private int offset = 0;
     private boolean isLoading;
