@@ -52,8 +52,6 @@ import it.unimib.disco.gruppoade.gamenow.models.Video;
 
 public class GameInfoFragment extends Fragment {
 
-    private static final String TAG = "GameInfoFragment";
-
     private FirebaseTranslator translator;
 
     private TextView gameDescription, gameTitle, gameStoryline;
@@ -121,9 +119,6 @@ public class GameInfoFragment extends Fragment {
 
 
         // Crea un traduttore English-Italiano
-
-
-        Log.d(TAG, "onViewCreated: Language " + Locale.getDefault().getLanguage());
 
         gameDescription = view.findViewById(R.id.gameinfo_desc);
         gameDescriptionText = view.findViewById(R.id.gameinfo_desc_text);
@@ -259,7 +254,7 @@ public class GameInfoFragment extends Fragment {
             gameVideoText.setVisibility(View.GONE);
             videoDivider.setVisibility(View.GONE);
         }
-        //Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
+
         String coverBig, url;
 
         if(game.getCover() != null){
@@ -267,7 +262,6 @@ public class GameInfoFragment extends Fragment {
             url = "https:" + coverBig;}
         else
             url = "";
-        Log.d(TAG, "onCreate: URl + " + url);
         if (!url.isEmpty()) {
             Picasso.get()
                     .load(url)
@@ -297,7 +291,6 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void initPlatformsRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
         ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms);
         platformsRecycler.setAdapter(consoleAdapter);
         if(mPlatforms.size() > 4)
@@ -308,7 +301,6 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void initVideosRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
         VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle(),getActivity());
         videosRecycler.setAdapter(videoAdapter);
         videosRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
