@@ -9,6 +9,7 @@ import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiClient;
 import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.ApiInterface;
+import it.unimib.disco.gruppoade.gamenow.fragments.comingsoon.utils.Constants;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,6 +49,7 @@ public class GameRepository {
                         games.postValue(currentGameList);
                     } else
                         games.postValue(response.body());
+                    Constants.loadingSentinel = false;
                 }
             }
 
