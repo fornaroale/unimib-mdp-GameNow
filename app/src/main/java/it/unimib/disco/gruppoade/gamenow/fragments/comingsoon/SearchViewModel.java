@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.Game;
@@ -37,9 +39,8 @@ public class SearchViewModel extends ViewModel {
         return mGames;
     }
 
-    public LiveData<List<Game>> resetGames() {
+    public void resetGames() {
         mGames = null;
-        return mGames;
     }
 
     public int getOffset() {
@@ -70,6 +71,7 @@ public class SearchViewModel extends ViewModel {
         this.mGames = mGames;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "ComingSoonViewModel{" +

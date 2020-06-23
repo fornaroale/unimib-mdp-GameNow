@@ -4,14 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.palette.graphics.Palette;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +18,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,14 +30,13 @@ import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.activities.MainActivity;
 import it.unimib.disco.gruppoade.gamenow.adapters.ConsoleAdapter;
 import it.unimib.disco.gruppoade.gamenow.adapters.VideoAdapter;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
@@ -56,7 +48,6 @@ public class GameInfoFragment extends Fragment {
 
     private static final String TAG = "GameInfoFragment";
 
-    private FirebaseTranslatorOptions options;
     private FirebaseTranslator translator;
 
     private TextView gameDescription, gameTitle, gameStoryline;
@@ -83,7 +74,7 @@ public class GameInfoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Game game = GameInfoFragmentArgs.fromBundle(getArguments()).getGame();
+        Game game = GameInfoFragmentArgs.fromBundle(requireArguments()).getGame();
 
 
         // Crea un traduttore English-Italiano
@@ -184,7 +175,7 @@ public class GameInfoFragment extends Fragment {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(@Nullable Palette palette) {
-                vibrantSwatch = palette.getVibrantSwatch();
+                vibrantSwatch = Objects.requireNonNull(palette).getVibrantSwatch();
                 mutedSwatch = palette.getMutedSwatch();
                 if(vibrantSwatch != null)
                     gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
@@ -217,7 +208,7 @@ public class GameInfoFragment extends Fragment {
             storylineSpinner.setVisibility(View.GONE);
         }
 
-        options = new FirebaseTranslatorOptions.Builder()
+        FirebaseTranslatorOptions options = new FirebaseTranslatorOptions.Builder()
                 .setSourceLanguage(FirebaseTranslateLanguage.EN)
                 .setTargetLanguage(FirebaseTranslateLanguage.IT)
                 .build();
@@ -264,7 +255,7 @@ public class GameInfoFragment extends Fragment {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(@Nullable Palette palette) {
-                vibrantSwatch = palette.getVibrantSwatch();
+                vibrantSwatch = Objects.requireNonNull(palette).getVibrantSwatch();
                 mutedSwatch = palette.getMutedSwatch();
                 if(vibrantSwatch != null)
                     gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
@@ -312,7 +303,7 @@ public class GameInfoFragment extends Fragment {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 e.printStackTrace();
-                                Snackbar.make(getView(), "Failed Downloading Model", Snackbar.LENGTH_LONG)
+                                Snackbar.make(requireView(), "Failed Downloading Model", Snackbar.LENGTH_LONG)
                                         .setAnchorView(R.id.nav_view)
                                         .show();
                             }

@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.models.Game;
@@ -55,6 +57,7 @@ public class ComingSoonViewModel extends ViewModel {
         isLoading = loading;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "ComingSoonViewModel{" +

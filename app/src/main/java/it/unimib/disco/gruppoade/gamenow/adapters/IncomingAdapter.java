@@ -1,7 +1,6 @@
 package it.unimib.disco.gruppoade.gamenow.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -133,7 +130,6 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .into(imageView);
             } else {
                 imageView.setImageResource(R.drawable.cover_na);
-                url = "";
             }
 
             //Console Recycler
@@ -147,45 +143,44 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     onItemClickListener.onItemClick(game);
                 }
             });
-            if (game != null) {
-                if (user.checkSavedGame(game))
-                    toggleButton.setChecked(true);
-                else
-                    toggleButton.setChecked(false);
-                toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (toggleButton.isPressed()) {
-                            final Game clickedGame = mGames.get(getAdapterPosition());
-                            if (isChecked) {
-                                if (user.saveGame(clickedGame)) {
-                                    Snackbar.make(buttonView, R.string.gioco_aggiunto, Snackbar.LENGTH_LONG)
-                                            .setAction(R.string.action_undo, new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    user.removeGame(clickedGame);
-                                                }
-                                            })
-                                            .setAnchorView(R.id.nav_view)
-                                            .show();
-                                }
-                            } else {
-                                if (user.removeGame(clickedGame)) {
-                                    Snackbar.make(buttonView, R.string.gioco_rimosso, Snackbar.LENGTH_LONG)
-                                            .setAction(R.string.action_undo, new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    user.saveGame(clickedGame);
-                                                }
-                                            })
-                                            .setAnchorView(R.id.nav_view)
-                                            .show();
-                                }
+
+            if (user.checkSavedGame(game))
+                toggleButton.setChecked(true);
+            else
+                toggleButton.setChecked(false);
+            toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (toggleButton.isPressed()) {
+                        final Game clickedGame = mGames.get(getAdapterPosition());
+                        if (isChecked) {
+                            if (user.saveGame(clickedGame)) {
+                                Snackbar.make(buttonView, R.string.gioco_aggiunto, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.action_undo, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                user.removeGame(clickedGame);
+                                            }
+                                        })
+                                        .setAnchorView(R.id.nav_view)
+                                        .show();
+                            }
+                        } else {
+                            if (user.removeGame(clickedGame)) {
+                                Snackbar.make(buttonView, R.string.gioco_rimosso, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.action_undo, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                user.saveGame(clickedGame);
+                                            }
+                                        })
+                                        .setAnchorView(R.id.nav_view)
+                                        .show();
                             }
                         }
                     }
-                });
-            }
+                }
+            });
         }
     }
 

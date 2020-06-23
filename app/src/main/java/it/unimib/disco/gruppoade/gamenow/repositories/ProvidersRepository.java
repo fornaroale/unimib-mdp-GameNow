@@ -13,7 +13,6 @@ import java.util.Locale;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
-import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public final class ProvidersRepository {
 
@@ -38,9 +37,9 @@ public final class ProvidersRepository {
     public static List<NewsProvider> loadProviders(){
         providers = new ArrayList<>();
         InputStream is = resources.openRawResource(R.raw.providers);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+        @SuppressWarnings("CharsetObjectCanBeUsed") BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 
-        String line = "";
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
                 if(!line.isEmpty()) {

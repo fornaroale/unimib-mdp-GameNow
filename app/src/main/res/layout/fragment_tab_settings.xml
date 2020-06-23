@@ -39,6 +39,7 @@
 
                 <EditText
                     android:id="@+id/Username"
+                    android:labelFor="@id/Username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/UsernameTitle"

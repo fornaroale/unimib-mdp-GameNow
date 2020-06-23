@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
@@ -114,8 +115,7 @@ public class TabSavedNewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_tab_saved_news, container, false);
     }
 
     @Override
@@ -126,8 +126,8 @@ public class TabSavedNewsFragment extends Fragment {
         locallySavedNews = new ArrayList<>();
 
         // Binding elementi visuali
-        mRecyclerView = getView().findViewById(R.id.tabsavednews_recycler_view);
-        mEmptyTV = getView().findViewById(R.id.tabsavednews_empty_view);
+        mRecyclerView = requireView().findViewById(R.id.tabsavednews_recycler_view);
+        mEmptyTV = requireView().findViewById(R.id.tabsavednews_empty_view);
 
         // Recupero dati database
         FbDatabase.getUserReference().addListenerForSingleValueEvent(postListenerFirstUserData);

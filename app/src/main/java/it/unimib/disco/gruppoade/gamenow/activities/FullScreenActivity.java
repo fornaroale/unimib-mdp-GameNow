@@ -12,6 +12,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
+import java.util.Objects;
+
 import it.unimib.disco.gruppoade.gamenow.R;
 
 public class FullScreenActivity extends AppCompatActivity {
@@ -31,7 +33,7 @@ public class FullScreenActivity extends AppCompatActivity {
             @Override
             public void onReady(@NonNull YouTubePlayer initializedYouTubePlayer) {
                 youTubePlayer = initializedYouTubePlayer;
-                youTubePlayer.cueVideo(videoId, currentSecond);
+                youTubePlayer.cueVideo(Objects.requireNonNull(videoId), currentSecond);
                 youTubePlayer.play();
             }
         });
