@@ -2,17 +2,19 @@ package it.unimib.disco.gruppoade.gamenow.models;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class NewsProvider {
+public class NewsProvider implements Cloneable {
     private final static String TAG = "NewsProvider Class";
     private String name;
     private URL homepageUrl;
     private URL rssUrl;
     private String platform;
 
-    public NewsProvider(String name, String homepageUrl, String rssUrl, String platform) {
+    public NewsProvider(String platform, String name, String homepageUrl, String rssUrl) {
         this.name = name;
         this.platform = platform;
 
@@ -31,35 +33,38 @@ public class NewsProvider {
         }
     }
 
+    public NewsProvider(NewsProvider copy) {
+        this.name = copy.getName();
+        this.homepageUrl = copy.getHomepageUrl();
+        this.rssUrl = copy.getRssUrl();
+        this.platform = copy.getPlatform();
+    }
+
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public URL getHomepageUrl() {
-        return homepageUrl;
-    }
-
-    public void setHomepageUrl(URL homepageUrl) {
-        this.homepageUrl = homepageUrl;
     }
 
     public URL getRssUrl() {
         return rssUrl;
     }
 
-    public void setRssUrl(URL rssUrl) {
-        this.rssUrl = rssUrl;
-    }
-
     public String getPlatform() {
         return platform;
     }
 
+    public URL getHomepageUrl() {
+        return homepageUrl;
+    }
+
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "NewsProvider{" +
+                "platform='" + platform + '\'' +
+                '}';
     }
 }

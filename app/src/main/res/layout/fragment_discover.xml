@@ -9,14 +9,30 @@
     tools:context=".fragments.discover.DiscoverFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+        android:id="@+id/discover_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/discover_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/discover_empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/news_loading"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:visibility="visible"
+                android:padding="15dp"/>
+
+        </RelativeLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

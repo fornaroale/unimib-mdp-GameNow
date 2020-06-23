@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'androidx.navigation.safeargs'
 
 android {
     compileSdkVersion 29
@@ -7,10 +8,11 @@ android {
 
     defaultConfig {
         applicationId "it.unimib.disco.gruppoade.gamenow"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,13 +24,23 @@ android {
         }
     }
 
+    viewBinding {
+        enabled = true
+    }
+
+    compileOptions{
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.navigation:navigation-fragment:2.2.2'
@@ -37,26 +49,21 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
+    def lifecycle_version = "2.2.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    // Firebase auth libraries
-    implementation 'com.google.firebase:firebase-auth:19.3.1'
-    implementation 'com.google.android.gms:play-services-auth:18.0.0'
-    implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
-
-    // add
-    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-
-    // firebase db
-    implementation 'com.google.firebase:firebase-database:19.3.0'
-
     // Dipendenze per fragment profilo
     implementation 'de.hdodenhof:circleimageview:3.0.1'
-    implementation 'com.android.support:design:29.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
 
     // SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
+    // Chrome custom tabs
+    implementation 'androidx.browser:browser:1.0.0'
 
     // Picasso per rendering immagini
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -66,15 +73,35 @@ dependencies {
 
     // Gestione date con classe time.date (supporto per v. Android < O)
     implementation 'org.threeten:threetenbp:1.4.4'
+    
+    // Firebase DB
+    implementation 'com.google.firebase:firebase-database:19.3.0'
 
-    // Firebase auth libraries
+    // Firebase Auth Libraries
     implementation 'com.google.firebase:firebase-auth:19.3.1'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
+    
+    // Firebase UI
     implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
+    
+    // Firebase Translate
+    implementation 'com.google.firebase:firebase-ml-natural-language:22.0.0'
+    implementation 'com.google.firebase:firebase-ml-natural-language-translate-model:20.0.8'
+    
+    // Firebase Storage
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.2.0'
+    
+    // Lottie
+    implementation 'com.airbnb.android:lottie:3.4.0'
+    
+    // Youtube Player Soffritti
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 
-    // add
-    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-
-    // firebase db
-    implementation 'com.google.firebase:firebase-database:19.3.0'
+    // Json parser for Firebase
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

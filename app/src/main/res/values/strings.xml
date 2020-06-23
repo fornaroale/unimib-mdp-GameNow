@@ -1,26 +1,80 @@
-<resources>
-    <string name="app_name">GameNow</string>
-    <string name="title_feed">Feed</string>
-    <string name="title_discover">Discover</string>
-    <string name="title_comingsoon">Coming Soon</string>
-    <string name="title_profile">Profile</string>
-    <string name="title_activity_sign_in">Sign in</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="title_activity_login">Sign in</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- generali -->
+    <string name="app_name" translatable="false">GameNow</string>
+    <string name="title_profile">Profilo</string>
+    <string name="news_loading">Attendere, caricamento notizie in corso…</string>
 
-    <!-- profile fragment-->
-    <string name="txt_usernameTitle">USERNAME</string>
-    <string name="txt_emailTitle">EMAIL</string>
-    <string name="txt_platformTitle">PLATFORM</string>
-    <string name="txt_topics_di_interesseTitle">Topics di interesse</string>
+    <!-- activity SignUp -->
+    <string name="signup_welcome">Benvenuto in GameNow,</string>
+    <string name="signup_piattaforme">Seleziona le piattaforme che sono di tuo interesse:</string>
+    <string name="signup_foto_profilo">Opzionale: Seleziona dal tuo dispositivo una foto per personalizzare il tuo profilo:</string>
+    <string name="signup_btn_sel_foto">Seleziona Immagine</string>
 
-    <!-- discover fragment-->
-    <string name="news_img_description">Image of the post</string>
+    <!-- coming soon fragment-->
+    <string name="incoming_card_placeholder_title">Titolo - gg/mm/aaaa</string>
+    <string name="incoming_card_available_for">Disponibile per</string>
+    <string name="console_name_placeholder" translatable="false">switch</string>
+    <string name="gameinfo_placeholder_title">Titolo</string>
+    <string name="gameinfo_placeholder_description">Descrizione</string>
+    <string name="gameinfo_placeholder_storyline">Storia</string>
+    <string name="gameinfo_placeholder_gameplays">Video</string>
+    <string name="cerca_gioco">Cerca Gioco</string>
+    <string name="gioco_aggiunto">Gioco salvato</string>
+    <string name="gioco_rimosso">Gioco rimosso dalla lista</string>
+    <string name="nessun_gioco">Nessun gioco trovato…</string>
+
+
+    <string name="prompt_email" translatable="false">Email</string>
+    <string name="prompt_password" translatable="false">Password</string>
+    <string name="action_sign_in">Accedi o registrati</string>
+    <string name="action_sign_in_short">Accedi</string>
+    <string name="welcome">Welcome!</string>
+    <string name="invalid_username">Username non valido</string>
+    <string name="invalid_password">La Password deve essere lunga almeno 6 caratteri</string>
+    <string name="login_failed">Login non eseguito</string>
+    <string name="title_activity_login" translatable="false">Login</string>
+    <string name="action_undo">Annulla</string>
+
+    <!-- feed fragment -->
+    <string name="no_data_available_feed">Non sono disponibili news per le piattaforme che segui. Prova a dare un\'occhiata alla sezione Scopri!</string>
+
+    <!-- discover fragment -->
+    <string name="news_img_description">Immagine della notizia</string>
+    <string name="fav_tag_removed">Tag rimosso dai preferiti</string>
+    <string name="fav_tag_added">Tag aggiunto ai preferiti</string>
+    <string name="fav_news_removed">News rimossa dalle salvate</string>
+    <string name="fav_news_added">News salvata</string>
+    <string name="no_data_available_discover">Stai seguendo tutte le piattaforme disponibili, oppure non sono disponibili news per quelle che non segui. Ti invitiamo ad utilizzare la sezione Notizie.</string>
+
+    <!-- profile settings tab -->
+    <string name="profile_username">Nome</string>
+    <string name="profile_username_not_found">Nome utente non disponibile</string>
+    <string name="profile_email" translatable="false">Email</string>
+    <string name="profile_email_not_found">Email non disponibile</string>
+    <string name="profile_platforms">Piattaforme di interesse</string>
+    <string name="profile_logout">Esci</string>
+    <string name="profile_delete">Elimina account</string>
+    <string name="profile_submit">Conferma</string>
+
+    <!-- saved news tab -->
+    <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dalla sezione scopri!</string>
+    <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
+    <string name="selezione_foto_profilo" tools:ignore="Typos">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
+    <string name="btn_switch" translatable="false">Switch</string>
+    <string name="btn_pc" translatable="false">PC</string>
+    <string name="btn_xbox" translatable="false">Xbox</string>
+    <string name="btn_ps4" translatable="false">PS4</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Ciao fragment blank</string>
+    <string name="title_comingsoon">In Uscita</string>
+    <string name="username">Username insesistente</string>
+    <string name="nessun_gioco_salvato">Non hai salvato nessun gioco. Puoi salvare i giochi dalla sezione \"In Uscita\" o tramite la ricerca.</string>
+    <string name="btn_all">Tutto</string>
+    <string name="tab_news_title">Notizie</string>
+    <string name="tab_games_title">Giochi</string>
+    <string name="tab_user_title">Utente</string>
+    <string name="title_activity_sign_in" translatable="false">Login</string>
+    <string name="title_discover">Scopri</string>
+    <string name="title_feed">Notizie</string>
+    <string name="immagine_di_profilo">Immagine di profilo</string>
 </resources>

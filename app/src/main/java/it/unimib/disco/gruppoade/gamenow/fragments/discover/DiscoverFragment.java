@@ -1,272 +1,157 @@
 package it.unimib.disco.gruppoade.gamenow.fragments.discover;
 
-
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import it.unimib.disco.gruppoade.gamenow.R;
-import it.unimib.disco.gruppoade.gamenow.adapters.RssFeedListAdapter;
-import it.unimib.disco.gruppoade.gamenow.models.NewsProvider;
+import it.unimib.disco.gruppoade.gamenow.adapters.NewsListAdapter;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.PieceOfNews;
 import it.unimib.disco.gruppoade.gamenow.models.User;
+import it.unimib.disco.gruppoade.gamenow.fragments.shared.NewsViewModel;
 
 public class DiscoverFragment extends Fragment {
 
-    private static final String TAG = "HomeFragment";
+    private static final String TAG = "DiscoverFragment";
 
-    private RecyclerView mRecyclerView;
-    private SwipeRefreshLayout mSwipeLayout;
-
-    private List<PieceOfNews> mFeedModelList;
-
-    private DiscoverViewModel discoverViewModel;
-    private RssFeedListAdapter adapter;
-
-    // Firebase
-    private FirebaseDatabase database;
+    private List<PieceOfNews> newsList;
+    private NewsViewModel viewModel;
     private User user;
+    private NewsListAdapter adapter;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TextView mEmptyTV;
+    private boolean discoverInitializedSentinel;
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_discover, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        discoverInitializedSentinel = false;
+
+        viewModel = new ViewModelProvider(requireActivity()).get(NewsViewModel.class);
+
+        mSwipeRefreshLayout = requireView().findViewById(R.id.discover_swipe_refresh);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mEmptyTV = getView().findViewById(R.id.discover_empty_view);
+        mRecyclerView = getView().findViewById(R.id.discover_recycler_view);
+        mEmptyTV.setText(R.string.news_loading);
+
+        // Recupero dati database
+        user = null;
+        FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
+
+        if(user!=null) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            initializeDiscover();
+            discoverInitializedSentinel = true;
+        }
+    }
+
+    public void initializeDiscover(){
+        newsList = new ArrayList<>();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        adapter = new NewsListAdapter(getActivity(), newsList, user, (byte) 2);
+        mRecyclerView.setAdapter(adapter);
+
+        // Observer su oggetto LiveData (collezione news)
+        final Observer<ArrayList<PieceOfNews>> observer = changedNewsList -> {
+            newsList.clear();
+            newsList.addAll(changedNewsList);
+            selectNews(newsList);
+
+            if (newsList.isEmpty()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTV.setText(R.string.no_data_available_discover);
+                mEmptyTV.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTV.setVisibility(View.GONE);
+            }
+
+            adapter.notifyDataSetChanged();
+            mSwipeRefreshLayout.setRefreshing(false);
+        };
+
+        LiveData<ArrayList<PieceOfNews>> liveData = viewModel.getNews();
+        liveData.observe(getViewLifecycleOwner(), observer);
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            viewModel.refreshNews();
+        });
+    }
+
+    private void selectNews(List<PieceOfNews> newsRaw){
+        if(user.getTags() != null) {
+            List<String> userTags = user.getTags();
+
+            for (int i = 0; i < newsRaw.size(); i++) {
+                boolean delArticle = true;
+
+                String[] articlePlatforms = newsRaw.get(i).getProvider().getPlatform().split(",");
+                for (String platform : articlePlatforms) {
+                    if (!userTags.contains(platform)) {
+                        delArticle = false;
+                    } else {
+                        if(articlePlatforms.length==1){
+                            delArticle = true;
+                        }
+                    }
+
+                }
+
+                if (delArticle) {
+                    newsRaw.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
     private ValueEventListener postListenerUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            Log.d(TAG, "Messaggio onDataChange: " + user.toString());
-
+            if(!discoverInitializedSentinel) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                initializeDiscover();
+                discoverInitializedSentinel = true;
+            }
             adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-            Log.d(TAG, databaseError.getMessage());
+            throw databaseError.toException();
         }
     };
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        discoverViewModel =
-                ViewModelProviders.of(this).get(DiscoverViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_discover, container, false);
-
-        // Recupero dati database
-        database = FirebaseDatabase.getInstance();
-        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-        database.getReference(fbUser.getUid()).addValueEventListener(postListenerUserData);
-
-        // Recupero il recyclerview dal layout xml e imposto l'adapter
-        mRecyclerView = root.findViewById(R.id.recyclerView);
-        mFeedModelList = new ArrayList<>();
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setHasFixedSize(true);
-        user = new User();
-        adapter = new RssFeedListAdapter(getActivity(), mFeedModelList, user);
-        mRecyclerView.setAdapter(adapter);
-
-        // Swipe per Refresh Manuale
-        mSwipeLayout = root.getRootView().findViewById(R.id.swipeRefresh);
-
-        final List<NewsProvider> providers = new ArrayList<NewsProvider>();
-
-        providers.add(new NewsProvider(
-                "EuroGamer",
-                "https://www.eurogamer.it/",
-                "https://www.eurogamer.it/?format=rss&platform=PS4",
-                "PS4"
-        ));
-
-        providers.add(new NewsProvider(
-                "EuroGamer",
-                "https://www.eurogamer.it/",
-                "https://www.eurogamer.it/?format=rss&platform=XBOXONE",
-                "XBOX ONE"
-        ));
-
-        providers.add(new NewsProvider(
-                "Multiplayer.it",
-                "https://multiplayer.it/",
-                "https://multiplayer.it/feed/rss/news/playstation/",
-                "PS4"
-        ));
-
-        new ProcessInBackground().execute(providers);
-
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new ProcessInBackground().execute(providers);
-            }
-        });
-
-        return root;
-    }
-
-    public class ProcessInBackground extends AsyncTask<List<NewsProvider>, Void, Boolean> {
-
-        @Override
-        protected void onPreExecute() {
-            mSwipeLayout.setRefreshing(true);
-        }
-
-        @Override
-        protected Boolean doInBackground(List<NewsProvider>... providers) {
-
-            // Pulisco array di notizie
-            mFeedModelList.clear();
-
-            for (NewsProvider provider : providers[0]) {
-                URL urlLink = provider.getRssUrl();
-
-                if (TextUtils.isEmpty(urlLink.toString()))
-                    return false;
-
-                try {
-                    // Creo connessione con URL
-                    InputStream inputStream = urlLink.openConnection().getInputStream();
-
-                    // Eseguo il parsing XML -> oggetti PieceOfNews
-                    parseFeed(inputStream, provider);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error [IO EXCEPTION] ", e);
-                } catch (XmlPullParserException e) {
-                    Log.e(TAG, "Error [XML PULL PARS.] ", e);
-                }
-            }
-
-            // Parsing XML avvenuto correttamente
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            mSwipeLayout.setRefreshing(false);
-
-            if (success) {
-                // Ordino notizie in base alla data di pubblicazione
-                Collections.sort(mFeedModelList);
-                Collections.reverse(mFeedModelList);
-
-                // Riempo la RecyclerView con le schede notizie
-                adapter.notifyDataSetChanged();
-            } else {
-                Log.d("RSS URL", "Enter a valid Rss feed url");
-            }
-        }
-    }
-
-    public void parseFeed(InputStream inputStream, NewsProvider provider) throws XmlPullParserException, IOException {
-        // Variabili temporanee per valori xml
-        String title = null;
-        String link = null;
-        String description = null;
-        String guid = null;
-        LocalDateTime pubDate = null;
-
-        // mi trovo all'interno della notizia?
-        boolean insideItem = false;
-
-        try {
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            XmlPullParser xpp = factory.newPullParser();
-            // supporto per namespace xml a false
-            factory.setNamespaceAware(false);
-            xpp.setInput(inputStream, "UTF_8");
-
-            // tipo dell'evento (inizio doc, fine doc, inizio tag, fine tag, ecc.)
-            int eventType = xpp.getEventType();
-
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG) {
-                    if (xpp.getName().equalsIgnoreCase("item")) {
-                        insideItem = true;
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("title")) {
-                        title = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("link")) {
-                        link = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("description")) {
-                        description = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("guid")) {
-                        guid = xpp.nextText();
-                    } else if (insideItem && xpp.getName().equalsIgnoreCase("pubDate")) {
-                        pubDate = LocalDateTime.parse(xpp.nextText(), DateTimeFormatter.RFC_1123_DATE_TIME);
-                    }
-                } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
-                    insideItem = false;
-                    if (title != null && link != null && description != null && pubDate != null) {
-                        if (!checkNewsPresence(guid, provider.getPlatform())) {
-                            PieceOfNews item = new PieceOfNews(title, description, link, pubDate, extractImageUrl(description), guid, provider);
-                            mFeedModelList.add(item);
-                        }
-                    }
-                }
-
-                eventType = xpp.next();
-            }
-
-        } finally {
-            inputStream.close();
-        }
-    }
-
-    public boolean checkNewsPresence(String guid, String platform) {
-        for (PieceOfNews pieceOfNews : mFeedModelList) {
-            if (pieceOfNews.getGuid().equals(guid)) {
-                // Se è già presente, aggiungo il tag (ammesso che questo non vi sia già)
-                String tmpPlatform = pieceOfNews.getProvider().getPlatform();
-                if (tmpPlatform.indexOf(platform) == -1)
-                    pieceOfNews.getProvider().setPlatform(tmpPlatform + "," + platform);
-                Log.d(TAG, pieceOfNews.getProvider().getPlatform());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String extractImageUrl(String description) {
-        Document document = Jsoup.parse(description);
-        Elements imgs = document.select("img");
-
-        for (Element img : imgs) {
-            if (img.hasAttr("src")) {
-                return img.attr("src").replace("http:", "https:");
-            }
-        }
-
-        // no image URL
-        return "";
-    }
 }

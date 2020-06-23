@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_comingsoon">Coming Soon</string>
+    <string name="title_profile">Profile</string>
+    <string name="username">Username not found</string>
+    <string name="incoming_card_available_for">Available for</string>
+    <string name="gameinfo_placeholder_title">Title</string>
+    <string name="gameinfo_placeholder_description">Description</string>
+    <string name="gameinfo_placeholder_storyline">Storyline</string>
+    <string name="gameinfo_placeholder_gameplays">Videos</string>
+    <string name="cerca_gioco">Search Game</string>
+    <string name="gioco_aggiunto">Game saved</string>
+    <string name="gioco_rimosso">Game removed from list</string>
+    <string name="nessun_gioco">No game found...</string>
+    <string name="nessun_gioco_salvato">You haven\'t saved any game yet. You can save a game from the \"Coming Soon\" section or by searching it.</string>
+    <string name="btn_all">All</string>
+    <string name="tab_user_title">User</string>
+    <string name="tab_games_title">Games</string>
+    <string name="news_loading">Please wait, loading news...</string>
+    <string name="signup_welcome">Welcome in GameNow,</string>
+    <string name="signup_piattaforme">Choose the platforms you\'d like to follow:</string>
+    <string name="signup_foto_profilo">"Optional: select a photo from your device for your profile "</string>
+    <string name="signup_btn_sel_foto">Select image</string>
+    <string name="incoming_card_placeholder_title" translatable="false">Title - dd/mm/yyyy</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">Benvenuto!</string>
+    <string name="invalid_username">Not valid username</string>
+    <string name="action_undo">Undo</string>
+    <string name="fav_news_added">Piece of news saved</string>
+    <string name="fav_news_removed">Piece of news removed from saved</string>
+    <string name="fav_tag_added">Tag added to favourites</string>
+    <string name="fav_tag_removed">Tag removed from favourites</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">Login failed</string>
+    <string name="news_img_description">Piece of news\' image</string>
+    <string name="no_data_available_discover">You\'re following all the available platforms, or there aren\'t any news for the ones you are not following. We invite you to use Feed section of the app.</string>
+    <string name="no_data_available_feed">No news available for your platforms. Try to give a look to the Discover section of the app.</string>
+    <string name="no_localnews_available">You haven\'t saved any news. You can save news from the feed/discover section of the app.</string>
+    <string name="profile_delete">Delete account</string>
+    <string name="profile_username_not_found">Username not available</string>
+    <string name="profile_email_not_found">Email not available</string>
+    <string name="profile_logout">Logout</string>
+    <string name="profile_platforms">Your platforms</string>
+    <string name="profile_submit">Confirm</string>
+    <string name="profile_username">Name</string>
+    <string name="selezione_foto_profilo">Select the picture from your device (it is also possible not to load any image)</string>
+    <string name="selezione_piattaforme">Select your platforms</string>
+    <string name="title_discover">Discover</string>
+    <string name="title_feed">Feed</string>
+    <string name="tab_news_title">News</string>
+    <string name="immagine_di_profilo">Profile image</string>
+</resources>

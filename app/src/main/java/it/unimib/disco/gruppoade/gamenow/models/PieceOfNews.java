@@ -25,40 +25,20 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public String getLink() {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public LocalDateTime getPubDate() {
         return pubDate;
     }
 
-    public void setPubDate(LocalDateTime pubDate) {
-        this.pubDate = pubDate;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public NewsProvider getProvider() {
@@ -73,5 +53,13 @@ public class PieceOfNews implements Comparable<PieceOfNews> {
     public int compareTo(PieceOfNews o) {
         return getPubDate().compareTo(o.getPubDate());
     }
-}
 
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (!(obj instanceof PieceOfNews)) return false;
+
+        PieceOfNews o = (PieceOfNews) obj;
+        return o.getGuid().equals(this.getGuid());
+    }
+}

@@ -4,6 +4,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs.TabSavedGamesFragment;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs.TabSavedNewsFragment;
 import it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs.TabSettingsFragment;
@@ -13,6 +15,7 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
         switch (position) {

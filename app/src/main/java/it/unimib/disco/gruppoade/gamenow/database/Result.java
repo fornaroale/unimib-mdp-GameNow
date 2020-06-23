@@ -1,5 +1,7 @@
 package it.unimib.disco.gruppoade.gamenow.database;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A generic class that holds a result success w/ data or an error exception.
  */
@@ -8,6 +10,7 @@ public class Result<T> {
     private Result() {
     }
 
+    @NotNull
     @Override
     public String toString() {
         if (this instanceof Result.Success) {
