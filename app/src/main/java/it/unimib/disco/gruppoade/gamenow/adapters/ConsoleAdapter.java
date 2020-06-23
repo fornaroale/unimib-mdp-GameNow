@@ -26,7 +26,7 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_console, parent, false);
-        return new ConsoleAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHold
         return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView consoleAbb;
 
