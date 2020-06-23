@@ -312,7 +312,9 @@ public class GameInfoFragment extends Fragment {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 e.printStackTrace();
-                                //Snackbar.make(, "Failed Downloading Model", Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(getView(), "Failed Downloading Model", Snackbar.LENGTH_LONG)
+                                        .setAnchorView(R.id.nav_view)
+                                        .show();
                             }
                         });
 

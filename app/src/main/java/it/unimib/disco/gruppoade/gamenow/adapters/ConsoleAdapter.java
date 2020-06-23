@@ -19,9 +19,6 @@ import it.unimib.disco.gruppoade.gamenow.models.Platform;
 
 public class ConsoleAdapter extends RecyclerView.Adapter<ConsoleAdapter.ViewHolder>{
 
-    private static final String TAG = "ConsoleAdapter";
-
-
     private List<Platform> mPlatforms;
 
     public ConsoleAdapter(List<Platform> mPlatforms) {
