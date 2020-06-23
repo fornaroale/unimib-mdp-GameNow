@@ -17,7 +17,10 @@
             android:name=".activities.FullScreenActivity"
             android:theme="@style/Theme.Design.NoActionBar"
             android:configChanges="orientation|layoutDirection|screenSize|screenLayout" />
-        <activity android:name=".activities.UserInitializationActivity" />
+        <activity
+            android:name=".activities.UserInitializationActivity"
+            android:configChanges="orientation|layoutDirection|screenSize|screenLayout"
+            />
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|layoutDirection|screenSize|screenLayout"
