@@ -2,10 +2,8 @@ package it.unimib.disco.gruppoade.gamenow.fragments.profile.tabs;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,14 +19,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
@@ -38,17 +31,17 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -77,10 +70,6 @@ public class TabSettingsFragment extends Fragment {
     private EditText usernameET;
     private ChipGroup chipGroup;
     private TextView username;
-    private TextView email;
-    private CardView logout;
-    private CardView deleteaccount;
-    private CardView cv_infoaccount;
     private CircleImageView profilePicture;
     private File localFile;
     private boolean userDeleted;
@@ -105,9 +94,8 @@ public class TabSettingsFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         profilePicture = view.findViewById(R.id.profile_image_change);
-        logout = view.findViewById(R.id.cv_logout);
-        deleteaccount = view.findViewById(R.id.cv_deleteaccount);
-        cv_infoaccount = view.findViewById(R.id.cv_infoaccount);
+        CardView logout = view.findViewById(R.id.cv_logout);
+        CardView deleteaccount = view.findViewById(R.id.cv_deleteaccount);
         usernameET = view.findViewById(R.id.Username);
 
         setHasOptionsMenu(true);
@@ -118,53 +106,43 @@ public class TabSettingsFragment extends Fragment {
 
 
         // assegno l'azione di SignOut alla Cardview
-        logout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                firebaseAuth.signOut();
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
-                requireActivity().finish();
-            }
+        logout.setOnClickListener(v -> {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signOut();
+            Intent intent = new Intent(getContext(), MainActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
         });
 
         // associo azione delete
-        deleteaccount.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Eliminazione account")
-                        .setMessage("Sei sicuro di voler eliminare il tuo account?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+        deleteaccount.setOnClickListener(v -> new AlertDialog.Builder(getActivity())
+                .setTitle("Eliminazione account")
+                .setMessage("Sei sicuro di voler eliminare il tuo account?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
 
-                                FbDatabase.setUserDeletingTrue();
+                    FbDatabase.setUserDeletingTrue();
 
-                                Log.d(TAG, "DELETE -> Cancello utente.");
-                                deleteAccount();
+                    Log.d(TAG, "DELETE -> Cancello utente.");
+                    deleteAccount();
 
-                                Log.d(TAG, "DELETE -> Sign out.");
-                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                                firebaseAuth.signOut();
+                    Log.d(TAG, "DELETE -> Sign out.");
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                    firebaseAuth.signOut();
 
-                                Log.d(TAG, "DELETE -> Start mainActivity intent.");
-                                Intent intent = new Intent(getContext(), MainActivity.class);
-                                startActivity(intent);
+                    Log.d(TAG, "DELETE -> Start mainActivity intent.");
+                    Intent intent = new Intent(getContext(), MainActivity.class);
+                    startActivity(intent);
 
-                                Log.d(TAG, "DELETE -> Finish sulla vecchia mainActivity.");
-                                requireActivity().finish();
-                            }})
-                        .setNegativeButton(android.R.string.no, null).show();
-            }
-        });
+                    Log.d(TAG, "DELETE -> Finish sulla vecchia mainActivity.");
+                    requireActivity().finish();
+                })
+                .setNeutralButton(android.R.string.no, null).show());
 
         // assegno una azione alla foto profilo
-        profilePicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Foto profilo cliccata");
-                showFileChooser();
-            }
+        profilePicture.setOnClickListener(v -> {
+            Log.d(TAG, "Foto profilo cliccata");
+            showFileChooser();
         });
 
         Log.d(TAG, "Start Profile");
@@ -185,29 +163,16 @@ public class TabSettingsFragment extends Fragment {
         // Cancello foto profilo utente (se presente)
         StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid);
         Log.d(TAG, "Sto cancellando l'immagine.");
-        imagesRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Ho cancellato l'immagine.");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "Non sono riuscito a cancellare l'immagine. Errore: " + exception);
-            }
-        });
+        imagesRef.delete().addOnSuccessListener(aVoid -> Log.d(TAG, "Ho cancellato l'immagine.")).addOnFailureListener(exception -> Log.d(TAG, "Non sono riuscito a cancellare l'immagine. Errore: " + exception));
 
         // Cancello credenziali autenticazione
         Log.d(TAG, "Sto cancellando le credenziali di auth.");
         FirebaseUser FBAuthUserToDel = FbDatabase.getUserAuth();
         FBAuthUserToDel
                 .delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "User account deleted.");
                     }
                 });
 
@@ -218,12 +183,12 @@ public class TabSettingsFragment extends Fragment {
 
     ValueEventListener postListener = new ValueEventListener() {
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
             if(!userDeleted) {
                 theUser = dataSnapshot.getValue(User.class);
 
                 // quando leggo l'user da db, chiamo il motodo che inizializza l'activity
-                setUp(getActivity().findViewById(android.R.id.content).getRootView());
+                setUp(requireActivity().findViewById(android.R.id.content).getRootView());
             }
         }
 
@@ -260,7 +225,7 @@ public class TabSettingsFragment extends Fragment {
             // collego activity con oggetti
             chipGroup = view.findViewById(R.id.chipGroup);
             username = view.findViewById((R.id.Username));
-            email = view.findViewById((R.id.Email));
+            TextView email = view.findViewById((R.id.Email));
 
             // setto i valori
             //username.setText(theUser.getUsername());
@@ -301,24 +266,16 @@ public class TabSettingsFragment extends Fragment {
         }
 
         // se riesco a scaricare la foto profilo la mostro con picasso
-        imagesRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.d(TAG, "SUCCESS DOWNLOAD");
+        imagesRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+            Log.d(TAG, "SUCCESS DOWNLOAD");
 
-                Picasso.get()
-                        .load(localFile)
-                        .fit()
-                        .centerCrop()
-                        .into((CircleImageView) profilePicture);
+            Picasso.get()
+                    .load(localFile)
+                    .fit()
+                    .centerCrop()
+                    .into(profilePicture);
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "FAILURE DOWNLOAD");
-            }
-        });
+        }).addOnFailureListener(exception -> Log.d(TAG, "FAILURE DOWNLOAD"));
 
 
     }
@@ -328,7 +285,7 @@ public class TabSettingsFragment extends Fragment {
         Log.d(TAG, "Creo chip, text: " + text);
 
         // creo la chips e la setto
-        Chip chip = new Chip(getContext());
+        Chip chip = new Chip(requireContext());
         chip.setText(text);
         chip.setCloseIconVisible(true);
         chip.setCheckable(false);
@@ -341,57 +298,50 @@ public class TabSettingsFragment extends Fragment {
         final Chip tmpChip = chip;
 
         // associo alla x la rimozione
-        chip.setOnCloseIconClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        chip.setOnCloseIconClickListener(v -> {
 
-                //rimuovo l'elemento dal chipGroup
-                chipGroup.removeView(v);
+            //rimuovo l'elemento dal chipGroup
+            chipGroup.removeView(v);
 
-                // rimuovo l'elemento dall'oggetto User
-                theUser.removeTagNoDbUpdate(tmpString);
-                Log.d(TAG, "rimozione tag da theUser: " + theUser.toString());
+            // rimuovo l'elemento dall'oggetto User
+            theUser.removeTagNoDbUpdate(tmpString);
+            Log.d(TAG, "rimozione tag da theUser: " + theUser.toString());
 
-                // riottengo i tag
-                tags = theUser.getTags();
+            // riottengo i tag
+            tags = theUser.getTags();
 
 
-                // Creo la snackbar
-                Snackbar mySnackbar = Snackbar.make(getView(), "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
-                mySnackbar.setAnchorView(R.id.nav_view);
+            // Creo la snackbar
+            Snackbar mySnackbar = Snackbar.make(requireView(), "Tag eliminato: " + tmpString, Snackbar.LENGTH_SHORT);
+            mySnackbar.setAnchorView(R.id.nav_view);
 
-                // associo la funzione al tasto UNDO
-                mySnackbar.setAction(R.string.action_undo, new View.OnClickListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onClick(View v) {
+            // associo la funzione al tasto UNDO
+            mySnackbar.setAction(R.string.action_undo, v1 -> {
 
-                        // richiamo la stessa funzione (ricorsione(?))
-                        creaChip(tmpString, tmpView);
+                // richiamo la stessa funzione (ricorsione(?))
+                creaChip(tmpString, tmpView);
 
-                        // aggiungo nuovamente la chips al chipsGroup
-                        chipGroup.addView(tmpChip);
-                        chipGroup.setVisibility(tmpView.getVisibility());
+                // aggiungo nuovamente la chips al chipsGroup
+                chipGroup.addView(tmpChip);
+                chipGroup.setVisibility(tmpView.getVisibility());
 
-                        // aggiungo l'elemento ad user
-                        sortedAdd(tmpString, tags);
-
-                        // salvo user su DB
-                        FbDatabase.getUserReference().setValue(theUser);
-                    }
-                });
-                // mostro la snackbar
-                mySnackbar.show();
-
-                Log.d(TAG, "Inizio aggiornamento");
-
-                // myRef = database.getReference(usernameDb);
-                Log.d(TAG, "Tag theUser: " + theUser.getTags());
-                Log.d(TAG, "New theUser: " + theUser.toString());
+                // aggiungo l'elemento ad user
+                sortedAdd(tmpString, tags);
 
                 // salvo user su DB
                 FbDatabase.getUserReference().setValue(theUser);
-            }
+            });
+            // mostro la snackbar
+            mySnackbar.show();
+
+            Log.d(TAG, "Inizio aggiornamento");
+
+            // myRef = database.getReference(usernameDb);
+            Log.d(TAG, "Tag theUser: " + theUser.getTags());
+            Log.d(TAG, "New theUser: " + theUser.toString());
+
+            // salvo user su DB
+            FbDatabase.getUserReference().setValue(theUser);
         });
 
         // ritorno la chip creata
@@ -410,16 +360,9 @@ public class TabSettingsFragment extends Fragment {
             UploadTask uploadTask = imagesRef.putFile(filePath);
 
             // Register observers to listen for when the download is done or if it fails
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            uploadTask.addOnFailureListener(exception -> {
+            }).addOnSuccessListener(taskSnapshot -> {
 
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                }
             });
         }
     }
@@ -447,7 +390,7 @@ public class TabSettingsFragment extends Fragment {
                         .load(filePath)
                         .fit()
                         .centerCrop()
-                        .into((CircleImageView) profilePicture);
+                        .into(profilePicture);
 
                 // aggiorno la foto sul database
                 uploadNewPhoto();
@@ -487,38 +430,32 @@ public class TabSettingsFragment extends Fragment {
             }
         });
 
-        usernameET.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
+        usernameET.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
 
-                if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(usernameET.getCompoundDrawables()[DRAWABLE_RIGHT] != null)
-                        if(event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                            Log.d(TAG, "Premuto check Right");
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                if(usernameET.getCompoundDrawables()[DRAWABLE_RIGHT] != null)
+                    if(event.getRawX() >= (usernameET.getRight() - usernameET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        Log.d(TAG, "Premuto check Right");
 
-                            // Rimuovo il chack
-                            usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        // Rimuovo il chack
+                        usernameET.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-                            Snackbar sbUsernameChange = null;
-                            if(!usernameET.getText().toString().isEmpty()) {
-                                updateUsername(usernameET.getText());
-                                sbUsernameChange = Snackbar.make(getView(), "Nome modificato", Snackbar.LENGTH_LONG);
-                                theUser.setUsername(usernameET.getText().toString());
-                            } else {
-                                usernameET.setText(theUser.getUsername());
-                                sbUsernameChange = Snackbar.make(getView(), "Errore: nome vuoto!", Snackbar.LENGTH_LONG);
-                            }
-                            sbUsernameChange.setAnchorView(R.id.nav_view);
-                            sbUsernameChange.show();
-                            return true;
+                        Snackbar sbUsernameChange;
+                        if(!usernameET.getText().toString().isEmpty()) {
+                            updateUsername(usernameET.getText());
+                            sbUsernameChange = Snackbar.make(requireView(), "Nome modificato", Snackbar.LENGTH_LONG);
+                            theUser.setUsername(usernameET.getText().toString());
+                        } else {
+                            usernameET.setText(theUser.getUsername());
+                            sbUsernameChange = Snackbar.make(requireView(), "Errore: nome vuoto!", Snackbar.LENGTH_LONG);
                         }
-                }
-                return false;
+                        sbUsernameChange.setAnchorView(R.id.nav_view);
+                        sbUsernameChange.show();
+                        return true;
+                    }
             }
+            return false;
         });
     }
 
@@ -527,15 +464,7 @@ public class TabSettingsFragment extends Fragment {
                 .setDisplayName(String.valueOf(newUSername))
                 .build();
 
-        FbDatabase.getUserAuth().updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // success!
-                        }
-                    }
-                });
+        FbDatabase.getUserAuth().updateProfile(profileUpdates);
 
         // set the name in the database
         FbDatabase.getUserReference().child("username").setValue(newUSername.toString());
@@ -543,7 +472,7 @@ public class TabSettingsFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, @NotNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
     }
