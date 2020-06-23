@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.unimib.disco.gruppoade.gamenow.R;
@@ -123,7 +124,7 @@ public class TabSettingsFragment extends Fragment {
                 firebaseAuth.signOut();
                 Intent intent = new Intent(getContext(), MainActivity.class);
                 startActivity(intent);
-                getActivity().finish();
+                requireActivity().finish();
             }
         });
 
@@ -151,7 +152,7 @@ public class TabSettingsFragment extends Fragment {
                                 startActivity(intent);
 
                                 Log.d(TAG, "DELETE -> Finish sulla vecchia mainActivity.");
-                                getActivity().finish();
+                                requireActivity().finish();
                             }})
                         .setNegativeButton(android.R.string.no, null).show();
             }

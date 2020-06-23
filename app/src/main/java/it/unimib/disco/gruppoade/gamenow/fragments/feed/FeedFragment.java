@@ -133,27 +133,29 @@ public class FeedFragment extends Fragment {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             user = dataSnapshot.getValue(User.class);
-            if(!feedInitializedSentinel && user!=null) {
-                mSwipeRefreshLayout.setRefreshing(true);
-                initializeFeed();
-                feedInitializedSentinel = true;
-            } else if (user==null && !FbDatabase.getUserDeleting()) {
-                Intent userInitializationIntent = new Intent(getActivity(), UserInitializationActivity.class);
-                startActivity(userInitializationIntent);
-            }
-            if(adapter!=null) {
-                if(newsList!=null) {
-                    selectNews(newsList);
-                    if (newsList.isEmpty()) {
-                        mRecyclerView.setVisibility(View.GONE);
-                        mEmptyTV.setText(R.string.no_data_available_feed);
-                        mEmptyTV.setVisibility(View.VISIBLE);
-                    } else {
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                        mEmptyTV.setVisibility(View.GONE);
-                    }
+            if(!FbDatabase.getUserDeleting()) {
+                if (!feedInitializedSentinel && user != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    initializeFeed();
+                    feedInitializedSentinel = true;
+                } else if (user == null) {
+                    Intent userInitializationIntent = new Intent(getActivity(), UserInitializationActivity.class);
+                    startActivity(userInitializationIntent);
                 }
-                adapter.notifyDataSetChanged();
+                if (adapter != null) {
+                    if (newsList != null) {
+                        selectNews(newsList);
+                        if (newsList.isEmpty()) {
+                            mRecyclerView.setVisibility(View.GONE);
+                            mEmptyTV.setText(R.string.no_data_available_feed);
+                            mEmptyTV.setVisibility(View.VISIBLE);
+                        } else {
+                            mRecyclerView.setVisibility(View.VISIBLE);
+                            mEmptyTV.setVisibility(View.GONE);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                }
             }
         }
 
