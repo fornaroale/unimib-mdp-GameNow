@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
@@ -137,46 +137,28 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             recyclerView.setAdapter(consoleAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
 
-            cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(game);
-                }
-            });
+            cardView.setOnClickListener(v -> onItemClickListener.onItemClick(game));
 
             if (user.checkSavedGame(game))
                 toggleButton.setChecked(true);
             else
                 toggleButton.setChecked(false);
-            toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (toggleButton.isPressed()) {
-                        final Game clickedGame = mGames.get(getAdapterPosition());
-                        if (isChecked) {
-                            if (user.saveGame(clickedGame)) {
-                                Snackbar.make(buttonView, R.string.gioco_aggiunto, Snackbar.LENGTH_LONG)
-                                        .setAction(R.string.action_undo, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                user.removeGame(clickedGame);
-                                            }
-                                        })
-                                        .setAnchorView(R.id.nav_view)
-                                        .show();
-                            }
-                        } else {
-                            if (user.removeGame(clickedGame)) {
-                                Snackbar.make(buttonView, R.string.gioco_rimosso, Snackbar.LENGTH_LONG)
-                                        .setAction(R.string.action_undo, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                user.saveGame(clickedGame);
-                                            }
-                                        })
-                                        .setAnchorView(R.id.nav_view)
-                                        .show();
-                            }
+            toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (toggleButton.isPressed()) {
+                    final Game clickedGame = mGames.get(getAdapterPosition());
+                    if (isChecked) {
+                        if (user.saveGame(clickedGame)) {
+                            Snackbar.make(buttonView, R.string.gioco_aggiunto, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.action_undo, v -> user.removeGame(clickedGame))
+                                    .setAnchorView(R.id.nav_view)
+                                    .show();
+                        }
+                    } else {
+                        if (user.removeGame(clickedGame)) {
+                            Snackbar.make(buttonView, R.string.gioco_rimosso, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.action_undo, v -> user.saveGame(clickedGame))
+                                    .setAnchorView(R.id.nav_view)
+                                    .show();
                         }
                     }
                 }
@@ -184,7 +166,7 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-        public class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public static class LoadingViewHolder extends RecyclerView.ViewHolder {
 
             ProgressBar loadingGame;
 
@@ -196,7 +178,11 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         private String constructTitle(String name, Integer date) {
             long dateInMillis = date * 1000L;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat sdf;
+            if(Locale.getDefault().getLanguage().equals("it"))
+                sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
+            else
+                sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
             String stringDate = sdf.format(dateInMillis);
             if (name.length() > 35) {
                 return name.substring(0, 35) + "... - " + stringDate;

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,9 +23,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
+
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
@@ -39,14 +43,14 @@ import java.util.Objects;
 import it.unimib.disco.gruppoade.gamenow.R;
 import it.unimib.disco.gruppoade.gamenow.adapters.ConsoleAdapter;
 import it.unimib.disco.gruppoade.gamenow.adapters.VideoAdapter;
+import it.unimib.disco.gruppoade.gamenow.database.FbDatabase;
 import it.unimib.disco.gruppoade.gamenow.models.Game;
 import it.unimib.disco.gruppoade.gamenow.models.Platform;
+import it.unimib.disco.gruppoade.gamenow.models.User;
 import it.unimib.disco.gruppoade.gamenow.models.Video;
 
 
 public class GameInfoFragment extends Fragment {
-
-    private static final String TAG = "GameInfoFragment";
 
     private FirebaseTranslator translator;
 
@@ -59,6 +63,8 @@ public class GameInfoFragment extends Fragment {
     private RatingBar ratingBar;
     private ProgressBar descSpinner, storylineSpinner;
     private Palette.Swatch vibrantSwatch, mutedSwatch;
+    private ToggleButton toggleButton;
+    private User user;
 
     private List<Platform> mPlatforms;
     private List<Video> mVideos;
@@ -75,12 +81,44 @@ public class GameInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Game game = GameInfoFragmentArgs.fromBundle(requireArguments()).getGame();
+        ValueEventListener postListenerUserData = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                if (Objects.requireNonNull(user).checkSavedGame(game))
+                    toggleButton.setChecked(true);
+                else
+                    toggleButton.setChecked(false);
+                toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (toggleButton.isPressed()) {
+                        if (isChecked) {
+                            if (user.saveGame(game)) {
+                                Snackbar.make(buttonView, R.string.gioco_aggiunto, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.action_undo, v -> user.removeGame(game))
+                                        .setAnchorView(R.id.nav_view)
+                                        .show();
+                            }
+                        } else {
+                            if (user.removeGame(game)) {
+                                Snackbar.make(buttonView, R.string.gioco_rimosso, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.action_undo, v -> user.saveGame(game))
+                                        .setAnchorView(R.id.nav_view)
+                                        .show();
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        };
+        FbDatabase.getUserReference().addValueEventListener(postListenerUserData);
 
 
         // Crea un traduttore English-Italiano
-
-
-        Log.d(TAG, "onViewCreated: Language " + Locale.getDefault().getLanguage());
 
         gameDescription = view.findViewById(R.id.gameinfo_desc);
         gameDescriptionText = view.findViewById(R.id.gameinfo_desc_text);
@@ -104,11 +142,16 @@ public class GameInfoFragment extends Fragment {
         platformsRecycler = view.findViewById(R.id.gameinfo_recyclerview);
         videosRecycler = view.findViewById(R.id.gameplays_recyclerview);
 
+        toggleButton = view.findViewById(R.id.gameinfo_save_game);
+
 
         if(Locale.getDefault().getLanguage().equals("it"))
             buildIT(game);
         else
             buildEN(game);
+
+        buildCommon(game);
+
 
     }
 
@@ -134,62 +177,7 @@ public class GameInfoFragment extends Fragment {
             gameStorylineText.setVisibility(View.GONE);
             storylineSpinner.setVisibility(View.GONE);
         }
-        if(game.getRating() == 0){
-            ratingBar.setVisibility(View.GONE);
-        } else {
-            ratingBar.setRating(setRating(game.getRating()));
-        }
 
-        gameTitle.setText(game.getName());
-        String storyline = game.getStoryline();
-        Log.d(TAG, "onCreate: Storyline = " + storyline);
-
-
-        mPlatforms = game.getPlatforms();
-        mVideos = game.getVideos();
-
-        if (mVideos == null){
-            gameVideoText.setVisibility(View.GONE);
-            videoDivider.setVisibility(View.GONE);
-        }
-        //Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
-        String coverBig, url;
-
-        if(game.getCover() != null){
-            coverBig = game.getCover().getUrl().replace("t_thumb", "t_cover_big");
-            url = "https:" + coverBig;}
-        else
-            url = "";
-        Log.d(TAG, "onCreate: URl + " + url);
-        if (!url.isEmpty()) {
-            Picasso.get()
-                    .load(url)
-                    .placeholder(R.drawable.img)
-                    .into(gameCover);
-        } else {
-            gameCover.setImageResource(R.drawable.cover_na);
-
-        }
-
-        Bitmap bitmap = ((BitmapDrawable) gameCover.getDrawable()).getBitmap();
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(@Nullable Palette palette) {
-                vibrantSwatch = Objects.requireNonNull(palette).getVibrantSwatch();
-                mutedSwatch = palette.getMutedSwatch();
-                if(vibrantSwatch != null)
-                    gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
-                else if (mutedSwatch != null)
-                    gameScreen.setBackgroundColor(mutedSwatch.getRgb());
-            }
-        });
-        if(mPlatforms!= null)
-            initPlatformsRecyclerView();
-        if(mVideos == null){
-            gameVideoText.setVisibility(View.GONE);
-            videoDivider.setVisibility(View.GONE);
-        } else
-            initVideosRecyclerView();
     }
 
     private void buildIT(Game game){
@@ -214,16 +202,50 @@ public class GameInfoFragment extends Fragment {
                 .build();
         translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
+        String storyline = game.getStoryline();
+
+        // Traduzione
+        translator.downloadModelIfNeeded(conditions)
+                .addOnSuccessListener(
+                        v -> {
+                            if( game.getSummary() != null) {
+                                final String desc = game.getSummary();
+                                translate(desc, gameDescriptionText,descSpinner);
+
+                            } else {
+                                gameDescription.setVisibility(View.GONE);
+                                descDivider.setVisibility(View.GONE);
+                                gameDescriptionText.setVisibility(View.GONE);
+                                descSpinner.setVisibility(View.GONE);
+                            }
+                            if( storyline != null) {
+                                translate(storyline, gameStorylineText, storylineSpinner);
+
+                            } else {
+                                storylineDivider.setVisibility(View.GONE);
+                                gameStoryline.setVisibility(View.GONE);
+                                gameStorylineText.setVisibility(View.GONE);
+                                storylineSpinner.setVisibility(View.GONE);
+                            }
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            e.printStackTrace();
+                            Snackbar.make(requireView(), "Failed Downloading Model", Snackbar.LENGTH_LONG)
+                                    .setAnchorView(R.id.nav_view)
+                                    .show();
+                        });
+
+    }
+
+    private void buildCommon(Game game){
+        gameTitle.setText(game.getName());
+
         if(game.getRating() == 0){
             ratingBar.setVisibility(View.GONE);
         } else {
             ratingBar.setRating(setRating(game.getRating()));
         }
-
-        gameTitle.setText(game.getName());
-        String storyline = game.getStoryline();
-        Log.d(TAG, "onCreate: Storyline = " + storyline);
-
 
         mPlatforms = game.getPlatforms();
         mVideos = game.getVideos();
@@ -232,7 +254,7 @@ public class GameInfoFragment extends Fragment {
             gameVideoText.setVisibility(View.GONE);
             videoDivider.setVisibility(View.GONE);
         }
-        //Log.d(TAG, "onCreate: Platforms = " + gson.toJson(mPlatforms));
+
         String coverBig, url;
 
         if(game.getCover() != null){
@@ -240,7 +262,6 @@ public class GameInfoFragment extends Fragment {
             url = "https:" + coverBig;}
         else
             url = "";
-        Log.d(TAG, "onCreate: URl + " + url);
         if (!url.isEmpty()) {
             Picasso.get()
                     .load(url)
@@ -252,16 +273,13 @@ public class GameInfoFragment extends Fragment {
         }
 
         Bitmap bitmap = ((BitmapDrawable) gameCover.getDrawable()).getBitmap();
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(@Nullable Palette palette) {
-                vibrantSwatch = Objects.requireNonNull(palette).getVibrantSwatch();
-                mutedSwatch = palette.getMutedSwatch();
-                if(vibrantSwatch != null)
-                    gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
-                else if (mutedSwatch != null)
-                    gameScreen.setBackgroundColor(mutedSwatch.getRgb());
-            }
+        Palette.from(bitmap).generate(palette -> {
+            vibrantSwatch = Objects.requireNonNull(palette).getVibrantSwatch();
+            mutedSwatch = palette.getMutedSwatch();
+            if(vibrantSwatch != null)
+                gameScreen.setBackgroundColor(vibrantSwatch.getRgb());
+            else if (mutedSwatch != null)
+                gameScreen.setBackgroundColor(mutedSwatch.getRgb());
         });
         if(mPlatforms!= null)
             initPlatformsRecyclerView();
@@ -270,49 +288,9 @@ public class GameInfoFragment extends Fragment {
             videoDivider.setVisibility(View.GONE);
         } else
             initVideosRecyclerView();
-
-        // Traduzione
-        translator.downloadModelIfNeeded(conditions)
-                .addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void v) {
-                                if( game.getSummary() != null) {
-                                    final String desc = game.getSummary();
-                                    translate(desc, gameDescriptionText,descSpinner);
-
-                                } else {
-                                    gameDescription.setVisibility(View.GONE);
-                                    descDivider.setVisibility(View.GONE);
-                                    gameDescriptionText.setVisibility(View.GONE);
-                                    descSpinner.setVisibility(View.GONE);
-                                }
-                                if( storyline != null) {
-                                    translate(storyline, gameStorylineText, storylineSpinner);
-
-                                } else {
-                                    storylineDivider.setVisibility(View.GONE);
-                                    gameStoryline.setVisibility(View.GONE);
-                                    gameStorylineText.setVisibility(View.GONE);
-                                    storylineSpinner.setVisibility(View.GONE);
-                                }
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                                Snackbar.make(requireView(), "Failed Downloading Model", Snackbar.LENGTH_LONG)
-                                        .setAnchorView(R.id.nav_view)
-                                        .show();
-                            }
-                        });
-
     }
 
     private void initPlatformsRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init Platforms RecyclerView");
         ConsoleAdapter consoleAdapter = new ConsoleAdapter(mPlatforms);
         platformsRecycler.setAdapter(consoleAdapter);
         if(mPlatforms.size() > 4)
@@ -323,7 +301,6 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void initVideosRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init Videos RecyclerView");
         VideoAdapter videoAdapter = new VideoAdapter(mVideos,this.getLifecycle(),getActivity());
         videosRecycler.setAdapter(videoAdapter);
         videosRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL,false));
@@ -339,20 +316,17 @@ public class GameInfoFragment extends Fragment {
     private void translate (String textToTranslate, final TextView v, final View spinner){
         translator.translate(textToTranslate)
                 .addOnSuccessListener(
-                        new OnSuccessListener<String>() {
-                            @Override
-                            public void onSuccess(@NonNull String translatedText) {
-                                v.setText(translatedText);
-                                spinner.setVisibility(View.GONE);
-                            }
+                        translatedText -> {
+                            v.setText(translatedText);
+                            spinner.setVisibility(View.GONE);
                         })
                 .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                            }
+                        e -> {
+                            v.setText(R.string.errore_traduzione);
+                            e.printStackTrace();
                         });
     }
+
+
 
 }

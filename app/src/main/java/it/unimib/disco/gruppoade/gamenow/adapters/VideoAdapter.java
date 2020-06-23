@@ -24,7 +24,6 @@ import it.unimib.disco.gruppoade.gamenow.activities.FullScreenActivity;
 import it.unimib.disco.gruppoade.gamenow.models.Video;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> {
-    private static final String TAG = "VideoAdapter";
 
     private List<Video> mVideos;
     private Lifecycle mLifecycle;
@@ -75,7 +74,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
         private YouTubePlayerView youTubePlayerView;
         private YouTubePlayer youTubePlayer;
