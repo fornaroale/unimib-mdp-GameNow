@@ -33,12 +33,9 @@ public class IncomingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int GAME_VIEW_TYPE = 0;
     private static final int LOADING_VIEW_TYPE = 1;
 
-
     public interface OnItemClickListener {
         void onItemClick(Game game);
     }
-
-    private static final String TAG = "Adapter";
 
     private Context mContext;
     private List<Game> mGames;
