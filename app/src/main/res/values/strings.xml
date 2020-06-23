@@ -1,8 +1,8 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- generali -->
     <string name="app_name" translatable="false">GameNow</string>
     <string name="title_profile">Profilo</string>
-    <string name="news_loading">Attendere, caricamento notizie in corso...</string>
+    <string name="news_loading">Attendere, caricamento notizie in corso…</string>
 
     <!-- activity SignUp -->
     <string name="signup_welcome">Benvenuto in GameNow,</string>
@@ -21,7 +21,7 @@
     <string name="cerca_gioco">Cerca Gioco</string>
     <string name="gioco_aggiunto">Gioco salvato</string>
     <string name="gioco_rimosso">Gioco rimosso dalla lista</string>
-    <string name="nessun_gioco">Nessun gioco trovato...</string>
+    <string name="nessun_gioco">Nessun gioco trovato…</string>
 
 
     <string name="prompt_email" translatable="false">Email</string>
@@ -36,7 +36,7 @@
     <string name="action_undo">Annulla</string>
 
     <!-- feed fragment -->
-    <string name="no_data_available_feed">Non sono disponibili news per le piattaforme che segui. Prova a dare un\'occhio alla sezione Discover!</string>
+    <string name="no_data_available_feed">Non sono disponibili news per le piattaforme che segui. Prova a dare un\'occhiata alla sezione Scopri!</string>
 
     <!-- discover fragment -->
     <string name="news_img_description">Immagine della notizia</string>
@@ -44,7 +44,7 @@
     <string name="fav_tag_added">Tag aggiunto ai preferiti</string>
     <string name="fav_news_removed">News rimossa dalle salvate</string>
     <string name="fav_news_added">News salvata</string>
-    <string name="no_data_available_discover">Stai seguendo tutte le piattaforme disponibili, oppure non sono disponibili news per quelle che non segui. Ti invitiamo ad utilizzare la sezione Feed.</string>
+    <string name="no_data_available_discover">Stai seguendo tutte le piattaforme disponibili, oppure non sono disponibili news per quelle che non segui. Ti invitiamo ad utilizzare la sezione Notizie.</string>
 
     <!-- profile settings tab -->
     <string name="profile_username">Nome</string>
@@ -57,9 +57,9 @@
     <string name="profile_submit">Conferma</string>
 
     <!-- saved news tab -->
-    <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dal discover!</string>
+    <string name="no_localnews_available">Non hai salvato alcuna notizia. Puoi salvare le notizie dal feed oppure dalla sezione scopri!</string>
     <string name="selezione_piattaforme">Seleziona le piattaforme che sono di tuo interesse</string>
-    <string name="selezione_foto_profilo">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
+    <string name="selezione_foto_profilo" tools:ignore="Typos">Seleziona la foto profilo dal tuo dispositivo (è possibile non caricare nessuna foto profilo)</string>
     <string name="btn_switch" translatable="false">Switch</string>
     <string name="btn_pc" translatable="false">PC</string>
     <string name="btn_xbox" translatable="false">Xbox</string>

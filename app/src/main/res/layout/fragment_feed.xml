@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/no_data_available_feed"
+                android:text="@string/news_loading"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:padding="15dp"/>
 
