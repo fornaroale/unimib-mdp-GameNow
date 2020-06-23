@@ -12,7 +12,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <FrameLayout
@@ -28,25 +28,39 @@
                 <ImageView
                     android:id="@+id/gameinfo_screen"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:background="@color/colorPrimary" />
+                    android:layout_height="match_parent" />
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/gradient" />
+
+
             </FrameLayout>
 
-            <ImageView
-                android:id="@+id/gameinfo_cover"
-                android:layout_width="150dp"
-                android:layout_height="210dp"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/cover_na" />
+                android:layout_marginTop="50dp">
 
+                <ImageView
+                    android:id="@+id/gameinfo_cover"
+                    android:layout_width="150dp"
+                    android:layout_height="210dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/cover_na" />
+
+                <ToggleButton
+                    android:id="@+id/gameinfo_save_game"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@null"
+                    android:textOff=""
+                    android:textOn=""
+                    android:drawableTop="@drawable/ic_toggle_favnews"/>
+            </FrameLayout>
         </FrameLayout>
 
         <TextView
@@ -81,7 +95,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/gameinfo_placeholder_description"
             android:textColor="#99000000"
@@ -114,9 +127,8 @@
             android:id="@+id/gameinfo_storyline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="24dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/gameinfo_placeholder_storyline"
             android:textColor="#99000000"
@@ -149,7 +161,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
             android:text="@string/gameinfo_placeholder_gameplays"
@@ -168,6 +179,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
             android:id="@+id/gameplays_recyclerview"
             android:layout_margin="8dp"
             android:layout_marginBottom="24dp"/>
