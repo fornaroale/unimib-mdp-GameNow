@@ -101,11 +101,14 @@ public class FeedFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
+            mEmptyTV.setText(R.string.news_loading);
             viewModel.refreshNews();
         });
     }
 
     private void selectNews(List<PieceOfNews> newsRaw){
+        mEmptyTV.setText(R.string.news_loading);
+
         if(user.getTags() != null) {
             List<String> userTags = user.getTags();
 
@@ -140,8 +143,7 @@ public class FeedFragment extends Fragment {
                 } else if (user == null) {
                     Intent userInitializationIntent = new Intent(getActivity(), UserInitializationActivity.class);
                     startActivity(userInitializationIntent);
-                }
-                if (adapter != null) {
+                } else if (adapter != null) {
                     if (newsList != null) {
                         selectNews(newsList);
                         if (newsList.isEmpty()) {
