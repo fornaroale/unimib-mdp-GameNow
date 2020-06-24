@@ -88,7 +88,7 @@ public class SearchFragment extends Fragment {
                     TextView giocoNA = view.findViewById(R.id.coordinator);
                     if (games.isEmpty()) {
                         giocoNA.setVisibility(View.VISIBLE);
-                        giocoNA.setText(R.string.nessun_gioco);
+                        giocoNA.setText(getResources().getString(R.string.nessun_gioco) + "\n" + "\"" + query + "\"");
                     } else  {
                         giocoNA.setVisibility(GONE);
                         giocoNA.setText("");
