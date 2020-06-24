@@ -21,7 +21,8 @@
     <string name="cerca_gioco">Cerca Gioco</string>
     <string name="gioco_aggiunto">Gioco salvato</string>
     <string name="gioco_rimosso">Gioco rimosso dalla lista</string>
-    <string name="nessun_gioco">Nessun gioco trovato…</string>
+    <string name="nessun_gioco">Nessun gioco trovato con nome</string>
+    <string name="errore_traduzione">Non è stato possibile tradurre questo contenuto al momento.</string>
 
 
     <string name="prompt_email" translatable="false">Email</string>
@@ -65,7 +66,6 @@
     <string name="btn_xbox" translatable="false">Xbox</string>
     <string name="btn_ps4" translatable="false">PS4</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Ciao fragment blank</string>
     <string name="title_comingsoon">In Uscita</string>
     <string name="username">Username insesistente</string>
     <string name="nessun_gioco_salvato">Non hai salvato nessun gioco. Puoi salvare i giochi dalla sezione \"In Uscita\" o tramite la ricerca.</string>

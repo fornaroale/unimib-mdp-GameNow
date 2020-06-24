@@ -36,8 +36,6 @@ import it.unimib.disco.gruppoade.gamenow.models.User;
 
 public class TabSavedGamesFragment extends Fragment {
 
-    private static final String TAG = "TabSavedGamesFragment";
-
     private RecyclerView mRecyclerView;
     private TextView mEmptyTV;
     private IncomingAdapter adapter;
@@ -73,28 +71,21 @@ public class TabSavedGamesFragment extends Fragment {
 
         locallySavedGames = new ArrayList<>();
 
-        // JSON to PieceOfNews Array
-        // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
-        // Recupero il recyclerview dal layout xml e imposto l'adapter
         ValueEventListener postListenerFirstUserData = new ValueEventListener() {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
 
-                // JSON to PieceOfNews Array
                 locallySavedGames.clear();
                 Gson gson = new Gson();
                 for (String jsonGame : user.getGames()) {
                     locallySavedGames.add(gson.fromJson(jsonGame, Game.class));
                 }
 
-                adapter = new IncomingAdapter(getActivity(), locallySavedGames, new IncomingAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Game game) {
-                        ProfileFragmentDirections.ActionNavigationProfileToGameInfoFragment action = ProfileFragmentDirections.actionNavigationProfileToGameInfoFragment(game);
-                        NavController navController = NavHostFragment.findNavController(requireParentFragment());
-                        navController.navigate(action);
-                    }
+                adapter = new IncomingAdapter(getActivity(), locallySavedGames, game -> {
+                    ProfileFragmentDirections.ActionNavigationProfileToGameInfoFragment action = ProfileFragmentDirections.actionNavigationProfileToGameInfoFragment(game);
+                    NavController navController = NavHostFragment.findNavController(requireParentFragment());
+                    navController.navigate(action);
                 }, user);
 
                 // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
@@ -106,7 +97,6 @@ public class TabSavedGamesFragment extends Fragment {
                     mEmptyTV.setVisibility(View.GONE);
                 }
 
-                // Recupero il recyclerview dal layout xml e imposto l'adapter
                 LinearLayoutManager manager = new LinearLayoutManager(getActivity());
                 mRecyclerView.setLayoutManager(manager);
                 mRecyclerView.setHasFixedSize(true);
@@ -119,15 +109,12 @@ public class TabSavedGamesFragment extends Fragment {
             }
         };
 
-        // JSON to PieceOfNews Array
-        // Controllo la presenza o meno di informazioni per mostrare un messaggio di stato
         ValueEventListener postListenerUserData = new ValueEventListener() {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
 
                 if (user != null) {
-                    // JSON to PieceOfNews Array
                     locallySavedGames.clear();
                     Gson gson = new Gson();
                     for (String jsonGame : user.getGames()) {

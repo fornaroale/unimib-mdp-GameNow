@@ -3,7 +3,6 @@ package it.unimib.disco.gruppoade.gamenow.fragments.comingsoon;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,6 @@ import static android.view.View.GONE;
 
 public class ComingSoonFragment extends Fragment {
 
-    private static final String TAG = "ComingSoonFragment";
     private ComingSoonViewModel comingSoonViewModel;
 
     private long todayInSecs = (new Date().getTime()/1000);
@@ -78,12 +76,9 @@ public class ComingSoonFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
-                incomingAdapter = new IncomingAdapter(getActivity(), getGameList(body), new IncomingAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Game game) {
-                        ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
-                        Navigation.findNavController(view).navigate(action);
-                    }
+                incomingAdapter = new IncomingAdapter(getActivity(), getGameList(body), game -> {
+                    ComingSoonFragmentDirections.DisplayGameInfo action = ComingSoonFragmentDirections.displayGameInfo(game);
+                    Navigation.findNavController(view).navigate(action);
                 }, user);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -115,7 +110,6 @@ public class ComingSoonFragment extends Fragment {
                                 comingSoonViewModel.setOffset(currentOffset + Constants.PAGE_SIZE);
                                 bodyOffset = "offset " + comingSoonViewModel.getOffset() + ";\n";
                                 body = bodystart + bodyOffset + bodyEnd;
-                                Log.d(TAG, "onScrolled: Body " + body);
                                 comingSoonViewModel.getMoreGames(body);
                                 Constants.loadingSentinel = true;
 
@@ -124,15 +118,11 @@ public class ComingSoonFragment extends Fragment {
                     }
                 });
 
-                observer = new Observer<List<Game>>() {
-                    @Override
-                    public void onChanged(List<Game> games) {
-                        Log.d(TAG, "initRecyclerView: Init RecyclerView");
-                        incomingAdapter.setData(games);
-                        lottieAnimationView.setVisibility(GONE);
-                        if (!Constants.loadingSentinel) {
-                            comingSoonViewModel.setLoading(false);
-                        }
+                observer = games -> {
+                    incomingAdapter.setData(games);
+                    lottieAnimationView.setVisibility(GONE);
+                    if (!Constants.loadingSentinel) {
+                        comingSoonViewModel.setLoading(false);
                     }
                 };
 
@@ -177,36 +167,15 @@ public class ComingSoonFragment extends Fragment {
 
 
         //Buttons Listeners
-        ps4Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { chooseButton(ps4Btn.getId()); }
-        });
+        ps4Btn.setOnClickListener(v -> chooseButton(ps4Btn.getId()));
 
-        allBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { chooseButton(allBtn.getId()); }
-        });
+        allBtn.setOnClickListener(v -> chooseButton(allBtn.getId()));
 
-        xboxBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseButton(xboxBtn.getId());
-            }
-        });
+        xboxBtn.setOnClickListener(v -> chooseButton(xboxBtn.getId()));
 
-        pcBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseButton(pcBtn.getId());
-            }
-        });
+        pcBtn.setOnClickListener(v -> chooseButton(pcBtn.getId()));
 
-        switchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseButton(switchBtn.getId());
-            }
-        });
+        switchBtn.setOnClickListener(v -> chooseButton(switchBtn.getId()));
 
 
     }

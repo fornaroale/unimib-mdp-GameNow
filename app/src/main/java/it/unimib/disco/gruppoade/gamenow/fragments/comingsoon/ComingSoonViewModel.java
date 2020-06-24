@@ -31,9 +31,8 @@ public class ComingSoonViewModel extends ViewModel {
         return mGames;
     }
 
-    public LiveData<List<Game>> getMoreGames(String body) {
+    public void getMoreGames(String body) {
         GameRepository.getInstance().getGames(mGames, body);
-        return mGames;
     }
 
     public LiveData<List<Game>> changeConsole(String body) {
