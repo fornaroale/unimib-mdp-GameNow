@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "108957765081-p2l69n7atvuib3p06a1strr7785nvi19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unimib.disco.gruppoade.gamenow",
+            "certificate_hash": "f01c25cb5e32e5c84a20e5e84832f7d1a673da4d"
+          }
+        },
+        {
           "client_id": "108957765081-go24eh01kp1ll8kobbrgkaohitbipg50.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
