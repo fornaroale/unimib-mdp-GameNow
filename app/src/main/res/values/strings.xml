@@ -21,7 +21,7 @@
     <string name="cerca_gioco">Cerca Gioco</string>
     <string name="gioco_aggiunto">Gioco salvato</string>
     <string name="gioco_rimosso">Gioco rimosso dalla lista</string>
-    <string name="nessun_gioco">Nessun gioco trovato…</string>
+    <string name="nessun_gioco">Nessun gioco trovato con nome</string>
     <string name="errore_traduzione">Non è stato possibile tradurre questo contenuto al momento.</string>
 
 
