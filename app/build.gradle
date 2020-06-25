@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "it.unimib.disco.gruppoade.gamenow"
-        minSdkVersion 17
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
