@@ -206,6 +206,7 @@ public class ComingSoonFragment extends Fragment {
         lottieAnimationView.setVisibility(View.VISIBLE);
         comingSoonViewModel.setOffset(0);
         gamesLiveData.postValue(null);
+        recyclerView.scrollToPosition(0);
         PorterDuffColorFilter accentFilter = new PorterDuffColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
         PorterDuffColorFilter offFilter = new PorterDuffColorFilter(getResources().getColor(R.color.buttonBackground), PorterDuff.Mode.MULTIPLY);
         switch (buttonId){
