@@ -160,11 +160,6 @@ public class TabSettingsFragment extends Fragment {
 
         String uid = FbDatabase.getUserAuth().getUid();
 
-        // Cancello foto profilo utente (se presente)
-        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid);
-        Log.d(TAG, "Sto cancellando l'immagine.");
-        imagesRef.delete().addOnSuccessListener(aVoid -> Log.d(TAG, "Ho cancellato l'immagine.")).addOnFailureListener(exception -> Log.d(TAG, "Non sono riuscito a cancellare l'immagine. Errore: " + exception));
-
         // Cancello credenziali autenticazione
         Log.d(TAG, "Sto cancellando le credenziali di auth.");
         FirebaseUser FBAuthUserToDel = FbDatabase.getUserAuth();
@@ -179,6 +174,11 @@ public class TabSettingsFragment extends Fragment {
         // Cancello dati utente database
         Log.d(TAG, "Sto cancellando i dati del realtime database.");
         FbDatabase.getUserReference().removeValue();
+
+        // Cancello foto profilo utente (se presente)
+        StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images").child(uid);
+        Log.d(TAG, "Sto cancellando l'immagine.");
+        imagesRef.delete().addOnSuccessListener(aVoid -> Log.d(TAG, "Ho cancellato l'immagine.")).addOnFailureListener(exception -> Log.d(TAG, "Non sono riuscito a cancellare l'immagine. Errore: " + exception));
     }
 
     ValueEventListener postListener = new ValueEventListener() {
